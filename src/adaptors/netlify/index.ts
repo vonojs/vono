@@ -6,7 +6,7 @@ import * as fs from "fs/promises"
 
 const tmpl = `[build]
 publish = "netlify/public"
-edge-functions = "netlify/edge-functions"
+edge_functions = "netlify/edge-functions"
 
 [functions]
 directory = "netlify/functions"`
