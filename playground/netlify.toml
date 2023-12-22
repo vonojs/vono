@@ -1,2 +1,2 @@
 [build]
-edge_functions = "/playground/netlify/edge_functions"
+edge_functions = "/netlify/edge_functions"
