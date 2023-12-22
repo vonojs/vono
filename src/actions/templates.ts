@@ -1,4 +1,4 @@
-function recursiveGet(obj: Record<string, any>, path: string[]) {
+export const serverApi = () => `function recursiveGet(obj: Record<string, any>, path: string[]) {
   const key = path.shift();
   if (!key) {
     return obj;
@@ -35,4 +35,34 @@ export const createServerApi = <T>(manifest: Record<string, any>) => {
 		}) as T;
 	};
 	return createProxy<T>();
-};
+};`
+
+export const clientApi = (handlerUrl: string) => `export const createClientApi = <T>(handlerUrl: string) => {
+  const createProxy = <T>(path: string[] = []): T => {
+    return new Proxy(() => {}, {
+      get: (_, key: string) => {
+        return createProxy([...path, key]);
+      },
+      apply: async (_, __, args) => {
+        const res = await fetch(${handlerUrl}, {
+          method: "POST",
+          body: JSON.stringify({
+            path,
+            args,
+          }),
+        })
+        if (res.status === 200) {
+          return res.json();
+        }
+        throw new Error("Error");
+      },
+    }) as T;
+  };
+  return createProxy<T>();
+}`
+
+export const recursiveAwaitable = `type RecursiveAwaitable<T> = {
+	[K in keyof T]: T[K] extends (...args: any[]) => any
+		? (...args: Parameters<T[K]>) => Promise<ReturnType<T[K]>>
+		: T[K];
+};`

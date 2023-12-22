@@ -1,8 +1,8 @@
-import { InternalConfig } from "./config";
-import { assert } from "./tools/invariant";
+import { InternalConfig } from "../config";
+import { assert } from "../tools/invariant";
 import * as pathe from "pathe";
 import * as fs from "fs/promises";
-import * as tools from "./tools";
+import * as tools from "../tools";
 
 type RouteConfig = {
 	[key: string]: any;

@@ -8,16 +8,11 @@ type RecursivePartial<T> = {
 	[P in keyof T]?: RecursivePartial<T[P]>;
 };
 
-export enum BuildTarget {
-	node,
-	deno,
-	cloudflare,
-	netlify,
-	vercel,
-}
+import { Adaptor } from "./adaptors";
+import nodeAdaptor from "./adaptors/node";
 
 type Config = {
-	target: BuildTarget;
+	adaptor: Adaptor;
 	debug: boolean;
 	server: {
 		directory: string;
@@ -33,20 +28,21 @@ type Config = {
 	entries?: {
 		client?: string;
 		server?: string;
-	}
+	},
 };
 
 export type InternalConfig = Config & {
 	hono?: string;
 	root?: string;
 	vfs: VFS;
+	mode?: "build" | "serve" | "dev";
 };
 
 export type InlineConfig = RecursivePartial<Config> & {};
 
 export function generateConfig(config?: InlineConfig) {
 	return defu<InternalConfig, InternalConfig[]>(config, {
-		target: BuildTarget.node,
+		adaptor: nodeAdaptor(),
 		debug: false,
 		vfs: createVFS(),
 		server: {
@@ -113,13 +109,16 @@ export function configPlugin(config: InternalConfig): vite.Plugin {
 	return {
 		name: `${PLUGIN_NAME}:config`,
 		enforce: "pre",
-		config: async (viteConfig) => {
-			viteConfig.clearScreen = false;
-			viteConfig.appType = "custom";
-			if(config.typescript.writeTypes) await writeTSConfig(config);
+		config: () => {
+			// if(config.typescript.writeTypes) await writeTSConfig(config);
+			return {
+				clearScreen: false,
+				appType: "custom",
+			}
 		},
 		configResolved: (viteConfig) => {
 			config.root = viteConfig.root;
+			config.mode = viteConfig.command ?? "dev"
 		},
 	};
 }

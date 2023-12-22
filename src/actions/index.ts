@@ -1,8 +1,8 @@
 import { assert } from "../tools/invariant";
-import { deepGet, exists, stripExtension } from "../tools";
+import { exists, stripExtension } from "../tools";
 import * as fs from "fs/promises";
 import * as pathe from "pathe";
-import { handleRequest } from "./handler";
+import * as templates from "./templates";
 
 type ActionConfig = {
 	path: string;
@@ -12,6 +12,16 @@ type ActionConfig = {
 export type ActionManifest = {
 	[key: string]: string;
 };
+
+function recursiveSet(target: object, path: string[], value: any) {
+	const [key, ...rest] = path;
+	if (rest.length === 0) {
+		target[key] = value;
+	} else {
+		target[key] ??= {};
+		recursiveSet(target[key], rest, value);
+	}
+}
 
 export function createActions(config: ActionConfig) {
 	async function generateManifest(): Promise<ActionManifest> {
@@ -32,70 +42,43 @@ export function createActions(config: ActionConfig) {
 						actionFile.path.replace(actionsDir, ""),
 						stripExtension(actionFile.name)
 					)
-					.replaceAll("/", ".")
-					.replace(/^\./, "");
-				manifest[path] = pathe.join(actionFile.path, actionFile.name);
+					.replace(/^\//, "")
+					.split("/");
+
+				recursiveSet(
+					manifest,
+					path,
+					pathe.join(actionFile.path, actionFile.name)
+				);
 			}
 		}
 		const actionConfig: ActionManifest = {};
 		await getActions(actionsDir, actionConfig);
 		return actionConfig;
 	}
-	const generateClientApi = (
-		manifest: ActionManifest
-	) => `/* This file is generated */
-const manifest = ${JSON.stringify(manifest, null, 2)};
-const createProxy = (path: string[] = []) => {
-	return new Proxy(() => {}, {
-		get: (_, key: string) => {
-			return createProxy([...path, key]);
-		},
-		apply: async (_, __, args) => {
-			const res = await fetch("${config.handlerUrl}", {
-				method: "POST",
-				body: JSON.stringify({
-					path,
-					args,
-				}),
-			})
-			if (res.status === 200) {
-				return res.json();
-			}
-			throw new Error("Error");
-		},
-	});
-};
-const actions = createProxy();
-export default actions;`;
 
-	const generateServerApi = (manifest: ActionManifest) => `/* This file is generated */
-const manifest = ${JSON.stringify(manifest, null, 2)};
-const createProxy = (path: string[] = []) => {
-	return new Proxy(() => {}, {
-		get: (_, key: string) => {
-			return createProxy([...path, key]);
-		},
-		apply: async (_, __, args) => {
-			try {
-				const actionName = path.pop();
-				const file = await import(manifest[path.join(".")]);
-				if (!actionName || !(actionName in file)) {
-					return null;
+	function generateTypes(manifest: ActionManifest) {
+		const recurse = (manifest: ActionManifest): string[] =>
+			Object.entries(manifest).map(([key, value]) => {
+				if (typeof value === "object") {
+					return `'${key}': { ${recurse(value)} },`;
 				}
-				return file[actionName](...args);
-			} catch {
-				return null;
-			}
-		},
-	});
+				return `'${key}': typeof import("${value}"),`;
+			});
+		const items = recurse(manifest);
+
+		return `/* This file is generated */
+${templates.recursiveAwaitable}
+
+export type Manifest = {
+	${items.join("\n\t")}
 };
-const actions = createProxy();
-export default actions;
-`;
+
+export type Actions = RecursiveAwaitable<Manifest>;`;
+	}
 
 	return {
 		generateManifest,
-		generateClientApi,
-		generateServerApi,
+		generateTypes,
 	};
 }

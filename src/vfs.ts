@@ -12,13 +12,13 @@ type VFile = {
 };
 
 export function createVFS(): {
-	add: (vfile: VFile) => void;
+	add: (vfile: VFile) => VFile;
 	remove: (path: string) => void;
 	get: (path: string) => VFile | undefined;
 	internal: Map<string, VFile>;
 } {
 	const vfs = new Map<string, VFile>();
-	const add = (vfile: VFile) => vfs.set(vfile.path, vfile);
+	const add = (vfile: VFile) => (vfs.set(vfile.path, vfile), vfile);
 	const remove = (path: string) => vfs.delete(path);
 	const get = (path: string) => vfs.get(path);
 	return {
@@ -53,14 +53,18 @@ export function vfsPlugin(config: InternalConfig): vite.Plugin {
 	const { vfs } = config;
 	const vfsAlias = "#server";
 	const virtualModuleId = "virtual:server:";
+
 	return {
 		name: `${PLUGIN_NAME}:vfs`,
 		enforce: "pre",
 		config: (config) => {
-			config.resolve ??= {};
-			config.resolve.alias ??= {};
-			// @ts-expect-error - can't assign to the config??
-			config.resolve.alias[vfsAlias] = "virtual:server:";
+			return {
+				resolve: {
+					alias: {
+						[vfsAlias]: virtualModuleId,
+					}
+				}
+			}
 		},
 		resolveId(id) {
 			if (id.startsWith(virtualModuleId)) {
