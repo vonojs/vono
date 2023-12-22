@@ -6,11 +6,6 @@ import * as pathe from "pathe";
 import { httpPlugin } from "./http";
 
 export function buildPlugin(config: InternalConfig): vite.Plugin {
-	config.vfs.add({
-		path: "/internal/server.entry",
-		content: () =>
-			"import app from '/Users/benten/dev/vpb/playground/server.entry'; export default app;",
-	});
 
 	return {
 		name: `${PLUGIN_NAME}:builder:client`,
@@ -21,6 +16,13 @@ export function buildPlugin(config: InternalConfig): vite.Plugin {
 					manifest: "manifest.json",
 				},
 			};
+		},
+		configResolved(configResolved){
+			config.vfs.add({
+				path: "/internal/server.entry",
+				content: () =>
+					`import app from '${process.cwd()}/server.entry'; export default app;`,
+			});
 		},
 		writeBundle: {
 			sequential: true,
