@@ -2,6 +2,10 @@ import { dirname, join } from "path";
 import { Adaptor } from "../index";
 import { nodeless } from "unenv";
 import { fileURLToPath } from "url";
+import * as fs from "fs/promises"
+
+const tmpl = `[build]
+publish = "netlify/public"`
 
 export default (options: { edge?: boolean } = {}) => {
   const name = options.edge ? "netlify-edge" : "netlify";
@@ -15,5 +19,8 @@ export default (options: { edge?: boolean } = {}) => {
 		publicDir: "netlify/public",
 		inlineDynamicImports: options.edge,
 		env: nodeless,
+		onBuild: async () => {
+			await fs.writeFile("netlify.toml", tmpl)
+		}
 	});
 };
