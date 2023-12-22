@@ -6,9 +6,12 @@ import entry from "#server/internal/server.entry"
 const server = new Server();
 server.route("/", entry);
 
-export default server.fetch
+export default async (req, context) => {
+  const res = await server.fetch(req, { context })
+  if(!res.ok) return undefined;
+  return res;
+}
 
 export const config = {
   path: "/*",
-  preferStatic: true,
 }
