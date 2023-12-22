@@ -7,7 +7,7 @@ import deno from "../src/adaptors/deno"
 export default defineConfig({
 	plugins: [backend({ 
 		debug: true, 
-		adaptor: netlify({edge: true})
+		adaptor: cloudflare()
 	})],
 	server: {
 		port: 8000,

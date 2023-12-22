@@ -1,8 +1,5 @@
 import { Server } from "../src/server";
 
-import { z } from "https://esm.sh/zod"
-console.log(z)
-
 const app = new Server();
 
 app.get("/ping", c => c.json({ hello: "pong" }));
