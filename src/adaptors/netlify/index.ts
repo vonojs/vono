@@ -22,6 +22,7 @@ export default (options: { edge?: boolean } = {}) => {
 		serverDir: serverDir,
 		publicDir: "netlify/public",
 		inlineDynamicImports: options.edge,
+		entryName: "entry",
 		env: nodeless,
 		onBuild: async () => {
 			await fs.writeFile("netlify.toml", tmpl)

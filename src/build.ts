@@ -57,7 +57,7 @@ export function buildPlugin(config: InternalConfig): vite.Plugin {
 								inlineDynamicImports: config.adaptor.inlineDynamicImports,
 							},
 							input: {
-								index: config.adaptor.runtime,
+								[config.adaptor.entryName ?? 'index']: config.adaptor.runtime,
 							},
 							external: config.adaptor.env?.external,
 						},
