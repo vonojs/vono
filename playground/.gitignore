@@ -2,4 +2,4 @@ netlify
 cloudflare
 vercel
 dist
-# netlify.toml
+netlify.toml
