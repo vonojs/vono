@@ -25,7 +25,7 @@ export default (options: { edge?: boolean } = {}) => {
 		entryName: "entry",
 		env: nodeless,
 		onBuild: async () => {
-			await fs.writeFile("netlify.toml", tmpl)
+			// await fs.writeFile("netlify.toml", tmpl)
 		}
 	});
 };
