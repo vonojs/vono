@@ -1,0 +1,2 @@
+[build]
+edge_functions = "playground/netlify/edge_functions"
