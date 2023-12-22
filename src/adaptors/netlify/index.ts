@@ -5,7 +5,11 @@ import { fileURLToPath } from "url";
 import * as fs from "fs/promises"
 
 const tmpl = `[build]
-publish = "netlify/public"`
+publish = "netlify/public"
+edge-functions = "netlify/edge-functions"
+
+[functions]
+directory = "netlify/functions"`
 
 export default (options: { edge?: boolean } = {}) => {
   const name = options.edge ? "netlify-edge" : "netlify";
