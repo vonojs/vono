@@ -8,5 +8,6 @@ server.route("/", entry);
 export default server.fetch
 
 export const config = {
-  path: "/*"
+  path: "/*",
+  preferStatic: true,
 }
