@@ -1,7 +1,0 @@
-{
-  "../src/adaptors/netlify/entry-edge.ts": {
-    "file": "index.js",
-    "isEntry": true,
-    "src": "../src/adaptors/netlify/entry-edge.ts"
-  }
-}
