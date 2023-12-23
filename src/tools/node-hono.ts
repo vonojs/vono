@@ -18,6 +18,7 @@ import { splitCookiesString } from "set-cookie-parser";
 import { assert } from "./invariant";
 import { createReadableStreamFromReadable } from "./node";
 import { log } from "../index";
+import Server from "../runtime/server";
 
 function createHeaders(requestHeaders: IncomingHttpHeaders) {
 	let headers = new Headers();
@@ -89,10 +90,9 @@ async function handleNodeResponse(webRes: Response, res: ServerResponse) {
 }
 
 export const handleNodeRequest = async (
-	app: Hono,
+	app: Server,
 	req: any,
 	res: any,
-	next: any
 ) => {
   const request = createRequest(req, res);
   handleNodeResponse(await app.fetch(request), res);

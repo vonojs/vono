@@ -16,7 +16,7 @@ type Config = {
 	debug: boolean;
 	server: {
 		directory: string;
-		entry?: string;
+		entry: string;
 		actions: {
 			directory: string;
 			endpoint: string;
@@ -25,15 +25,11 @@ type Config = {
   typescript: {
     writeTypes: boolean;
   }
-	entries?: {
-		client?: string;
-		server?: string;
-	},
 };
 
 export type InternalConfig = Config & {
 	hono?: string;
-	root?: string;
+	root: string;
 	vfs: VFS;
 	mode?: "build" | "serve" | "dev";
 };
@@ -47,11 +43,13 @@ export function generateConfig(config?: InlineConfig) {
 		vfs: createVFS(),
 		server: {
 			directory: "server",
+			entry: "index",
 			actions: {
 				directory: "server/actions",
 				endpoint: "/__actions",
 			},
 		},
+		root: process.cwd(),
     typescript: {
       writeTypes: true,
     },
@@ -83,26 +81,6 @@ async function writeTSConfig(config: InternalConfig) {
 			})
 		);
 	}
-}
-
-async function getEntryPoints(config: InternalConfig, viteConfig: vite.UserConfig) {
-	config.entries ??= {};
-	// Entry points manually specified
-	if(config.entries.client && config.entries.server) return;
-	/* 
-	 * We need to find the entry points automatically.
-	 * Let's start by looking in vite config for a manually specified entry point.
-	 * We will look one level deep for entry points.
-	 * We'll look for an html file for the client entry.
-	 */
-	let clientEntry = viteConfig.build?.rollupOptions?.input;
-	let serverEntry;
-
-
-	if(!clientEntry){
-		// find the entry point in the root directory
-	}
-
 }
 
 export function configPlugin(config: InternalConfig): vite.Plugin {

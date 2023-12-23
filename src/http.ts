@@ -1,6 +1,5 @@
 import { Plugin } from "vite";
 import path from "path";
-import { log } from ".";
 
 export type ResolveIdFallback = (
 	specifier: string,
@@ -18,9 +17,7 @@ export function httpPlugin(): Plugin {
 		name: "http-plugin",
     enforce: "pre",
 		async resolveId(id, importer) {
-			log.debug(`resolveId: ${id} from ${importer}`);
 			if (importer && isHttpProtocol(importer)) {
-        log.debug(`resolveId-http: ${id} from ${importer}`);
 				if (id.startsWith("https://")) {
 					return id;
 				}
@@ -34,7 +31,6 @@ export function httpPlugin(): Plugin {
 					return newId;
 				}
 			} else if (isHttpProtocol(id)) {
-				log.debug(`resolveId-http: ${id}`);
 				return id;
 			}
 		},
@@ -42,9 +38,7 @@ export function httpPlugin(): Plugin {
 			if (id === null) {
 				return;
 			}
-			log.debug(`load: ${id}`);
 			if (isHttpProtocol(id)) {
-        log.debug(`load-http: ${id}`);
 				const cached = cache.get(id);
 				if (cached) {
 					return cached;

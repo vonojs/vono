@@ -1,4 +1,4 @@
-import { Server } from "../../server"
+import { Server } from "../../runtime/server"
 // @ts-ignore - this is a generated file
 import entry from "#server/internal/server.entry"
 

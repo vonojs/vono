@@ -4,7 +4,7 @@ export type Adaptor = {
   outDir: string;
   serverDir: string;
   publicDir: string;
-  entryName?: string;
+  entryName: string;
   entryDir?: string;
   inlineDynamicImports?: boolean;
   env?: {

@@ -13,6 +13,7 @@ export default (options: {
 		outDir: "cloudflare/",
 		serverDir: "cloudflare/server",
 		publicDir: "cloudflare/public",
+		entryName: "index",
 		// inlineDynamicImports: true,
 		env: nodeless,
 		onBuild: async () => {
