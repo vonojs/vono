@@ -1,10 +1,9 @@
-import { InternalConfig } from "./config";
 import * as vite from "vite";
 const PLUGIN_NAME = "vpb";
 
 type ContentFn = () => string | Promise<string>;
 
-type VFile = {
+export type VFile = {
 	path: string;
 	content?: ContentFn;
 	serverContent?: ContentFn;
@@ -49,15 +48,20 @@ export function createVFile<
 	} satisfies VFile;
 }
 
-export function vfsPlugin(config: InternalConfig): vite.Plugin {
-	const { vfs } = config;
+function find(vfs: Set<VFile>, path: string) {
+	for (const file of vfs) {
+		if (file.path === path) return file;
+	}
+}
+
+export function vfsPlugin(store?: Map<string, VFile>): vite.Plugin {
 	const vfsAlias = "#server";
 	const virtualModuleId = "virtual:server:";
-
+	const vfs = store ?? new Map<string, VFile>();
 	return {
 		name: `${PLUGIN_NAME}:vfs`,
 		enforce: "pre",
-		config: (config) => {
+		config: () => {
 			return {
 				resolve: {
 					alias: {
@@ -80,6 +84,9 @@ export function vfsPlugin(config: InternalConfig): vite.Plugin {
 				const c = await (content ?? file.content)?.();
 				return c;
 			}
+		},
+		handleHotUpdate(ctx) {
+			
 		},
 	};
 }

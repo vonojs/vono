@@ -1,20 +1,14 @@
-class AssertionError extends Error {
-	constructor(message?: string) {
-		super(message);
-		this.name = "AssertionError";
-	}
-}
 
-export function assert(value: boolean, message?: string): asserts value;
+export function invariant(value: boolean, message?: string): asserts value;
 
-export function assert<T>(
+export function invariant<T>(
 	value: T | null | undefined,
 	message?: string
 ): asserts value is T;
 
-export function assert(value: any, message?: string) {
+export function invariant(value: any, message?: string) {
 	if (value === false || value === null || typeof value === "undefined") {
-		throw new AssertionError(message);
+		throw new Error(message);
 	}
   return value;
 }

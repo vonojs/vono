@@ -5,6 +5,9 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
+  '@gaiiaa/assert':
+    specifier: ^0.0.5
+    version: 0.0.5
   '@gaiiaa/logger':
     specifier: ^0.1.5
     version: 0.1.5
@@ -649,6 +652,10 @@ packages:
     requiresBuild: true
     dev: true
     optional: true
+
+  /@gaiiaa/assert@0.0.5:
+    resolution: {integrity: sha512-FpqRgm66nIkMzIa/enVDyUidwisd6zbWklpmD0bx3iH7jHGzIJg8xdWz5xJEHAHMcEbzF0lyT0MboUBXhwwlGg==}
+    dev: false
 
   /@gaiiaa/logger@0.1.5:
     resolution: {integrity: sha512-PqTmZ6cXkY18jlrmc0qPI2L+9NOGGC0GgCQZazWaIWowgo6R4fxhcdu4vqtYE2+EzltjfHwOeILztbnPbq3C9w==}

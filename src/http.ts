@@ -14,7 +14,7 @@ const cache = new Map();
 
 export function httpPlugin(): Plugin {
 	return {
-		name: "http-plugin",
+		name: "vite-plugin-http-loader",
     enforce: "pre",
 		async resolveId(id, importer) {
 			if (importer && isHttpProtocol(importer)) {

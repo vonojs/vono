@@ -15,7 +15,7 @@ import { once } from "node:events";
 import { Readable } from "node:stream";
 // @ts-expect-error
 import { splitCookiesString } from "set-cookie-parser";
-import { assert } from "./invariant";
+import { invariant } from "./invariant";
 import { createReadableStreamFromReadable } from "./node";
 import { log } from "../index";
 import Server from "../runtime/server";
@@ -44,7 +44,7 @@ function createRequest(req: IncomingMessage, res: ServerResponse): Request {
 		req.headers.origin && "null" !== req.headers.origin
 			? req.headers.origin
 			: `http://${req.headers.host}`;
-	assert(req.url, 'Expected "req.url" to be defined');
+	invariant(req.url, 'Expected "req.url" to be defined');
 	let url = new URL(req.url, origin);
 
 	let init: RequestInit = {

@@ -5,8 +5,13 @@
     "build": "vite build"
   },
   "dependencies": {
-    "@hono/node-server": "^1.3.3",
+    "@gaiiaa/assert": "^0.0.5",
+    "@types/react": "^18.2.45",
+    "@types/react-dom": "^18.2.18",
+    "@vitejs/plugin-react": "^4.2.1",
     "hono": "^3.11.8",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "vite": "^5.0.10"
   }
 }

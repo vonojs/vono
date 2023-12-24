@@ -1,15 +1,15 @@
 import { defineConfig } from "vite";
 import backend from "../src/index";
-import cloudflare from "../src/adaptors/cloudflare"
-import netlify from "../src/adaptors/netlify"
+import cloudflare from "../src/adaptors/cloudflare";
 import deno from "../src/adaptors/deno"
+import react from "@vitejs/plugin-react";
 
 export default defineConfig({
-	plugins: [backend({ 
-		debug: true, 
-		adaptor: cloudflare()
-	})],
-	server: {
-		port: 8000,
-	}
+  plugins: [
+    react(),
+    backend({ adaptor: cloudflare() }),
+  ],
+  server: {
+    port: 8000,
+  },
 });

@@ -1,5 +1,5 @@
-import { Context, Hono } from "hono";
-import { log } from "..";
+import { type Context, Hono } from "hono";
+
 export function notfound() {
   return new Response("not found", { status: 404 });
 }
@@ -57,13 +57,13 @@ class Server {
         });
       }
       if (result instanceof Error) {
-        log.error("server:", result.message);
+        // log.error("server:", result.message);
         return c.json({ error: result.message }, 500);
       }
       return new Response(result);
     } catch (e) {
       if (e instanceof Error) {
-        log.error("server:", e.message);
+        // log.error("server:", e.message);
         return c.text('internal server error', 500);
       }
       if (e instanceof Response) {

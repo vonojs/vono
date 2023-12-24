@@ -1,15 +1,10 @@
 import defu from "defu";
-import { VFS, createVFS } from "./vfs";
-import * as vite from "vite";
-import { PLUGIN_NAME } from "./constants";
+import { VFile } from "./vfs";
 import * as fs from "fs/promises";
-
-type RecursivePartial<T> = {
-	[P in keyof T]?: RecursivePartial<T[P]>;
-};
-
 import { Adaptor } from "./adaptors";
 import nodeAdaptor from "./adaptors/node";
+import { check } from "@gaiiaa/assert"
+import Server from "./runtime/server";
 
 type Config = {
 	adaptor: Adaptor;
@@ -28,22 +23,47 @@ type Config = {
 };
 
 export type InternalConfig = Config & {
-	hono?: string;
+	devServer?: Server
 	root: string;
-	vfs: VFS;
+	vfs: Map<string, VFile>;
 	mode?: "build" | "serve" | "dev";
 };
 
-export type InlineConfig = RecursivePartial<Config> & {};
+export type InlineConfig = {
+	adaptor?: Adaptor;
+	// debug?: boolean;
+	// server?: {
+	// 	directory?: string;
+	// 	entry?: string;
+	// 	actions?: {
+	// 		directory?: string;
+	// 		endpoint?: string;
+	// 	};
+	// };
+	// typescript?: {
+	// 	writeTypes?: boolean;
+	// }
+};
 
 export function generateConfig(config?: InlineConfig) {
+	const adaptor = config?.adaptor ?? nodeAdaptor();
+	const validAdaptor = check({
+		name: String,
+		outDir: String,
+		serverDir: String,
+		publicDir: String,
+		entryName: String,
+	}, adaptor)
+
+	if(!validAdaptor) throw new Error("Invalid adaptor settings.")
+
 	return defu<InternalConfig, InternalConfig[]>(config, {
-		adaptor: nodeAdaptor(),
+		adaptor,
 		debug: false,
-		vfs: createVFS(),
+		vfs: new Map<string, VFile>(),
 		server: {
 			directory: "server",
-			entry: "index",
+			entry: "entry",
 			actions: {
 				directory: "server/actions",
 				endpoint: "/__actions",
@@ -83,20 +103,3 @@ async function writeTSConfig(config: InternalConfig) {
 	}
 }
 
-export function configPlugin(config: InternalConfig): vite.Plugin {
-	return {
-		name: `${PLUGIN_NAME}:config`,
-		enforce: "pre",
-		config: () => {
-			// if(config.typescript.writeTypes) await writeTSConfig(config);
-			return {
-				clearScreen: false,
-				appType: "custom",
-			}
-		},
-		configResolved: (viteConfig) => {
-			config.root = viteConfig.root;
-			config.mode = viteConfig.command ?? "dev"
-		},
-	};
-}
