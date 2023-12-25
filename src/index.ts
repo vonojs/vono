@@ -1,5 +1,5 @@
 import { Plugin } from "vite";
-import { generateConfig, InlineConfig } from "./config";
+import { generateConfig, InlineConfig, writeTSConfig } from "./config";
 import { createDevServer, registerDevServer } from "./devServer";
 import { vfsPlugin } from "./plugins/vfs";
 import { httpPlugin } from "./plugins/http";
@@ -10,6 +10,7 @@ import { createLogger } from "@gaiiaa/logger";
 import { prerender } from "./prerender";
 import * as pathe from "pathe";
 import * as fs from "fs/promises";
+import { writeTypes } from "./types";
 
 export const log = createLogger({
   name: PLUGIN_NAME,
@@ -49,6 +50,8 @@ export default function serverPlugin(config: InlineConfig = {}): Array<Plugin> {
             return `export default \`${raw}\`;`;
           },
         })
+        await writeTSConfig(c);
+        await writeTypes();
       },
       configureServer: (server) => registerDevServer(server, c),
       handleHotUpdate: async (ctx) => {

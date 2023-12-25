@@ -82,7 +82,7 @@ export function generateConfig(config?: InlineConfig) {
 	});
 }
 
-async function writeTSConfig(config: InternalConfig) {
+export async function writeTSConfig(config: InternalConfig) {
 	try {
 		const tsConfigJSON = await fs.readFile(`tsconfig.json`, "utf-8");
 		const tsConfig = JSON.parse(tsConfigJSON);
@@ -90,20 +90,20 @@ async function writeTSConfig(config: InternalConfig) {
 			fs.writeFile(
 				`tsconfig.json`,
 				JSON.stringify({
-					include: ["node_modules/.vpb"],
+					include: ["node_modules/.vpb/*"],
 				})
 			);
 			return;
 		} else {
 			tsConfig.include ??= [];
-			tsConfig.include.push("node_modules/.vpb");
+			!tsConfig.include.find("node_modules/.vpb/*") && tsConfig.include.push("node_modules/.vpb/*");
 			fs.writeFile(`tsconfig.json`, JSON.stringify(tsConfig));
 		}
 	} catch {
 		fs.writeFile(
 			`tsconfig.json`,
 			JSON.stringify({
-				include: ["node_modules/.vpb"],
+				include: ["node_modules/.vpb/*"],
 			})
 		);
 	}
