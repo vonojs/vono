@@ -5,7 +5,7 @@
     "build": "vite build"
   },
   "dependencies": {
-    "@gaiiaa/assert": "^0.0.5",
+    "@gaiiaa/assert": "^0.0.6",
     "@types/react": "^18.2.45",
     "@types/react-dom": "^18.2.18",
     "@vitejs/plugin-react": "^4.2.1",

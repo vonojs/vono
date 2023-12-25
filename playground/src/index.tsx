@@ -1,5 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
+import "./index.css";
 const App = () => {
 	const [count, setCount] = React.useState(0);
 	return (

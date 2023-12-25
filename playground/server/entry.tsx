@@ -1,8 +1,11 @@
 import { Server, html, redirect } from "../../src/runtime/server";
 import { renderToString } from "react-dom/server.browser"
 import { createElement } from "react";
+import template from "#server/template"
 
 const app = new Server();
+
+console.log(template)
 
 app.get("/ping", c => ({ hello: "ponger" }));
 
@@ -16,7 +19,7 @@ app.get("/redir", () => {
 
 app.get("/ssr", async () => {
   const App = await import("../src/index").then(m => m.default);
-  return html(renderToString(createElement(App)));
+  return html(template.replace("%content%", renderToString(createElement(App))));
 })
 
 export default app;

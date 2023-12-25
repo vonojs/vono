@@ -1,7 +1,7 @@
 import * as vite from "vite";
 const PLUGIN_NAME = "vpb";
 
-type ContentFn = () => string | Promise<string>;
+type ContentFn = (path: string) => string | Promise<string>;
 
 export type VFile = {
 	path: string;
@@ -81,7 +81,7 @@ export function vfsPlugin(store?: Map<string, VFile>): vite.Plugin {
 				const file = vfs.get(path);
 				if (!file) return null;
 				const content = ctx?.ssr ? file.serverContent : file.clientContent;
-				const c = await (content ?? file.content)?.();
+				const c = await (content ?? file.content)?.(path);
 				return c;
 			}
 		},

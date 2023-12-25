@@ -1,4 +1,3 @@
-import { assert } from "../tools/invariant";
 import { exists, stripExtension } from "../tools";
 import * as fs from "fs/promises";
 import * as pathe from "pathe";

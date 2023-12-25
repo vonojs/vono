@@ -6,8 +6,8 @@ settings:
 
 dependencies:
   '@gaiiaa/assert':
-    specifier: ^0.0.5
-    version: 0.0.5
+    specifier: ^0.0.6
+    version: 0.0.6
   '@types/react':
     specifier: ^18.2.45
     version: 18.2.45
@@ -463,8 +463,8 @@ packages:
     dev: false
     optional: true
 
-  /@gaiiaa/assert@0.0.5:
-    resolution: {integrity: sha512-FpqRgm66nIkMzIa/enVDyUidwisd6zbWklpmD0bx3iH7jHGzIJg8xdWz5xJEHAHMcEbzF0lyT0MboUBXhwwlGg==}
+  /@gaiiaa/assert@0.0.6:
+    resolution: {integrity: sha512-0EoDJGSQd9O5kXBk6E1fMDAtbo2db11qOZvH24vWFK9AO/6dMlBZrSfbmxvWsPyUhQOoPr9xk53GThg3P6R6uQ==}
     dev: false
 
   /@jridgewell/gen-mapping@0.3.3:

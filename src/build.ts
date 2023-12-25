@@ -8,6 +8,7 @@ import { log } from ".";
 
 declare global {
   var IS_BUILDING_SERVER: boolean;
+  var SERVER_BUILT: boolean;
 }
 
 export async function createVirtualServerEntry(config: InternalConfig) {
@@ -15,6 +16,10 @@ export async function createVirtualServerEntry(config: InternalConfig) {
   if (
     await exists(
       pathe.join(config.root, config.server.directory, config.server.entry),
+      ".tsx",
+      ".ts",
+      ".js",
+      ".jsx"
     )
   ) {
     path = pathe.join(
@@ -38,6 +43,14 @@ export async function buildServer(config: InternalConfig) {
   if (globalThis.IS_BUILDING_SERVER) return;
   globalThis.IS_BUILDING_SERVER = true;
   await vite.build({
+    plugins: [
+      {
+        name: "server-entry",
+        configResolved(vite) {
+          vite.build.outDir = config.adaptor.serverDir;
+        },
+      }
+    ],
     ssr: {
       noExternal: true,
       external: config.adaptor.env?.external,
@@ -60,6 +73,7 @@ export async function buildServer(config: InternalConfig) {
       },
     },
   });
+  globalThis.SERVER_BUILT = true;
 }
 
 export async function writeArtifacts(config: InternalConfig) {

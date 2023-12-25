@@ -5,7 +5,7 @@ import { handleNodeRequest } from "./tools/node-hono";
 import * as fs from "fs/promises";
 import * as pathe from "pathe";
 import { runtimeDir } from "./runtime";
-import { invariant } from "./tools/invariant";
+import { assert, check } from "@gaiiaa/assert";
 
 export function registerDevServer(
   server: vite.ViteDevServer,
@@ -13,13 +13,15 @@ export function registerDevServer(
 ) {
   return async () => {
     await createDevServer(config, server);
-    
     server.middlewares.use((req, res, next) => {
       if (req.url?.startsWith("/@id/")) {
         return next();
       }
-      invariant(config.devServer, "No dev server found. This is a bug.");
-      handleNodeRequest(config.devServer, req, res);
+      if(check(config.devServer)){
+        handleNodeRequest(config.devServer, req, res);
+      } else {
+        throw new Error("No dev server found. This is a bug.");
+      }
     });
   }
 }
@@ -28,6 +30,18 @@ export async function createDevServer(
   config: InternalConfig,
   server: vite.ViteDevServer,
 ) {
+  config.vfs.set("/template", {
+    path: "/template",
+    content: async () => {
+      const raw = await fs.readFile(
+        pathe.join(config.root!, "index.html"),
+        "utf-8",
+      );
+      const template = await server.transformIndexHtml("/", raw);
+      return `export default \`${template}\`;`;
+    },
+  })
+
   config.devServer = new Server();
   /* load the entry */
   let entry;
@@ -43,9 +57,8 @@ export async function createDevServer(
   if (!entry) {
     throw new Error("No entry found");
   }
-  invariant(entry.default, "Could not find a server entry. This is a");
+  assert(entry.default)
   config.devServer.route("/", entry.default);
-  // server fallback to index.html
   config.devServer.get("*", async (c) => {
     const raw = await fs.readFile(
       pathe.join(config.root!, "index.html"),

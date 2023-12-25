@@ -1,5 +1,5 @@
 import defu from "defu";
-import { VFile } from "./vfs";
+import { VFile } from "./plugins/vfs";
 import * as fs from "fs/promises";
 import { Adaptor } from "./adaptors";
 import nodeAdaptor from "./adaptors/node";
@@ -20,6 +20,12 @@ type Config = {
   typescript: {
     writeTypes: boolean;
   }
+	prerender: {
+		routes: Array<string>;
+	},
+	dev: {
+		port: number;
+	}
 };
 
 export type InternalConfig = Config & {
@@ -31,29 +37,23 @@ export type InternalConfig = Config & {
 
 export type InlineConfig = {
 	adaptor?: Adaptor;
-	// debug?: boolean;
-	// server?: {
-	// 	directory?: string;
-	// 	entry?: string;
-	// 	actions?: {
-	// 		directory?: string;
-	// 		endpoint?: string;
-	// 	};
-	// };
-	// typescript?: {
-	// 	writeTypes?: boolean;
-	// }
+	prerender?: {
+		routes: Array<string>;
+	},
+	dev?: {
+		port: number;
+	}
 };
 
 export function generateConfig(config?: InlineConfig) {
 	const adaptor = config?.adaptor ?? nodeAdaptor();
-	const validAdaptor = check({
+	const validAdaptor = check(adaptor, {
 		name: String,
 		outDir: String,
 		serverDir: String,
 		publicDir: String,
 		entryName: String,
-	}, adaptor)
+	})
 
 	if(!validAdaptor) throw new Error("Invalid adaptor settings.")
 
@@ -73,6 +73,12 @@ export function generateConfig(config?: InlineConfig) {
     typescript: {
       writeTypes: true,
     },
+		prerender: {
+			routes: [],
+		},
+		dev: {
+			port: 8000,
+		}
 	});
 }
 
