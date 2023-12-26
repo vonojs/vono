@@ -1,4 +1,10 @@
 import * as fs from "fs/promises";
+import { createLogger } from "@gaiiaa/logger";
+
+const logger = createLogger({
+  name: "PRERENDER",
+  level: 1,
+});
 
 function isRedirect(res: Response) {
   return res.status >= 300 && res.status < 400;
@@ -16,21 +22,23 @@ export async function prerender(args: {
     );
     if (res.status !== 200) {
       if (isRedirect(res)) {
-        console.log(`Skipping ${route} due to redirect`);
+        logger.warn(`skipping ${route} due to redirect`);
         return;
       }
-      console.error(`Error prerendering ${route}; Status: ${res.status}`);
+      logger.error (`error prerendering ${route}; Status: ${res.status}`);
       return;
     }
     try {
+      const t = performance.now();
       const output = await res.text();
       const url = new URL(route, "http://localhost");
       const path = url.pathname === "/"
         ? "/index.html"
         : url.pathname + ".html";
       await fs.writeFile(args.outDir + path, output);
+      logger.success(`prerendered route "${route}" in ${(performance.now() - t).toFixed(1)}ms`);
     } catch (e) {
-      console.error(`Error prerendering ${route}; ${e}`);
+      logger.error(`error prerendering ${route}; ${e}`);
       return;
     }
   }));

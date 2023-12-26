@@ -2,7 +2,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build"
+    "build": "vite build && vite build --ssr"
   },
   "dependencies": {
     "@gaiiaa/assert": "^0.0.6",

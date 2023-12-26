@@ -1,7 +1,7 @@
 import { Plugin } from "vite";
-import { generateConfig, InlineConfig, writeTSConfig } from "./config";
+import { Config, generateConfig, UserConfig, writeTSConfig } from "./config";
 import { createDevServer, registerDevServer } from "./devServer";
-import { vfsPlugin } from "./plugins/vfs";
+import { VFile, vfsPlugin } from "./plugins/vfs";
 import { httpPlugin } from "./plugins/http";
 import { PLUGIN_NAME } from "./constants";
 import * as build from "./build";
@@ -11,36 +11,68 @@ import { prerender } from "./prerender";
 import * as pathe from "pathe";
 import * as fs from "fs/promises";
 import { writeTypes } from "./types";
+import nodeAdaptor from "./adaptors/node";
+import { Adaptor } from "./adaptors";
 
 export const log = createLogger({
   name: PLUGIN_NAME,
   level: 0,
 });
 
-export default function serverPlugin(config: InlineConfig = {}): Array<Plugin> {
-  const c = generateConfig(config);
+export default function serverPlugin(userConfig?: UserConfig): Array<Plugin> {
+  const vfs = new Map<string, VFile>();
+  const adaptor = (userConfig?.adaptor ?? nodeAdaptor()) as Adaptor;
+
+  let c: Config;
   return [
     httpPlugin(),
-    vfsPlugin(c.vfs),
+    vfsPlugin(vfs),
     {
       name: PLUGIN_NAME,
       enforce: "pre",
-      config: () => ({
+      config: (vite) => ({
         appType: "custom",
         clearScreen: false,
-        build: {
-          outDir: c.adaptor.publicDir,
-          manifest: "manifest.json",
+        resolve: {
+          alias: vite.build?.ssr ? adaptor.env?.alias : undefined,
         },
-        server: {
-          port: c.dev.port,
-        }
+        ssr: {
+          noExternal: true,
+          external: adaptor.env?.external,
+        },
+        build: {
+          emptyOutDir: !vite.build?.ssr,
+          outDir: vite.build?.ssr ? adaptor.serverDir : adaptor.publicDir,
+          manifest: true,
+          rollupOptions: vite.build?.ssr
+            ? {
+              output: {
+                chunkFileNames: "[name].[hash].[format].js",
+                inlineDynamicImports: adaptor.inlineDynamicImports,
+              },
+              input: {
+                [adaptor.entryName ?? "index"]: adaptor.runtime,
+              },
+              external: adaptor.env?.external,
+            }
+            : undefined,
+        },
       }),
-      configResolved: async (config) => {
-        c.root = config.root;
-        c.mode = config.command ?? "dev";
-        await build.createVirtualServerEntry(c);
-        c.mode === "build" && c.vfs.set("/template", {
+      configResolved: async (vite) => {
+        c = generateConfig(userConfig, {
+          root: vite.root,
+          mode: vite.command ?? "dev",
+          ssr: !!vite.build?.ssr,
+          adaptor,
+          vfs,
+        });
+        await build.createVirtualServerEntry({
+          root: c.root,
+          serverDir: c.server.directory,
+          serverEntry: c.server.entry,
+          vfs,
+        });
+        vite.build.ssr && c.vfs.set("/template", {
           path: "/template",
           content: async () => {
             const raw = await fs.readFile(
@@ -49,37 +81,39 @@ export default function serverPlugin(config: InlineConfig = {}): Array<Plugin> {
             );
             return `export default \`${raw}\`;`;
           },
-        })
-        await writeTSConfig(c);
+        });
+        await writeTSConfig();
         await writeTypes();
       },
       configureServer: (server) => registerDevServer(server, c),
       handleHotUpdate: async (ctx) => {
         if (ctx.modules.find((m) => m.file?.includes(c.server.directory))) {
-          log.info("Server file modified, restarting dev server");
-          createDevServer(c, ctx.server);
+          const t = performance.now();
+          await createDevServer(c, ctx.server);
+          log.info(
+            "reloaded server in",
+            (performance.now() - t).toFixed(1),
+            "ms",
+          );
         }
       },
-      writeBundle: {
-        sequential: true,
-        handler: async () => {
-          await build.buildServer(c);
-          // await build.writeArtifacts(c);
-          if (check(Function, c.adaptor.onBuild)) await c.adaptor.onBuild();
-          if (globalThis.SERVER_BUILT && c.prerender.routes.length > 0) {
-            await prerender({
-              routes: c.prerender.routes,
-              handler: await import(
-                pathe.join(
-                  c.root,
-                  c.adaptor.serverDir,
-                  c.adaptor.entryName + ".js",
-                )
-              ).then((m) => m.default.fetch),
-              outDir: c.adaptor.publicDir,
-            });
-          }
-        },
+      writeBundle: async (x) => {
+        if(!c.ssr) return;
+        if (check(Function, c.adaptor.onBuild)) await c.adaptor.onBuild();
+        if (c.prerender.routes.length > 0) {
+          const handler = await import(
+            pathe.join(
+              c.root,
+              c.adaptor.serverDir,
+              c.adaptor.entryName + ".js",
+            )
+          ).then((m) => m.default.fetch);
+          await prerender({
+            handler,
+            routes: c.prerender.routes,
+            outDir: c.adaptor.publicDir,
+          });
+        }
       },
     },
   ];

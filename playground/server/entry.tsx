@@ -5,8 +5,6 @@ import template from "#server/template"
 
 const app = new Server();
 
-console.log(template)
-
 app.get("/ping", c => ({ hello: "ponger" }));
 
 app.get("/throw", () => {

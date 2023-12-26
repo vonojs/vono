@@ -6,8 +6,8 @@ settings:
 
 dependencies:
   '@gaiiaa/assert':
-    specifier: ^0.0.9
-    version: 0.0.9
+    specifier: ^0.0.11
+    version: 0.0.11
   '@gaiiaa/logger':
     specifier: ^0.1.5
     version: 0.1.5
@@ -653,8 +653,8 @@ packages:
     dev: true
     optional: true
 
-  /@gaiiaa/assert@0.0.9:
-    resolution: {integrity: sha512-Qj65NNY44ZhzgcTfaVED81fqUxqtdJgSYms32IsEx1TilGHW3YEp2/tCn9PLq4PKnCPWt+o88ixixCYhUDhUHg==}
+  /@gaiiaa/assert@0.0.11:
+    resolution: {integrity: sha512-i/kqajjKqsSjRtAxf8NGOidKa2lUD1JG5at7M8HD5x2tK3yceiDTa51LTS2fL1MThB5IV/p3XU8zoOGsTfK7eg==}
     dev: false
 
   /@gaiiaa/logger@0.1.5:

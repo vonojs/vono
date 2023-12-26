@@ -1,4 +1,4 @@
-import { InternalConfig } from "./config";
+import { Config } from "./config";
 import * as vite from "vite";
 import { notfound, Server } from "./runtime/server";
 import { handleNodeRequest } from "./tools/node-hono";
@@ -9,7 +9,7 @@ import { assert, check } from "@gaiiaa/assert";
 
 export function registerDevServer(
   server: vite.ViteDevServer,
-  config: InternalConfig,
+  config: Config,
 ) {
   return async () => {
     await createDevServer(config, server);
@@ -27,7 +27,7 @@ export function registerDevServer(
 }
 
 export async function createDevServer(
-  config: InternalConfig,
+  config: Config,
   server: vite.ViteDevServer,
 ) {
   config.vfs.set("/template", {
