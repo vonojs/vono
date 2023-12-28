@@ -10,5 +10,5 @@ export default () => Adaptor({
   serverDir: "dist",
   publicDir: "dist/public",
   env: nodeless,
-  entryName: "index",
+  entryName: "entry",
 });

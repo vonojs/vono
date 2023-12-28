@@ -1,5 +1,4 @@
 import * as vite from "vite";
-const PLUGIN_NAME = "vpb";
 
 type ContentFn = (path: string) => string | Promise<string>;
 
@@ -48,18 +47,12 @@ export function createVFile<
 	} satisfies VFile;
 }
 
-function find(vfs: Set<VFile>, path: string) {
-	for (const file of vfs) {
-		if (file.path === path) return file;
-	}
-}
-
 export function vfsPlugin(store?: Map<string, VFile>): vite.Plugin {
 	const vfsAlias = "#server";
 	const virtualModuleId = "virtual:server:";
 	const vfs = store ?? new Map<string, VFile>();
 	return {
-		name: `${PLUGIN_NAME}:vfs`,
+		name: `vfs`,
 		enforce: "pre",
 		config: () => {
 			return {
@@ -86,7 +79,14 @@ export function vfsPlugin(store?: Map<string, VFile>): vite.Plugin {
 			}
 		},
 		handleHotUpdate(ctx) {
-			
+			// invalidate all files in the virtual module
+			// todo: only invalidate the changed file
+			for (const path of vfs.keys()) {
+				const mod = ctx.server.moduleGraph.getModuleById(
+					"\0" + virtualModuleId + path,
+				);
+				mod && ctx.server.reloadModule(mod);
+			}
 		},
 	};
 }

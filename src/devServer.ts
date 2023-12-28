@@ -1,6 +1,6 @@
 import { Config } from "./config";
 import * as vite from "vite";
-import { notfound, Server } from "./runtime/server";
+import { Hono } from "hono";
 import { handleNodeRequest } from "./tools/node-hono";
 import * as fs from "fs/promises";
 import * as pathe from "pathe";
@@ -30,19 +30,7 @@ export async function createDevServer(
   config: Config,
   server: vite.ViteDevServer,
 ) {
-  config.vfs.set("/template", {
-    path: "/template",
-    content: async () => {
-      const raw = await fs.readFile(
-        pathe.join(config.root!, "index.html"),
-        "utf-8",
-      );
-      const template = await server.transformIndexHtml("/", raw);
-      return `export default \`${template}\`;`;
-    },
-  })
-
-  config.devServer = new Server();
+  config.devServer = new Hono();
   /* load the entry */
   let entry;
   try {
@@ -59,15 +47,17 @@ export async function createDevServer(
   }
   assert(entry.default)
   config.devServer.route("/", entry.default);
+  /* Serve fallback html.
+  If this doesn't exist, we serve a warning. */
   config.devServer.get("*", async (c) => {
     const raw = await fs.readFile(
       pathe.join(config.root!, "index.html"),
       "utf-8",
     );
     if (!raw) {
-      throw notfound();
+      return new Response("No index.html found.")
     }
-    return new Response(await server.transformIndexHtml(c.url, raw), {
+    return new Response(await server.transformIndexHtml(c.req.url, raw), {
       headers: {
         "content-type": "text/html",
       },

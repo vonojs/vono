@@ -2,12 +2,11 @@ import defu from "defu";
 import { VFile } from "./plugins/vfs";
 import * as fs from "fs/promises";
 import { Adaptor } from "./adaptors";
-import nodeAdaptor from "./adaptors/node";
 import { Infer, Maybe, Optional, check } from "@gaiiaa/assert";
-import Server from "./runtime/server";
+import { Hono } from "hono";
 
 export type Config = {
-	devServer?: Server;
+	devServer?: Hono;
   root: string;
   vfs: Map<string, VFile>;
   mode?: "build" | "serve" | "dev";
@@ -81,33 +80,5 @@ export function generateConfig(userConfig: UserConfig | undefined, options: {
       routes: userConfig?.prerender?.routes ?? [],
     },
     ssr: options.ssr,
-  }
-}
-
-export async function writeTSConfig() {
-  try {
-    const tsConfigJSON = await fs.readFile(`tsconfig.json`, "utf-8");
-    const tsConfig = JSON.parse(tsConfigJSON);
-    if (!tsConfig) {
-      fs.writeFile(
-        `tsconfig.json`,
-        JSON.stringify({
-          include: ["node_modules/.vpb/*"],
-        }),
-      );
-      return;
-    } else {
-      tsConfig.include ??= [];
-      !tsConfig.include.find("node_modules/.vpb/*") &&
-        tsConfig.include.push("node_modules/.vpb/*");
-      fs.writeFile(`tsconfig.json`, JSON.stringify(tsConfig));
-    }
-  } catch {
-    fs.writeFile(
-      `tsconfig.json`,
-      JSON.stringify({
-        include: ["node_modules/.vpb/*"],
-      }),
-    );
   }
 }

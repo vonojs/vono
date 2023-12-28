@@ -1,6 +1,9 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
+import asset from "./a.svg"
+console.log(asset)
+import("./dyn").then((m) => m.dyn).then((fn) => console.log(fn));
 const App = () => {
 	const [count, setCount] = React.useState(0);
 	return (

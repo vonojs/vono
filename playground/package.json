@@ -9,9 +9,13 @@
     "@types/react": "^18.2.45",
     "@types/react-dom": "^18.2.18",
     "@vitejs/plugin-react": "^4.2.1",
+    "himalaya": "^1.1.0",
     "hono": "^3.11.8",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "vite": "^5.0.10"
+  },
+  "devDependencies": {
+    "vite-plugin-inspect": "^0.8.1"
   }
 }

@@ -40,12 +40,12 @@ export default (options: {
 		outDir: "cloudflare/",
 		serverDir: "cloudflare/server",
 		publicDir: "cloudflare/public",
-		entryName: "index",
+		entryName: "entry",
 		env: cloudflare,
 		onBuild: async () => {
 			await fs.writeFile("cloudflare/wrangler.toml", `
 name = "${options.name || "gaiiaa-vite-cloudflare"}"
-main = "server/index.js"
+main = "server/entry.js"
 assets = "public"
 node_compat = true
 compatibility_date = "2022-07-12"

@@ -16,8 +16,6 @@ import { Readable } from "node:stream";
 // @ts-expect-error
 import { splitCookiesString } from "set-cookie-parser";
 import { createReadableStreamFromReadable } from "./node";
-import { log } from "../index";
-import Server from "../runtime/server";
 
 function createHeaders(requestHeaders: IncomingHttpHeaders) {
 	let headers = new Headers();
@@ -43,7 +41,7 @@ function createRequest(req: IncomingMessage, res: ServerResponse): Request {
 		req.headers.origin && "null" !== req.headers.origin
 			? req.headers.origin
 			: `http://${req.headers.host}`;
-	let url = new URL(req.url, origin);
+	let url = new URL(req.url!, origin);
 
 	let init: RequestInit = {
 		method: req.method,
@@ -88,7 +86,7 @@ async function handleNodeResponse(webRes: Response, res: ServerResponse) {
 }
 
 export const handleNodeRequest = async (
-	app: Server,
+	app: Hono,
 	req: any,
 	res: any,
 ) => {

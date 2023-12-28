@@ -1,13 +1,5 @@
-import Server from "./server";
+import { Hono } from "hono";
 
-const app = new Server();
-
-// add actions handlers here
-
-// add FS router here
-
-app.get("/_dev", () => {
-  return "Dev tools!!";
-});
+const app = new Hono();
 
 export default app;

@@ -1,4 +1,3 @@
-import { EncodingOption } from "fs";
 import * as fs from "fs/promises";
 import * as pathe from "pathe";
 import { fileURLToPath } from "url";
@@ -7,6 +6,7 @@ export const exists = async (path: string, ...extensions: string[]) => {
   if (!extensions.length) {
     try {
       await fs.access(path);
+      return true;
     } catch {
       return false;
     }
@@ -14,7 +14,7 @@ export const exists = async (path: string, ...extensions: string[]) => {
 		for (const ext of extensions) {
 			try {
 				await fs.access(path + ext);
-				return true;
+				return path + ext;
 			} catch {}
 		}
 		return false;

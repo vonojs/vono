@@ -9,6 +9,6 @@ export default () => Adaptor({
   outDir: "dist/",
   serverDir: "dist/server",
   publicDir: "dist/public",
-  entryName: "index",
+  entryName: "entry",
   env: node,
 });
