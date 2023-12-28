@@ -1,11 +1,11 @@
 import { serve } from "@hono/node-server"
-import { Server } from "../../runtime/server";
+import { Hono } from "hono";
 // @ts-ignore - this is a generated file
 import entry from "#server/internal/server.entry"
 
 const port = parseInt(process.argv[2]) || 8000;
 
-const server = new Server();
+const server = new Hono();
 server.route("/", entry);
 
 serve({
