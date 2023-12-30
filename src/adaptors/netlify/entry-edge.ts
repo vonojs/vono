@@ -1,7 +1,7 @@
 // @ts-ignore - deno import
 import { Hono } from "https://deno.land/x/hono/mod.ts";
 // @ts-ignore - this is a generated file
-import entry from "#server/internal/server.entry"
+import entry from "#vono/internal/server.entry"
 
 const server = new Hono();
 server.route("/", entry);

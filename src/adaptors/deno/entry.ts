@@ -4,7 +4,7 @@ import { Hono } from "https://deno.land/x/hono/mod.ts";
 import { serveStatic } from 'https://deno.land/x/hono/middleware.ts'
 
 // @ts-ignore - this is a generated file
-import entry from "#server/internal/server.entry"
+import entry from "#vono/internal/server.entry"
 
 const server = new Hono();
 server.use("*",

@@ -1,27 +1,27 @@
-import * as fs from 'fs/promises';
+import * as fs from "fs/promises";
 
-export async function writeTypes(){
-  await fs.mkdir("node_modules/.vono", { recursive: true });
-  await fs.writeFile("node_modules/.vono/app.ts", `import App from "../../server/entry"; export type App = typeof App`);
-  await fs.writeFile("vono.d.ts", `
-// 🅶🅴🅽🅴🆁🅰🆃🅴🅳 🅵🅸🅻🅴
-// 🅴🅳🅸🆃🆂 🆆🅸🅻🅻 🅱🅴 🅻🅾🆂🆃
+const types = `
+declare module "#vono/manifest" {
+  const manifest: import("vite").Manifest;
+  export default manifest;
+}
 
-declare module "#server/api" {
-  const api: ReturnType<
-    typeof import("hono/client").hc<import(".vono/app").App>
+declare module "#vono/template" {
+  const template: string;
+  export default template;
+}
+
+declare module "#vono/rpc" {
+  const rpc: ReturnType<
+    typeof import("hono/client").hc<import("./app").App>
   >;
-  export default api;
+  export default rpc;
 }
+`.trim();
 
-declare module "#server/template" {
-  const tmpl: string
-  export default tmpl
-}
-
-declare module "#server/manifest" {
-  const manifest: Record<string, any>
-  export default manifest
-}
-`.trim())
+export async function writeTypes() {
+  await fs.writeFile(
+    "node_modules/.vono/index.d.ts",
+    types,
+  );
 }

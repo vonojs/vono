@@ -48,7 +48,7 @@ export function createVFile<
 }
 
 export function vfsPlugin(store?: Map<string, VFile>): vite.Plugin {
-	const vfsAlias = "#server";
+	const vfsAlias = "#vono";
 	const virtualModuleId = "virtual:server:";
 	const vfs = store ?? new Map<string, VFile>();
 	return {

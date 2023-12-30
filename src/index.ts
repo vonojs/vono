@@ -1,5 +1,5 @@
 import { Plugin, ViteDevServer } from "vite";
-import { Config, generateConfig, UserConfig} from "./config";
+import { Config, generateConfig, UserConfig } from "./config";
 import { createDevServer, registerDevServer } from "./devServer";
 import { VFile, vfsPlugin } from "./plugins/vfs";
 import { httpPlugin } from "./plugins/http";
@@ -12,6 +12,8 @@ import nodeAdaptor from "./adaptors/node";
 import { Adaptor } from "./adaptors";
 import { createMetadata } from "./metadata";
 import { join } from "path";
+import * as fs from "fs/promises";
+import { buildRPC } from "./rpc";
 import { writeTypes } from "./types";
 
 export const log = createLogger({
@@ -26,7 +28,7 @@ export default function serverPlugin(userConfig?: UserConfig): Array<Plugin> {
   /* our config is ready for all plugins that run after configResolved.
   As far as I know, that's all of them besides config() */
   let c: Config;
-  /* I'm not happy about a potentially undefined reference here. 
+  /* I'm not happy about a potentially undefined reference here.
   TODO: change to ViteDevServer | undefined and force us to assert
   when using it. Thankfully thus far it's confined to metadata vfs stuff*/
   let devServer: ViteDevServer;
@@ -79,7 +81,7 @@ export default function serverPlugin(userConfig?: UserConfig): Array<Plugin> {
           };
         }
 
-        /* generate the config used for the rest of the plugin. 
+        /* generate the config used for the rest of the plugin.
         This will be accessible everywhere beyond this point. */
         c = generateConfig(userConfig, {
           root: vite.root,
@@ -98,7 +100,7 @@ export default function serverPlugin(userConfig?: UserConfig): Array<Plugin> {
           vfs,
         });
 
-        /* create virtual files for #server/template and #server/manifest */
+        /* create virtual files for #vono/template and #vono/manifest */
         createMetadata({
           builtHtmlPath: join(c.root, c.adaptor.publicDir, "index.html"),
           isBuild: (vite.command === "build"),
@@ -113,8 +115,20 @@ export default function serverPlugin(userConfig?: UserConfig): Array<Plugin> {
           vfs,
         });
 
-        /* Write typedefs here for template files, actions, and fs API routes */
+        await fs.mkdir("node_modules/.vono", { recursive: true })
+
+        /* lets write our entry and type to temporary files. */
+        await fs.writeFile(
+          "node_modules/.vono/entry.ts",
+          `import App from "${
+            join(c.root, c.server.directory, c.server.entry)
+          }; export default App; export type AppType = typeof App;`,
+        );
+
         await writeTypes();
+
+        /* create virtual RPC files */
+        buildRPC({ vfs })
       },
       /* This is where we run our dev server setup. */
       configureServer: (

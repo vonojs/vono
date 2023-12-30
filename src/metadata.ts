@@ -31,7 +31,7 @@ export function createMetadata(args: {
         const transformed = await args.transformHtml("/index.html", raw);
         return `export default \`${transformed}\`;`;
       } else {
-        throw new Error("Cannot find #server/template. This is a bug.");
+        throw new Error("Cannot find #vono/template. This is a bug.");
       }
     },
   });
