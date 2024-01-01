@@ -13,7 +13,7 @@ declare module "#vono/template" {
 
 declare module "#vono/rpc" {
   const rpc: ReturnType<
-    typeof import("hono/client").hc<import("./app").App>
+    typeof import("hono/client").hc<import("./entry").AppType>
   >;
   export default rpc;
 }

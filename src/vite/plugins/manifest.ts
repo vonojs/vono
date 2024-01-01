@@ -26,6 +26,15 @@ function createDevManifest(
       return manifest;
     }, {} as Manifest);
   }
+  if(typeof entries === "string") {
+    return {
+      [entries]: {
+        file: entries,
+        isEntry: true,
+        src: entries,
+      },
+    };
+  }
   return {};
 }
 
@@ -44,15 +53,8 @@ export default function manifest(config: {
   const vfs = useVFS();
   return {
     name: "vono:manifest",
-    config: () => ({
-      resolve: {
-        alias: {
-          "#manifest": "virtual:manifest",
-        },
-      },
-    }),
+    enforce: "pre",
     configResolved: async (vite) => {
-      if (!vite.build?.ssr) return;
       const isBuild = vite.mode === "production";
       vfs.add({
         path: "/manifest",

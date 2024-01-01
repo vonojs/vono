@@ -51,6 +51,7 @@ export default function vono(userConfig?: UserConfig): Array<Plugin> {
             ? {
               output: {
                 inlineDynamicImports: adaptor.inlineDynamicImports,
+                chunkFileNames: "chunks/[name]-[hash].js",
               },
               input: {
                 [adaptor.entryName ?? "index"]: adaptor.runtime,
@@ -97,7 +98,7 @@ export default function vono(userConfig?: UserConfig): Array<Plugin> {
           "node_modules/.vono/entry.ts",
           `import App from "${
             join(vono.root, vono.server.directory, vono.server.entry)
-          }; export default App; export type AppType = typeof App;`,
+          }"; export default App; export type AppType = typeof App;`,
         );
 
         await writeTypes();

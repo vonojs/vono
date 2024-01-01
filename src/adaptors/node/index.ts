@@ -7,7 +7,7 @@ export default () => Adaptor({
   name: "node",
   runtime: join(dirname(fileURLToPath(import.meta.url)), "entry"),
   outDir: "dist/",
-  serverDir: "dist/server",
+  serverDir: "dist",
   publicDir: "dist/public",
   entryName: "entry",
   env: node,

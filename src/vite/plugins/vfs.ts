@@ -3,7 +3,7 @@ import { VFS } from "../../vfs";
 
 export function vfsPlugin(options: {vfs?: VFS} = {}): vite.Plugin {
   const vfsAlias = "#vono";
-  const virtualModuleId = "virtual:server:";
+  const virtualModuleId = "virtual:vono:";
   const vfs = options.vfs ?? new VFS();
   return {
     name: "vono:vfs",
