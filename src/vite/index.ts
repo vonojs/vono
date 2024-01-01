@@ -9,33 +9,25 @@ import nodeAdaptor from "../adaptors/node";
 import { Adaptor } from "../adaptors";
 import { join } from "path";
 import * as fs from "fs/promises";
-import { writeTypes } from "../types";
-import { VFS } from "./plugins/vfs";
+import { writeTypes } from "./types";
+import { useVFS } from "../vfs";
 import { handleNodeRequest } from "../tools/node-hono";
 import { createDevServer } from "./dev";
-import { runtimeDir } from "../runtime";
 import { createVirtualServerEntry } from "./build";
 import manifestPlugin from "./plugins/manifest";
+import rpcPlugin from "./plugins/rpc";
 
 export default function vono(userConfig?: UserConfig): Array<Plugin> {
-  const vfs = new VFS();
-
   const adaptor = (userConfig?.adaptor ?? nodeAdaptor()) as Adaptor;
-
-  /* our config is ready for all plugins that run after configResolved.
-  As far as I know, that's all of them besides config() */
   let vono: Vono;
-  /* I'm not happy about a potentially undefined reference here.
-  TODO: change to ViteDevServer | undefined and force us to assert
-  when using it. Thankfully thus far it's confined to metadata vfs stuff*/
-  let viteDevServer: ViteDevServer;
   return [
     httpPlugin(),
     manifestPlugin({
       manifest: () =>
         join(vono.root, vono.adaptor.publicDir, ".vite", "manifest.json"),
     }),
-    vfsPlugin({ vfs }),
+    rpcPlugin(),
+    vfsPlugin({ vfs: useVFS() }),
     {
       name: "vono",
       enforce: "pre",
@@ -54,7 +46,7 @@ export default function vono(userConfig?: UserConfig): Array<Plugin> {
         build: {
           emptyOutDir: !vite.build?.ssr,
           outDir: vite.build?.ssr ? adaptor.serverDir : adaptor.publicDir,
-          manifest: !vite.build?.ssr,
+          manifest: true,
           rollupOptions: vite.build?.ssr
             ? {
               output: {
@@ -77,7 +69,7 @@ export default function vono(userConfig?: UserConfig): Array<Plugin> {
           mode: vite.command ?? "dev",
           ssr: !!vite.build?.ssr,
           adaptor,
-          vfs: vfs,
+          vfs: useVFS(),
         });
 
         // create gen directory
@@ -98,7 +90,7 @@ export default function vono(userConfig?: UserConfig): Array<Plugin> {
           root: vono.root,
           serverDir: vono.server.directory,
           serverEntry: vono.server.entry,
-          vfs,
+          vfs: useVFS(),
         });
 
         /* lets write our entry and type to temporary files. */
@@ -109,20 +101,10 @@ export default function vono(userConfig?: UserConfig): Array<Plugin> {
           }; export default App; export type AppType = typeof App;`,
         );
 
-        /* create virtual RPC files */
-        vfs.add({
-          path: "/rpc",
-          serverContent: () =>
-            `export rpc from "${join(runtimeDir, "rpc.server")}";`,
-          clientContent: () =>
-            `export rpc from "${join(runtimeDir, "rpc.client")}";`,
-        });
-
         await writeTypes();
       },
       /* This is where we run our dev server setup. */
       configureServer: (server) => {
-        viteDevServer = server;
         return async () => {
           await createDevServer({ vono, server });
           server.middlewares.use((req, res, next) => {

@@ -1,7 +1,6 @@
 import { Adaptor } from "./adaptors";
-import { Infer, Maybe, check } from "@gaiiaa/assert";
 import { Hono } from "hono";
-import { VFS } from "./vite/plugins/vfs";
+import { type VFS } from "./vfs";
 
 export type Vono = {
 	devServer?: Hono;

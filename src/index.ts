@@ -8,7 +8,7 @@ declare global {
   }
 }
 
-export function registerServer(args: {
+function registerServer(args: {
   path: string;
 }){
   globalThis.__vono ??= {
@@ -17,4 +17,6 @@ export function registerServer(args: {
   globalThis.__vono.servers.push(args);
 }
 
+export { registerServer }; 
+export { useVFS } from "./vfs";
 export default vono;

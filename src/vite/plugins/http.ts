@@ -14,7 +14,7 @@ const cache = new Map();
 
 export function httpPlugin(): Plugin {
 	return {
-		name: "vite-plugin-http-loader",
+		name: "vono:http",
     enforce: "pre",
 		async resolveId(id, importer) {
 			if (importer && isHttpProtocol(importer)) {
