@@ -1,3 +1,8 @@
+import node from "./node";
+import cloudflare from "./cloudflare";
+import deno from "./deno";
+import netlify from "./netlify";
+
 export type Adaptor = {
   name: string;
 	runtime: string;
@@ -17,3 +22,10 @@ export type Adaptor = {
 };
 
 export const Adaptor = <T>(target: Adaptor): Adaptor => target;
+
+export {
+  node,
+  cloudflare,
+  deno,
+  netlify
+}

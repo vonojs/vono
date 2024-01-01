@@ -1,28 +1,18 @@
-import defu from "defu";
-import { VFile } from "./plugins/vfs";
-import * as fs from "fs/promises";
 import { Adaptor } from "./adaptors";
-import { Infer, Maybe, Optional, check } from "@gaiiaa/assert";
+import { Infer, Maybe, check } from "@gaiiaa/assert";
 import { Hono } from "hono";
+import { VFS } from "./vite/plugins/vfs";
 
-export type Config = {
+export type Vono = {
 	devServer?: Hono;
   root: string;
-  vfs: Map<string, VFile>;
+  vfs: VFS;
   mode?: "build" | "serve" | "dev";
   buildTarget?: "server" | "client";
   adaptor: Adaptor;
-  debug: boolean;
   server: {
     directory: string;
     entry: string;
-    actions: {
-      directory: string;
-      endpoint: string;
-    };
-  };
-  typescript: {
-    writeTypes: boolean;
   };
   prerender: {
     routes: Array<string>;
@@ -30,52 +20,29 @@ export type Config = {
   ssr: boolean;
 };
 
-const adaptorSchema = {
-	name: String,
-	outDir: String,
-	serverDir: String,
-	publicDir: String,
-	entryName: String,
-	runtime: String,
-}
+export type UserConfig = {
+  adaptor?: Adaptor;
+  prerender?: {
+    routes: Array<string>;
+  };
+};
 
-const userConfigSchema = {
-	adaptor: Maybe(adaptorSchema),
-	prerender: Maybe({
-		routes: Array(String),
-	}),
-	debug: Maybe(Boolean),
-}
-
-export type UserConfig = Infer<typeof userConfigSchema>;
-
-export function generateConfig(userConfig: UserConfig | undefined, options: {
+export function createVono(userConfig: UserConfig | undefined, options: {
   root: string;
   mode: "build" | "serve" | "dev";
   ssr: boolean;
-	vfs: Map<string, VFile>;
+	vfs: VFS;
   adaptor: Adaptor;
-}): Config {
-
-	const validUserConfig = check(userConfig, userConfigSchema)
-	if(!validUserConfig) throw new Error("Invalid user config.")
+}): Vono {
 
   return {
     adaptor: options.adaptor,
-    debug: !!userConfig?.debug,
     vfs: options.vfs,
     server: {
       directory: "server",
       entry: "entry",
-      actions: {
-        directory: "server/actions",
-        endpoint: "/__actions",
-      },
     },
     root: options.root,
-    typescript: {
-      writeTypes: true,
-    },
     prerender: {
       routes: userConfig?.prerender?.routes ?? [],
     },

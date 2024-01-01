@@ -1,3 +1,10 @@
+/***********************************************************
+*
+*  This module has been adapted from Remix's Vite plugin.
+*  https://remix.run
+*
+***********************************************************/
+
 import type { Readable, Writable } from "node:stream";
 import { Stream } from "node:stream";
 

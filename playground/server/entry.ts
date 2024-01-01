@@ -1,4 +1,7 @@
 import { Hono } from "hono";
+import manifest from "#manifest"
+
+console.log(manifest, reactRefresh, devScripts)
 
 const app = new Hono()
 .get("/ping", (c) => c.json({ message: "ponger" }))
@@ -7,7 +10,7 @@ const app = new Hono()
 	throw new Error("test");
 })
 
-.get("/*", (c) => {
+.get("*", async (c, next) => {
 	return c.text(`renderer: ${c.req.url}`)
 })
 

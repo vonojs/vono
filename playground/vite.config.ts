@@ -1,9 +1,7 @@
 import { defineConfig } from "vite";
-import backend from "../src/index";
+import backend from "../src/vite";
 import cloudflare from "../src/adaptors/cloudflare";
-import deno from "../src/adaptors/deno";
 import react from "@vitejs/plugin-react";
-import Inspect from 'vite-plugin-inspect'
 
 export default defineConfig({
   plugins: [
@@ -12,5 +10,13 @@ export default defineConfig({
       adaptor: cloudflare(),
       // prerender: { routes: ["/ssr"] },
     }),
-  ]
+  ],
+  build: {
+    rollupOptions: {
+      input: {
+        index: "index.html",
+        lol: "/src/index.tsx"
+      },
+    },
+  }
 });

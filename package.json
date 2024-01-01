@@ -49,6 +49,7 @@
     "@rollup/plugin-url": "^8.0.2",
     "defu": "^6.1.3",
     "hono": "^3.11.8",
+    "html5parser": "^2.0.2",
     "pathe": "^1.1.1",
     "rollup-plugin-url-resolve": "^0.2.0",
     "unenv": "^1.8.0"
