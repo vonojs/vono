@@ -13,7 +13,7 @@ import { writeTypes } from "./types";
 import { useVFS } from "../vfs";
 import { handleNodeRequest } from "../tools/node-hono";
 import { createDevServer } from "./dev";
-import { createVirtualServerEntry } from "./build";
+import { createVirtualServerEntry } from "./virtualEntry";
 import manifestPlugin from "./plugins/manifest";
 import rpcPlugin from "./plugins/rpc";
 
@@ -90,7 +90,6 @@ export default function vono(userConfig?: UserConfig): Array<Plugin> {
           root: vono.root,
           serverDir: vono.server.directory,
           serverEntry: vono.server.entry,
-          vfs: useVFS(),
         });
 
         /* lets write our entry and type to temporary files. */

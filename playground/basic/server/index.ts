@@ -2,6 +2,6 @@ import { Hono } from "hono";
 
 const hono = new Hono();
 
-hono.get("/message", (c) => c.json({ message: "Hello World!" }));
+hono.get("/ping", (c) => c.text("pong"));
 
 export default hono;

@@ -39,7 +39,7 @@ export function createVono(userConfig: UserConfig | undefined, options: {
     vfs: options.vfs,
     server: {
       directory: "server",
-      entry: "entry",
+      entry: "index",
     },
     root: options.root,
     prerender: {
