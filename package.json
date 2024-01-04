@@ -1,6 +1,6 @@
 {
   "name": "@gaiiaa/vono",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Drop in Hono server for Vite",
   "repository": "@gaiiaa/vono",
   "publishConfig": {
