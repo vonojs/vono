@@ -47,6 +47,7 @@ export default function vono(userConfig?: UserConfig): Array<Plugin> {
           emptyOutDir: !vite.build?.ssr,
           outDir: vite.build?.ssr ? adaptor.serverDir : adaptor.publicDir,
           manifest: true,
+          ssrEmitAssets: false,
           rollupOptions: vite.build?.ssr
             ? {
               output: {
