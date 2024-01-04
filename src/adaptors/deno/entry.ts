@@ -16,3 +16,5 @@ server.route("/", entry);
 
 // @ts-ignore - deno namespace
 Deno.serve(server.fetch)
+
+export default server;

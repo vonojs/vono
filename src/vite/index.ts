@@ -127,13 +127,14 @@ export default function vono(userConfig?: UserConfig): Array<Plugin> {
         if (!vono.ssr) return;
         if (check(Function, vono.adaptor.onBuild)) await vono.adaptor.onBuild();
         if (vono.prerender.routes.length > 0) {
-          const handler = await import(
+          const _handler = await import(
             pathe.join(
               vono.root,
               vono.adaptor.serverDir,
               vono.adaptor.entryName + ".js",
             )
-          ).then((m) => m.default.fetch);
+          ).then((m) => m.default);
+          const handler = _handler?.fetch ?? _handler;
           await prerender({
             handler,
             routes: vono.prerender.routes,

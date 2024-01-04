@@ -19,3 +19,5 @@ serve({
 	fetch: server.fetch,
 	port,
 });
+
+export default server;
