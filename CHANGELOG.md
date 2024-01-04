@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v0.0.3
+
+[compare changes](https://undefined/undefined/compare/v0.0.2...v0.0.3)
+
+### 🩹 Fixes
+
+- Adaptor export issue (2e28c41)
+
+### ❤️ Contributors
+
+- Benten <ben@benten.ca>
+
 ## v0.0.2
 
 [compare changes](https://undefined/undefined/compare/v0.0.1...v0.0.2)
