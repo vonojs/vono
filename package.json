@@ -28,8 +28,8 @@
   "scripts": {
     "build": "unbuild",
     "dev": "tsx src",
-    "lint": "oxlint && prettier -c src test playground",
-    "format": "prettier --write src test playground",
+    "lint": "oxlint && prettier -c src test examples",
+    "format": "prettier --write src test examples",
     "prepack": "pnpm run build",
     "release": "changelogen --release && npm publish && git push --follow-tags",
     "test": "pnpm lint && pnpm test:types && vitest run --coverage",
