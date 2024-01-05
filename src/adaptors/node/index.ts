@@ -1,9 +1,9 @@
 import { dirname, join } from "path";
-import { Adaptor } from "../index";
+import { Adapter } from "../index";
 import { node } from "unenv"
 import { fileURLToPath } from "url";
 
-export default () => Adaptor({
+export default () => Adapter({
   name: "node",
   runtime: join(dirname(fileURLToPath(import.meta.url)), "entry"),
   outDir: "dist/",

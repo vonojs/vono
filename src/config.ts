@@ -1,4 +1,4 @@
-import { Adaptor } from "./adaptors";
+import { Adapter } from "./adapters";
 import { Hono } from "hono";
 import { type VFS } from "./vfs";
 
@@ -8,7 +8,7 @@ export type Vono = {
   vfs: VFS;
   mode?: "build" | "serve" | "dev";
   buildTarget?: "server" | "client";
-  adaptor: Adaptor;
+  adapter: Adapter;
   server: {
     directory: string;
     entry: string;
@@ -20,7 +20,7 @@ export type Vono = {
 };
 
 export type UserConfig = {
-  adaptor?: Adaptor;
+  adapter?: Adapter;
   prerender?: {
     routes: Array<string>;
   };
@@ -31,11 +31,11 @@ export function createVono(userConfig: UserConfig | undefined, options: {
   mode: "build" | "serve" | "dev";
   ssr: boolean;
 	vfs: VFS;
-  adaptor: Adaptor;
+  adapter: Adapter;
 }): Vono {
 
   return {
-    adaptor: options.adaptor,
+    adapter: options.adapter,
     vfs: options.vfs,
     server: {
       directory: "server",
