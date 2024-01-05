@@ -17,7 +17,10 @@ jobs:
       - uses: ./.github/actions/pnpm-setup
 
       - run: pnpm lint
+        if: always()
       - run: pnpm test:types
+        if: always()
       - run: pnpm build
+        if: always()
       # - run: pnpm vitest --coverage
       - uses: codecov/codecov-action@v3
