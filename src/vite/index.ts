@@ -39,9 +39,9 @@ export default function vono(userConfig?: UserConfig): Array<Plugin> {
         },
         ssr: vite.build?.ssr
           ? {
-            noExternal: true,
-            external: adaptor.env?.external,
-          }
+              noExternal: true,
+              external: adaptor.env?.external,
+            }
           : undefined,
         build: {
           emptyOutDir: !vite.build?.ssr,
@@ -50,15 +50,15 @@ export default function vono(userConfig?: UserConfig): Array<Plugin> {
           ssrEmitAssets: false,
           rollupOptions: vite.build?.ssr
             ? {
-              output: {
-                inlineDynamicImports: adaptor.inlineDynamicImports,
-                chunkFileNames: "chunks/[name]-[hash].js",
-              },
-              input: {
-                [adaptor.entryName ?? "index"]: adaptor.runtime,
-              },
-              external: adaptor.env?.external,
-            }
+                output: {
+                  inlineDynamicImports: adaptor.inlineDynamicImports,
+                  chunkFileNames: "chunks/[name]-[hash].js",
+                },
+                input: {
+                  [adaptor.entryName ?? "index"]: adaptor.runtime,
+                },
+                external: adaptor.env?.external,
+              }
             : undefined,
         },
       }),
@@ -97,9 +97,11 @@ export default function vono(userConfig?: UserConfig): Array<Plugin> {
         /* lets write our entry and type to temporary files. */
         await fs.writeFile(
           "node_modules/.vono/entry.ts",
-          `import App from "${
-            join(vono.root, vono.server.directory, vono.server.entry)
-          }"; export default App; export type AppType = typeof App;`,
+          `import App from "${join(
+            vono.root,
+            vono.server.directory,
+            vono.server.entry,
+          )}"; export default App; export type AppType = typeof App;`,
         );
 
         await writeTypes();

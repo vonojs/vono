@@ -1,37 +1,39 @@
 export class VFS {
   store = new Map<string, VFile>();
-  constructor(options: {
-    store?: Map<string, VFile>;
-  } = {}) {
+  constructor(
+    options: {
+      store?: Map<string, VFile>;
+    } = {},
+  ) {
     if (options.store) this.store = options.store;
   }
-	add<
-  C extends ContentFn | undefined,
-  SC extends ContentFn | undefined,
-  CC extends ContentFn | undefined,
->(vfile: {
-  path: string;
-  content?: C;
-  serverContent?: SC;
-  clientContent?: CC;
-}) {
-	this.store.set(vfile.path, vfile);
-  return vfile as {
+  add<
+    C extends ContentFn | undefined,
+    SC extends ContentFn | undefined,
+    CC extends ContentFn | undefined,
+  >(vfile: {
     path: string;
-    content: C;
-    serverContent: SC;
-    clientContent: CC;
-  } satisfies VFile;
-}
-	remove(path: string) {
-		this.store.delete(path);
-	}
-	get(path: string) {
-		return this.store.get(path);
-	}
-	has(path: string) {
-		return this.store.has(path);
-	}
+    content?: C;
+    serverContent?: SC;
+    clientContent?: CC;
+  }) {
+    this.store.set(vfile.path, vfile);
+    return vfile as {
+      path: string;
+      content: C;
+      serverContent: SC;
+      clientContent: CC;
+    } satisfies VFile;
+  }
+  remove(path: string) {
+    this.store.delete(path);
+  }
+  get(path: string) {
+    return this.store.get(path);
+  }
+  has(path: string) {
+    return this.store.has(path);
+  }
 }
 
 type ContentFn = (path: string) => string | Promise<string>;

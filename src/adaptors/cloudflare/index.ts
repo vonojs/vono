@@ -31,24 +31,29 @@ const cloudflare = {
   external: cloudflareNodeCompatModules.map((p) => `node:${p}`),
 };
 
-export default (options: {
-	name?: string;
-} = {}) => 
-	Adaptor({
-		name: "cloudflare",
-		runtime: join(dirname(fileURLToPath(import.meta.url)), "entry"),
-		outDir: "cloudflare/",
-		serverDir: "cloudflare/server",
-		publicDir: "cloudflare/public",
-		entryName: "entry",
-		env: cloudflare,
-		onBuild: async () => {
-			await fs.writeFile("cloudflare/wrangler.toml", `
+export default (
+  options: {
+    name?: string;
+  } = {},
+) =>
+  Adaptor({
+    name: "cloudflare",
+    runtime: join(dirname(fileURLToPath(import.meta.url)), "entry"),
+    outDir: "cloudflare/",
+    serverDir: "cloudflare/server",
+    publicDir: "cloudflare/public",
+    entryName: "entry",
+    env: cloudflare,
+    onBuild: async () => {
+      await fs.writeFile(
+        "cloudflare/wrangler.toml",
+        `
 name = "${options.name || "gaiiaa-vite-cloudflare"}"
 main = "server/entry.js"
 assets = "public"
 node_compat = true
 compatibility_date = "2022-07-12"
-`.trim())
-		}
-	});
+`.trim(),
+      );
+    },
+  });

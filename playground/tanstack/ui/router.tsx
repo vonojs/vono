@@ -8,7 +8,7 @@ const routeTree = rootRoute.addChildren([indexRoute, aboutRoute]);
 export const createRouter = () => new Router({ routeTree });
 
 declare module "@tanstack/react-router" {
-	interface Register {
-		router: ReturnType<typeof createRouter>;
-	}
+  interface Register {
+    router: ReturnType<typeof createRouter>;
+  }
 }

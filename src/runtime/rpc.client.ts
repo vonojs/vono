@@ -1,2 +1,2 @@
-import { hc } from "hono/client"
-export default hc(window.location.origin)
+import { hc } from "hono/client";
+export default hc(window.location.origin);
