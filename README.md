@@ -16,7 +16,7 @@
 
 ## Work In Progress
 
-This is unreleased. Although feature complete, the adaptors are probably not all working for all providers.
+This is unreleased. Although feature complete, the adapters are probably not all working for all providers.
 
 Create a hono app in `server/index` and export it as default. Vono will pick it up and build it as the server runtime.
 

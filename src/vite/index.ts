@@ -5,8 +5,8 @@ import { httpPlugin } from "./plugins/http";
 import { check } from "@gaiiaa/assert";
 import { prerender } from "../prerender";
 import * as pathe from "pathe";
-import nodeAdaptor from "../adaptors/node";
-import { Adaptor } from "../adaptors";
+import nodeAdapter from "../adapters/node";
+import { Adapter } from "../adapters";
 import { join } from "path";
 import * as fs from "fs/promises";
 import { writeTypes } from "./types";
@@ -18,13 +18,13 @@ import manifestPlugin from "./plugins/manifest";
 import rpcPlugin from "./plugins/rpc";
 
 export default function vono(userConfig?: UserConfig): Array<Plugin> {
-  const adaptor = (userConfig?.adaptor ?? nodeAdaptor()) as Adaptor;
+  const adapter = (userConfig?.adapter ?? nodeAdapter()) as Adapter;
   let vono: Vono;
   return [
     httpPlugin(),
     manifestPlugin({
       manifest: () =>
-        join(vono.root, vono.adaptor.publicDir, ".vite", "manifest.json"),
+        join(vono.root, vono.adapter.publicDir, ".vite", "manifest.json"),
     }),
     rpcPlugin(),
     vfsPlugin({ vfs: useVFS() }),
@@ -35,29 +35,29 @@ export default function vono(userConfig?: UserConfig): Array<Plugin> {
         appType: "custom",
         clearScreen: false,
         resolve: {
-          alias: vite.build?.ssr ? adaptor.env?.alias : undefined,
+          alias: vite.build?.ssr ? adapter.env?.alias : undefined,
         },
         ssr: vite.build?.ssr
           ? {
             noExternal: true,
-            external: adaptor.env?.external,
+            external: adapter.env?.external,
           }
           : undefined,
         build: {
           emptyOutDir: !vite.build?.ssr,
-          outDir: vite.build?.ssr ? adaptor.serverDir : adaptor.publicDir,
+          outDir: vite.build?.ssr ? adapter.serverDir : adapter.publicDir,
           manifest: true,
           ssrEmitAssets: false,
           rollupOptions: vite.build?.ssr
             ? {
               output: {
-                inlineDynamicImports: adaptor.inlineDynamicImports,
+                inlineDynamicImports: adapter.inlineDynamicImports,
                 chunkFileNames: "chunks/[name]-[hash].js",
               },
               input: {
-                [adaptor.entryName ?? "index"]: adaptor.runtime,
+                [adapter.entryName ?? "index"]: adapter.runtime,
               },
-              external: adaptor.env?.external,
+              external: adapter.env?.external,
             }
             : undefined,
         },
@@ -70,7 +70,7 @@ export default function vono(userConfig?: UserConfig): Array<Plugin> {
           root: vite.root,
           mode: vite.command ?? "dev",
           ssr: !!vite.build?.ssr,
-          adaptor,
+          adapter,
           vfs: useVFS(),
         });
 
@@ -82,12 +82,12 @@ export default function vono(userConfig?: UserConfig): Array<Plugin> {
         the user happens to provide manual rollup inputs. */
         if (vite.build.ssr) {
           vite.build.rollupOptions.input = {
-            [adaptor.entryName ?? "index"]: adaptor.runtime,
+            [adapter.entryName ?? "index"]: adapter.runtime,
           };
         }
 
         /* create our server entry.
-        This is what adaptors import. */
+        This is what adapters import. */
         await createVirtualServerEntry({
           root: vono.root,
           serverDir: vono.server.directory,
@@ -125,20 +125,20 @@ export default function vono(userConfig?: UserConfig): Array<Plugin> {
       /* This is where we run our post build stuff */
       writeBundle: async () => {
         if (!vono.ssr) return;
-        if (check(Function, vono.adaptor.onBuild)) await vono.adaptor.onBuild();
+        if (check(Function, vono.adapter.onBuild)) await vono.adapter.onBuild();
         if (vono.prerender.routes.length > 0) {
           const _handler = await import(
             pathe.join(
               vono.root,
-              vono.adaptor.serverDir,
-              vono.adaptor.entryName + ".js",
+              vono.adapter.serverDir,
+              vono.adapter.entryName + ".js",
             )
           ).then((m) => m.default);
           const handler = _handler?.fetch ?? _handler;
           await prerender({
             handler,
             routes: vono.prerender.routes,
-            outDir: vono.adaptor.publicDir,
+            outDir: vono.adapter.publicDir,
           });
         }
       },

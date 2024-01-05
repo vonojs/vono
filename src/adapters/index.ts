@@ -3,7 +3,7 @@ import cloudflare from "./cloudflare";
 import deno from "./deno";
 import netlify from "./netlify";
 
-export type Adaptor = {
+export type Adapter = {
   name: string;
 	runtime: string;
   outDir: string;
@@ -21,7 +21,7 @@ export type Adaptor = {
   onBuild?: () => void | Promise<void>;
 };
 
-export const Adaptor = <T>(target: Adaptor): Adaptor => target;
+export const Adapter = <T>(target: Adapter): Adapter => target;
 
 export {
   node,
