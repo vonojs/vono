@@ -5,7 +5,7 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
-  "@gaiiaa/vono":
+  "@vonojs/vono":
     specifier: ../..
     version: link:../..
   react:
