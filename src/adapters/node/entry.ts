@@ -1,23 +1,25 @@
 import { serve } from "@hono/node-server"
-import {serveStatic } from "@hono/node-server/serve-static"
+import { serveStatic } from "@hono/node-server/serve-static"
 import { Hono } from "hono";
+import { pathToFileURL } from 'url'
 // @ts-ignore - this is a generated file
 import entry from "#vono/internal/server.entry"
 
-const port = parseInt(process.argv[2]) || 8000;
-
 const server = new Hono();
+
 server.use("*", serveStatic({
 	root: "./public",
 }));
 
 server.route("/", entry);
 
-console.log(`Listening on port http://localhost:${port}`);
-
-serve({
-	fetch: server.fetch,
-	port,
-});
+if (import.meta.url === pathToFileURL(process.argv[1]).href) {
+	const port = parseInt(process.argv[2]) || 8000;
+	console.log(`Listening on port http://localhost:${port}`);
+	serve({
+		fetch: server.fetch,
+		port,
+	});
+}
 
 export default server;
