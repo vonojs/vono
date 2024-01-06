@@ -1,6 +1,6 @@
 import { Adapter } from "../index";
 import { fileURLToPath } from "url";
-import { dirname, join } from "path";
+import { basename, dirname, join } from "path";
 import * as fs from "fs/promises";
 
 const cloudflareNodeCompatModules = [
@@ -43,8 +43,9 @@ export default (options: {
 		entryName: "entry",
 		env: cloudflare,
 		onBuild: async () => {
+      const name = options.name || basename(process.cwd()) + "-vono";
 			await fs.writeFile("cloudflare/wrangler.toml", `
-name = "${options.name || "gaiiaa-vite-cloudflare"}"
+name = "${name || "gaiiaa-vite-cloudflare"}"
 main = "server/entry.js"
 assets = "public"
 node_compat = true
