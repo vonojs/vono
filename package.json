@@ -1,8 +1,8 @@
 {
-  "name": "@gaiiaa/vono",
-  "version": "0.0.5",
+  "name": "@vonojs/vono",
+  "version": "0.0.6",
   "description": "Drop in Hono server for Vite",
-  "repository": "@gaiiaa/vono",
+  "repository": "@vonojs/vono",
   "publishConfig": {
     "access": "public"
   },

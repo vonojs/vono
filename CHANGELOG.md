@@ -1,5 +1,18 @@
 # Changelog
 
+## v0.0.6
+
+[compare changes](https://undefined/undefined/compare/v0.0.5...v0.0.6)
+
+### 🏡 Chore
+
+- Cloudflare adaptor default name (aacc448)
+- Fix ci (064e065)
+
+### ❤️ Contributors
+
+- Benten <ben@benten.ca>
+
 ## v0.0.5
 
 [compare changes](https://undefined/undefined/compare/v0.0.3...v0.0.5)
