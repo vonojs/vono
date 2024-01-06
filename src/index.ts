@@ -5,18 +5,16 @@ declare global {
     servers: {
       path: string;
     }[];
-  }
+  };
 }
 
-function registerServer(args: {
-  path: string;
-}){
+function registerServer(args: { path: string }) {
   globalThis.__vono ??= {
-    servers: []
+    servers: [],
   };
   globalThis.__vono.servers.push(args);
 }
 
-export { registerServer }; 
+export { registerServer };
 export { useVFS } from "./vfs";
 export default vono;

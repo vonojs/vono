@@ -10,30 +10,22 @@ export async function createDevServer(args: {
   vono: Vono;
 }) {
   args.vono.devServer = new Hono();
-  const entry = await args.server.ssrLoadModule(
-    join(runtimeDir, "dev-server"),
-  );
+  const entry = await args.server.ssrLoadModule(join(runtimeDir, "dev-server"));
   args.vono.devServer?.get("/", async (c, next) => {
-    try{
-      const raw = await readFile(
-        join(args.vono.root!, "index.html"),
-        "utf-8",
-      );
-      return c.html(await args.server.transformIndexHtml(c.req.url, raw))
+    try {
+      const raw = await readFile(join(args.vono.root!, "index.html"), "utf-8");
+      return c.html(await args.server.transformIndexHtml(c.req.url, raw));
     } catch {
       await next();
     }
-  })
+  });
   args.vono.devServer?.route("/", entry.default);
   args.vono.devServer?.get("*", async (c) => {
     try {
-      const raw = await readFile(
-        join(args.vono.root!, "index.html"),
-        "utf-8",
-      );
-      return c.html(await args.server.transformIndexHtml(c.req.url, raw))
+      const raw = await readFile(join(args.vono.root!, "index.html"), "utf-8");
+      return c.html(await args.server.transformIndexHtml(c.req.url, raw));
     } catch {
-      return c.text("No index.html or catchall", { status: 404 })
+      return c.text("No index.html or catchall", { status: 404 });
     }
   });
 }

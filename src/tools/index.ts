@@ -11,14 +11,14 @@ export const exists = async (path: string, ...extensions: string[]) => {
       return false;
     }
   } else {
-		for (const ext of extensions) {
-			try {
-				await fs.access(path + ext);
-				return path + ext;
-			} catch {}
-		}
-		return false;
-	}
+    for (const ext of extensions) {
+      try {
+        await fs.access(path + ext);
+        return path + ext;
+      } catch {}
+    }
+    return false;
+  }
 };
 
 export const stripExtension = (path: string) =>

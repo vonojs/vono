@@ -20,8 +20,5 @@ declare module "#vono/rpc" {
 `.trim();
 
 export async function writeTypes() {
-  await fs.writeFile(
-    "node_modules/.vono/index.d.ts",
-    types,
-  );
+  await fs.writeFile("node_modules/.vono/index.d.ts", types);
 }

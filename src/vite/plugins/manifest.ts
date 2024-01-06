@@ -26,7 +26,7 @@ function createDevManifest(
       return manifest;
     }, {} as Manifest);
   }
-  if(typeof entries === "string") {
+  if (typeof entries === "string") {
     return {
       [entries]: {
         file: entries,
@@ -60,16 +60,17 @@ export default function manifest(config: {
         path: "/manifest",
         serverContent: async () => {
           if (isBuild) {
-            const path = typeof config.manifest === "function"
-              ? config.manifest()
-              : config.manifest;
-            return `export default ${
-              JSON.stringify(await getBuildManifest(path))
-            };`;
+            const path =
+              typeof config.manifest === "function"
+                ? config.manifest()
+                : config.manifest;
+            return `export default ${JSON.stringify(
+              await getBuildManifest(path),
+            )};`;
           } else {
-            return `export default ${
-              JSON.stringify(createDevManifest(vite.build?.rollupOptions))
-            };`;
+            return `export default ${JSON.stringify(
+              createDevManifest(vite.build?.rollupOptions),
+            )};`;
           }
         },
       });

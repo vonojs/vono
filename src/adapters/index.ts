@@ -5,7 +5,7 @@ import netlify from "./netlify";
 
 export type Adapter = {
   name: string;
-	runtime: string;
+  runtime: string;
   outDir: string;
   serverDir: string;
   publicDir: string;
@@ -17,15 +17,10 @@ export type Adapter = {
     external?: string[];
     inject?: Record<string, string | string[]>;
     polyfill?: string[];
-  },
+  };
   onBuild?: () => void | Promise<void>;
 };
 
 export const Adapter = <T>(target: Adapter): Adapter => target;
 
-export {
-  node,
-  cloudflare,
-  deno,
-  netlify
-}
+export { node, cloudflare, deno, netlify };

@@ -15,57 +15,54 @@ window.$RefreshSig$ = () => (type) => type
 window.__vite_plugin_react_preamble_installed__ = true`;
 
 const Shell = (props: {
-	head: React.ReactNode;
-	scripts: React.ReactNode;
-	children: React.ReactNode;
+  head: React.ReactNode;
+  scripts: React.ReactNode;
+  children: React.ReactNode;
 }) => (
-	<html>
-		<head>
-			<meta charSet="utf-8" />
-			{dev && (
-				<>
-					<script type="module" src="/@vite/client" />
-					<script
-						type="module"
-						dangerouslySetInnerHTML={{
-							__html: reactRefresh,
-						}}
-					/>
-				</>
-			)}
-			{props.head}
-		</head>
-		<body>
-			<div id="app">{props.children}</div>
-			{props.scripts}
-		</body>
-	</html>
+  <html>
+    <head>
+      <meta charSet="utf-8" />
+      {dev && (
+        <>
+          <script type="module" src="/@vite/client" />
+          <script
+            type="module"
+            dangerouslySetInnerHTML={{
+              __html: reactRefresh,
+            }}
+          />
+        </>
+      )}
+      {props.head}
+    </head>
+    <body>
+      <div id="app">{props.children}</div>
+      {props.scripts}
+    </body>
+  </html>
 );
 
 export default async function render(url: string) {
-	const router = createRouter();
+  const router = createRouter();
 
-	const memoryHistory = createMemoryHistory({
-		initialEntries: [url],
-	});
+  const memoryHistory = createMemoryHistory({
+    initialEntries: [url],
+  });
 
-	router.update({
-		history: memoryHistory,
-	});
+  router.update({
+    history: memoryHistory,
+  });
 
-	await router.load();
+  await router.load();
 
-	return renderToString(
-		<Shell
-			scripts={
-				<script
-					type="module"
-					src={manifest["ui/entry.client.tsx"].file}
-				/>
-			}
-			head={<title>Vono x Tanstack</title>}
-		>
-			<StartServer router={router} />
-		</Shell>
-	);
+  return renderToString(
+    <Shell
+      scripts={
+        <script type="module" src={manifest["ui/entry.client.tsx"].file} />
+      }
+      head={<title>Vono x Tanstack</title>}
+    >
+      <StartServer router={router} />
+    </Shell>,
+  );
 }

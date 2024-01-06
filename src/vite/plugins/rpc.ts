@@ -12,9 +12,15 @@ export default function rpc(): Plugin {
       vfs.add({
         path: "/rpc",
         serverContent: () =>
-          `import rpc from "${join(runtimeDir, "rpc.server")}"; export default rpc;`,
+          `import rpc from "${join(
+            runtimeDir,
+            "rpc.server",
+          )}"; export default rpc;`,
         clientContent: () =>
-          `import rpc from "${join(runtimeDir, "rpc.client")}"; export default rpc;`,
+          `import rpc from "${join(
+            runtimeDir,
+            "rpc.client",
+          )}"; export default rpc;`,
       });
     },
   };

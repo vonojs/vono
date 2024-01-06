@@ -2,9 +2,9 @@ import { Route } from "@tanstack/react-router";
 import rootRoute from "../root";
 
 const route = new Route({
-	getParentRoute: () => rootRoute,
-	path: "/",
-	component: UI,
+  getParentRoute: () => rootRoute,
+  path: "/",
+  component: UI,
 });
 
 export default route;
