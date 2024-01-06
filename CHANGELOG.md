@@ -1,5 +1,21 @@
 # Changelog
 
+## v0.0.5
+
+[compare changes](https://undefined/undefined/compare/v0.0.3...v0.0.5)
+
+### 🚀 Enhancements
+
+- Add bun adapter (0de6f2d)
+
+### 🩹 Fixes
+
+- Don't start server when not entry (b4eb343)
+
+### ❤️ Contributors
+
+- Benten <ben@benten.ca>
+
 ## v0.0.4
 
 [compare changes](https://undefined/undefined/compare/v0.0.3...v0.0.4)
