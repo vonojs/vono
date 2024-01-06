@@ -5,6 +5,9 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
+  '@gaiia/vono':
+    specifier: ../..
+    version: link:../..
   '@tanstack/react-router':
     specifier: ^1.0.6
     version: 1.0.6(react-dom@18.2.0)(react@18.2.0)

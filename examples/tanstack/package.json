@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@gaiia/vono": "../..",
     "@tanstack/react-router": "^1.0.6",
     "@tanstack/react-router-server": "^1.0.6",
     "react": "^18.2.0",
