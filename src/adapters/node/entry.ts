@@ -16,7 +16,10 @@ server.use(
 
 server.route("/", entry);
 
-if (import.meta.url === pathToFileURL(process.argv[1]).href) {
+if (
+  import.meta.url === pathToFileURL(process.argv[1]).href ||
+  import.meta.url === pathToFileURL(process.argv[1]).href + ".js"
+) {
   const port = parseInt(process.argv[2]) || 8000;
   console.log(`Listening on port http://localhost:${port}`);
   serve({
