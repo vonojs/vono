@@ -10,5 +10,4 @@ server.use("*", (c) => {
   return (c.env?.ASSETS as any).fetch(c.req.raw);
 });
 
-
 export default server;

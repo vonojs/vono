@@ -1,6 +1,6 @@
 import node from "./node";
 import cloudflare from "./cloudflare";
-import pages from "./cloudflare-pages"
+import pages from "./cloudflare-pages";
 import deno from "./deno";
 import netlify from "./netlify";
 import bun from "./bun";

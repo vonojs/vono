@@ -27,9 +27,7 @@ const cloudflare = {
   },
   inject: {},
   polyfill: [],
-  external: [
-    ...cloudflareNodeCompatModules.map((p) => `node:${p}`),
-  ],
+  external: [...cloudflareNodeCompatModules.map((p) => `node:${p}`)],
 };
 
 export default () =>
