@@ -1,5 +1,21 @@
 # Changelog
 
+## v0.0.7
+
+[compare changes](https://undefined/undefined/compare/v0.0.6...v0.0.7)
+
+### 🩹 Fixes
+
+- Node adaptor prefix (ec7703a)
+
+### 🏡 Chore
+
+- Move to @vonojs (c9ee431)
+
+### ❤️ Contributors
+
+- Benten <ben@benten.ca>
+
 ## v0.0.6
 
 [compare changes](https://undefined/undefined/compare/v0.0.5...v0.0.6)
