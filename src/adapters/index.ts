@@ -1,5 +1,6 @@
 import node from "./node";
 import cloudflare from "./cloudflare";
+import pages from "./cloudflare-pages"
 import deno from "./deno";
 import netlify from "./netlify";
 import bun from "./bun";
@@ -24,4 +25,4 @@ export type Adapter = {
 
 export const Adapter = <T>(target: Adapter): Adapter => target;
 
-export { node, cloudflare, deno, netlify, bun };
+export { node, cloudflare, pages, deno, netlify, bun };
