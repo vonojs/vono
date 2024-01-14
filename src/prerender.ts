@@ -1,5 +1,6 @@
 import * as fs from "fs/promises";
 import { createLogger } from "@gaiiaa/logger";
+import { dirname } from "path";
 
 const logger = createLogger({
   name: "PRERENDER",
@@ -35,6 +36,7 @@ export async function prerender(args: {
         const url = new URL(route, "http://localhost");
         const path =
           url.pathname === "/" ? "/index.html" : url.pathname + ".html";
+        fs.mkdir(dirname(args.outDir + path), { recursive: true });
         await fs.writeFile(args.outDir + path, output);
         logger.success(
           `prerendered route "${route}" in ${(performance.now() - t).toFixed(
