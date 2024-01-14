@@ -1,5 +1,23 @@
 # Changelog
 
+## v0.0.8
+
+[compare changes](https://undefined/undefined/compare/v0.0.7...v0.0.8)
+
+### 🩹 Fixes
+
+- Preview command in examples (e213bfb)
+- Prerendering nested paths (c7140ff)
+
+### 🏡 Chore
+
+- Formatting (e7f9714)
+- Delete banner (9223c6c)
+
+### ❤️ Contributors
+
+- Benten <ben@benten.ca>
+
 ## v0.0.7
 
 [compare changes](https://undefined/undefined/compare/v0.0.6...v0.0.7)
