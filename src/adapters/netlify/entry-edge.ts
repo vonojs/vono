@@ -11,7 +11,7 @@ export default async (req, context) => {
   if (!res.ok) return undefined;
   return res;
 };
-export const prerenderHandler = server.fetch
+export const prerenderHandler = server.fetch;
 
 export const config = {
   path: "/*",

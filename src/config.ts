@@ -14,7 +14,7 @@ export type Vono = {
     entry: string;
   };
   prerender: {
-    routes: Array<string> | (() => Array<string> | Promise<Array<string>>)
+    routes: Array<string> | (() => Array<string> | Promise<Array<string>>);
   };
   ssr: boolean;
   onBuild?: (vono: Vono) => void | Promise<void>;
@@ -24,8 +24,8 @@ export type UserConfig = {
   adapter?: Adapter;
   prerender?: {
     routes: Array<string> | (() => Array<string>);
-  },
-  onBuild?: (vono: Vono) => void | Promise<void>
+  };
+  onBuild?: (vono: Vono) => void | Promise<void>;
 };
 
 export function createVono(

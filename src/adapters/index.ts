@@ -23,15 +23,18 @@ export type Adapter = {
 };
 
 export const createAdapter = <T>(target: Adapter): Adapter => target;
-export const extendAdapter = (target: Adapter, extend: Partial<Adapter>): Adapter => {
+export const extendAdapter = (
+  target: Adapter,
+  extend: Partial<Adapter>,
+): Adapter => {
   return {
     ...target,
     ...extend,
     onBuild: async () => {
       await target.onBuild?.();
       await extend.onBuild?.();
-    }
-  }
+    },
+  };
 };
 
 export { node, cloudflare, deno, netlify, bun };
