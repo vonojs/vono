@@ -29,4 +29,4 @@ if (
 }
 
 export default server;
-export const prerenderHandler = server.fetch
+export const prerenderHandler = server.fetch;
