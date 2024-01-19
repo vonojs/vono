@@ -10,7 +10,7 @@ app.get("/__dev", (c) => {
   return c.json({
     routes: app.routes,
     env: process.env,
-  })
-})
+  });
+});
 
 export default app;
