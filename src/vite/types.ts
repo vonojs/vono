@@ -15,6 +15,10 @@ declare module "#vono/rpc" {
   const rpc: ReturnType<
     typeof import("hono/client").hc<import("./entry").AppType>
   >;
+  const createRPC: (
+    headers: Record<string, string>
+  ) => ReturnType<typeof import("hono/client").hc<import("./entry").AppType>>;
+  export { createRPC };
   export default rpc;
 }
 `.trim();
