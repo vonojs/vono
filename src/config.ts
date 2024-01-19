@@ -1,4 +1,4 @@
-import { Adapter, createAdapter } from "./adapters";
+import { Adapter } from "./adapters";
 import { Hono } from "hono";
 import { type VFS } from "./vfs";
 

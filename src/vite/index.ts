@@ -5,7 +5,7 @@ import { httpPlugin } from "./plugins/http";
 import { check } from "@gaiiaa/assert";
 import { prerender } from "../prerender";
 import * as pathe from "pathe";
-import nodeAdapter from "../adapters/node";
+import { nodeServer }  from "../adapters";
 import { Adapter } from "../adapters";
 import { join } from "path";
 import * as fs from "fs/promises";
@@ -19,7 +19,7 @@ import rpcPlugin from "./plugins/rpc";
 import { log } from "../logger";
 
 export default function vono(userConfig?: UserConfig): Array<Plugin> {
-  const adapter = (userConfig?.adapter ?? nodeAdapter()) as Adapter;
+  const adapter = (userConfig?.adapter ?? nodeServer()) as Adapter;
   let vono: Vono;
   return [
     httpPlugin(),
