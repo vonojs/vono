@@ -7,7 +7,8 @@ export default hc("/", {
   fetch: entry.request,
 });
 
-export const createRPC = (headers: Record<string, string>) => hc("/", {
-  fetch: entry.request,
-  headers,
-})
+export const createRPC = (headers: Record<string, string>) =>
+  hc("/", {
+    fetch: entry.request,
+    headers,
+  });
