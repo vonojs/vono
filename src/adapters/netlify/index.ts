@@ -1,5 +1,5 @@
 import { dirname, join } from "path";
-import { Adapter } from "../index";
+import { createAdapter } from "../index";
 import { nodeless } from "unenv";
 import { fileURLToPath } from "url";
 
@@ -9,7 +9,7 @@ export default (options: { edge?: boolean } = {}) => {
   const serverDir = options.edge
     ? "netlify/edge-functions"
     : "netlify/functions/entry";
-  return Adapter({
+  return createAdapter({
     name,
     runtime: join(dirname(fileURLToPath(import.meta.url)), runtime),
     outDir: "netlify/",

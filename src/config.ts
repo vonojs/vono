@@ -1,4 +1,4 @@
-import { Adapter } from "./adapters";
+import { Adapter, createAdapter } from "./adapters";
 import { Hono } from "hono";
 import { type VFS } from "./vfs";
 
@@ -14,16 +14,18 @@ export type Vono = {
     entry: string;
   };
   prerender: {
-    routes: Array<string>;
+    routes: Array<string> | (() => Array<string> | Promise<Array<string>>)
   };
   ssr: boolean;
+  onBuild?: (vono: Vono) => void | Promise<void>;
 };
 
 export type UserConfig = {
   adapter?: Adapter;
   prerender?: {
-    routes: Array<string>;
-  };
+    routes: Array<string> | (() => Array<string>);
+  },
+  onBuild?: (vono: Vono) => void | Promise<void>
 };
 
 export function createVono(
@@ -48,5 +50,6 @@ export function createVono(
       routes: userConfig?.prerender?.routes ?? [],
     },
     ssr: options.ssr,
+    onBuild: userConfig?.onBuild ?? (() => {}),
   };
 }

@@ -1,10 +1,10 @@
 import { dirname, join } from "path";
-import { Adapter } from "../index";
+import { createAdapter } from "../index";
 import { nodeless } from "unenv";
 import { fileURLToPath } from "url";
 
 export default () =>
-  Adapter({
+  createAdapter({
     name: "deno",
     runtime: join(dirname(fileURLToPath(import.meta.url)), "entry"),
     outDir: "dist/",

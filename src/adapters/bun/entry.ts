@@ -29,3 +29,4 @@ if (import.meta.main) {
 }
 
 export default exp;
+export const prerenderHandler = server.fetch

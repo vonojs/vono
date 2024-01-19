@@ -1,4 +1,4 @@
-import { Plugin, ViteDevServer } from "vite";
+import { Plugin } from "vite";
 import { createVono, UserConfig, Vono } from "../config";
 import { vfsPlugin } from "./plugins/vfs";
 import { httpPlugin } from "./plugins/http";
@@ -39,9 +39,9 @@ export default function vono(userConfig?: UserConfig): Array<Plugin> {
         },
         ssr: vite.build?.ssr
           ? {
-              noExternal: true,
-              external: adapter.env?.external,
-            }
+            noExternal: true,
+            external: adapter.env?.external,
+          }
           : undefined,
         build: {
           emptyOutDir: !vite.build?.ssr,
@@ -50,15 +50,15 @@ export default function vono(userConfig?: UserConfig): Array<Plugin> {
           ssrEmitAssets: false,
           rollupOptions: vite.build?.ssr
             ? {
-                output: {
-                  inlineDynamicImports: adapter.inlineDynamicImports,
-                  chunkFileNames: "chunks/[name]-[hash].js",
-                },
-                input: {
-                  [adapter.entryName ?? "index"]: adapter.runtime,
-                },
-                external: adapter.env?.external,
-              }
+              output: {
+                inlineDynamicImports: adapter.inlineDynamicImports,
+                chunkFileNames: "chunks/[name]-[hash].js",
+              },
+              input: {
+                [adapter.entryName ?? "index"]: adapter.runtime,
+              },
+              external: adapter.env?.external,
+            }
             : undefined,
         },
       }),
@@ -97,11 +97,13 @@ export default function vono(userConfig?: UserConfig): Array<Plugin> {
         /* lets write our entry and type to temporary files. */
         await fs.writeFile(
           "node_modules/.vono/entry.ts",
-          `import App from "${join(
-            vono.root,
-            vono.server.directory,
-            vono.server.entry,
-          )}"; export default App; export type AppType = typeof App;`,
+          `import App from "${
+            join(
+              vono.root,
+              vono.server.directory,
+              vono.server.entry,
+            )
+          }"; export default App; export type AppType = typeof App;`,
         );
 
         await writeTypes();
@@ -127,8 +129,16 @@ export default function vono(userConfig?: UserConfig): Array<Plugin> {
       /* This is where we run our post build stuff */
       writeBundle: async () => {
         if (!vono.ssr) return;
+
         if (check(Function, vono.adapter.onBuild)) await vono.adapter.onBuild();
-        if (vono.prerender.routes.length > 0) {
+
+        await vono.onBuild?.(vono);
+
+        const routes = check(Function, vono.prerender.routes)
+          ? await vono.prerender.routes()
+          : vono.prerender.routes ?? [];
+
+        if (routes.length > 0) {
           const _handler = await import(
             pathe.join(
               vono.root,
@@ -136,10 +146,10 @@ export default function vono(userConfig?: UserConfig): Array<Plugin> {
               vono.adapter.entryName + ".js",
             )
           ).then((m) => m.default);
-          const handler = _handler?.fetch ?? _handler;
+          const handler = _handler.prerenderHandler;
           await prerender({
             handler,
-            routes: vono.prerender.routes,
+            routes,
             outDir: vono.adapter.publicDir,
           });
         }

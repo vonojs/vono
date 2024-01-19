@@ -6,3 +6,4 @@ const server = new Hono();
 server.route("/", entry);
 
 export default server;
+export const prerenderHandler = server.fetch

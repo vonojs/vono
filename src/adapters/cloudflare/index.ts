@@ -1,4 +1,4 @@
-import { Adapter } from "../index";
+import { createAdapter } from "../index";
 import { fileURLToPath } from "url";
 import { basename, dirname, join } from "path";
 import * as fs from "fs/promises";
@@ -36,7 +36,7 @@ export default (
     name?: string;
   } = {},
 ) =>
-  Adapter({
+  createAdapter({
     name: "cloudflare",
     runtime: join(dirname(fileURLToPath(import.meta.url)), "entry"),
     outDir: "cloudflare/",

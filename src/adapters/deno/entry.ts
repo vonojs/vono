@@ -19,3 +19,4 @@ server.route("/", entry);
 Deno.serve(server.fetch);
 
 export default server;
+export const prerenderHandler = server.fetch
