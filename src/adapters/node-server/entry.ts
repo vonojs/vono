@@ -14,7 +14,7 @@ server.use(
   "*",
   serveStatic({
     root: "./public",
-  })
+  }),
 );
 
 server.route("/", entry);
