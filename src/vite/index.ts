@@ -5,7 +5,7 @@ import { httpPlugin } from "./plugins/http";
 import { check } from "@gaiiaa/assert";
 import { prerender } from "../prerender";
 import * as pathe from "pathe";
-import { nodeServer }  from "../adapters";
+import { nodeServer } from "../adapters";
 import { Adapter } from "../adapters";
 import { join } from "path";
 import * as fs from "fs/promises";
