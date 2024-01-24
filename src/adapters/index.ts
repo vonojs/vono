@@ -1,6 +1,7 @@
 import node from "./node";
 import nodeServer from "./node-server";
 import cloudflare from "./cloudflare";
+import cloudflarePages from "./cloudflare-pages";
 import deno from "./deno";
 import netlify from "./netlify";
 import bun from "./bun";
@@ -38,4 +39,4 @@ export const extendAdapter = (
   };
 };
 
-export { node, cloudflare, deno, netlify, bun, nodeServer };
+export { node, cloudflare, cloudflarePages, deno, netlify, bun, nodeServer };
