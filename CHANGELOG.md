@@ -1,5 +1,40 @@
 # Changelog
 
+## v0.0.9
+
+[compare changes](https://undefined/undefined/compare/v0.0.8...v0.0.9)
+
+### 🚀 Enhancements
+
+- Create node-server adapter (8afeb54)
+- Add custom RPC creation factory (3abdbec)
+- (partial) add dev endpoint (1d5f6cb)
+- Auto build server (dfba202)
+- Support cloudflare pages (7318737)
+
+### 🏡 Chore
+
+- Remove static hosting from node adapter (d9a0a81)
+- Clean up adaptors (e5a2529)
+- Remove registerServer (99233d1)
+- Lock fix (c385adf)
+- Apply automated fixes (4293675)
+- Apply automated fixes (c05247d)
+- Format (92bbdd8)
+- Add generated types for createRPC (da91c8e)
+- Apply automated fixes (bb667cc)
+- Format (9abee35)
+- Apply automated fixes (f124f86)
+- Use nodeServer adaptor as default (f8d722a)
+- Apply automated fixes (0b3884e)
+- Apply automated fixes (1c3b426)
+- Format (bd79e9c)
+
+### ❤️ Contributors
+
+- Benten <ben@benten.ca>
+- Nirjhor Nath <nirjhor.nath@gmail.com>
+
 ## v0.0.8
 
 [compare changes](https://undefined/undefined/compare/v0.0.7...v0.0.8)
