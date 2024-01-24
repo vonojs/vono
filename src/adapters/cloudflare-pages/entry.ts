@@ -5,9 +5,9 @@ import entry from "#vono/internal/server.entry";
 const server = new Hono();
 
 server.use("*", async (c, next) => {
-  if(c.req.method !== "GET") return await next();
+  if (c.req.method !== "GET") return await next();
   const a = await (c.env?.ASSETS as any).fetch(c.req.raw);
-  if(a.ok) return a;
+  if (a.ok) return a;
   return await next();
 });
 
