@@ -1,5 +1,17 @@
 # Changelog
 
+## v0.0.10
+
+[compare changes](https://undefined/undefined/compare/v0.0.9...v0.0.10)
+
+### 🩹 Fixes
+
+- Node-server import (d75aae2)
+
+### ❤️ Contributors
+
+- Benten <ben@benten.ca>
+
 ## v0.0.9
 
 [compare changes](https://undefined/undefined/compare/v0.0.8...v0.0.9)
