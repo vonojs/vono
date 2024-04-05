@@ -1,38 +1,30 @@
-<div align="center">
-<br />
+# React + TypeScript + Vite
 
-![Vono](.github/banner.jpg)
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-<h3>Vono</h3>
+Currently, two official plugins are available:
 
-#### Drop in Hono backend for Vite
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
-[![Npm package yearly downloads](https://badgen.net/npm/dy/express)](https://npmjs.com/package/express)
-[![GitHub stars](https://img.shields.io/github/stars/freeCodeCamp/freeCodeCamp.svg?style=social&label=Star&maxAge=2592000)](https://github.com/freeCodeCamp/freeCodeCamp)
-[![NuGet stable version](https://badgen.net/nuget/v/newtonsoft.json)](https://nuget.org/packages/newtonsoft.json)
+## Expanding the ESLint configuration
 
-*A Vite plugin for adding a hono backend to any client app. Deploy to Netlify, Cloudflare, Deno, and beyond.*
-</div>
+If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
 
-## Work In Progress
+- Configure the top-level `parserOptions` property like this:
 
-This is unreleased. Although feature complete, the adapters are probably not all working for all providers.
+```js
+export default {
+  // other rules...
+  parserOptions: {
+    ecmaVersion: 'latest',
+    sourceType: 'module',
+    project: ['./tsconfig.json', './tsconfig.node.json'],
+    tsconfigRootDir: __dirname,
+  },
+}
+```
 
-Create a hono app in `server/index` and export it as default. Vono will pick it up and build it as the server runtime.
-
-You can access Hono's RPC function with `import rpc from "#vono/rpc";`. On the server it directly calls the handler without an additional request. 
-
-You can access the build metadata via `import metadata from "#vono/metadata";`. This allows you to link to build output without any additional steps.
-
-Other plugins can import `useVFS` in order to access the internal Vono virtual file system, accessible at `#vono/vfs`.
-
-Other plugins can also use `registerServer` to attach a set of Hono handlers to Vono's server runtime. This allows plugins to define their own routes.
-
-Thats pretty much it. The point is that it's very minimal and fully extensible, a base to build your own framework off of with the full power of Hono.
-
-## License
-
-Made with 💛
-
-Published under [MIT License](./LICENSE).
-
+- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
+- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
+- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
