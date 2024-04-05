@@ -5,7 +5,6 @@
  *
  ***********************************************************/
 
-import { Hono } from "hono";
 import type {
   IncomingHttpHeaders,
   IncomingMessage,

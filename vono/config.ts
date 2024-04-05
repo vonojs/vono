@@ -4,6 +4,6 @@ export type Vono = {
 
 export const createConfig = (config: Partial<Vono> = {}): Vono => {
 	return {
-		serverEntry: config.serverEntry || "src/server/index.ts",
+		serverEntry: config.serverEntry || "src/server.entry",
 	}
 }
