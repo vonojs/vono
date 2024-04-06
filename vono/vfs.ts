@@ -17,7 +17,9 @@ export class VFS {
     serverContent?: SC;
     clientContent?: CC;
   }) {
-    this.store.set(vfile.path, vfile);
+    const path = vfile.path.startsWith("/") ? vfile.path : "/" + vfile.path;
+    vfile.path = path;
+    this.store.set(path, vfile);
     return vfile as {
       path: string;
       content: C;
@@ -26,12 +28,15 @@ export class VFS {
     } satisfies VFile;
   }
   remove(path: string) {
+    !path.startsWith("/") && (path = "/" + path);
     this.store.delete(path);
   }
   get(path: string) {
+    !path.startsWith("/") && (path = "/" + path);
     return this.store.get(path);
   }
   has(path: string) {
+    !path.startsWith("/") && (path = "/" + path);
     return this.store.has(path);
   }
 }

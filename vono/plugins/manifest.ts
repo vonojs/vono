@@ -1,6 +1,7 @@
 import { BuildOptions, Manifest, Plugin } from "vite";
 import * as fs from "fs/promises";
 import { useVFS } from "../vfs";
+import {join} from "node:path";
 
 function createDevManifest(
   rollupOptions: BuildOptions["rollupOptions"],
@@ -65,7 +66,7 @@ export default function manifest(config: {
                 ? config.manifest()
                 : config.manifest;
             return `export default ${JSON.stringify(
-              await getBuildManifest(path),
+              await getBuildManifest(join(vite.build.outDir, path)),
             )};`;
           } else {
             return `export default ${JSON.stringify(

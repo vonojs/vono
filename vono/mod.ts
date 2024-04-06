@@ -1,51 +1,79 @@
 import {createConfig, Vono} from "./config";
-import {type Plugin, createViteRuntime, ResolvedConfig} from "vite";
+import {ModuleNode, type Plugin, ResolvedConfig} from "vite";
 import vfsPlugin from "./plugins/vfs";
-import {VFS} from "./vfs";
+import {useVFS} from "./vfs";
 import {httpPlugin} from "./plugins/http";
 import {createRequest, handleNodeResponse} from "./tools/req-res";
 import { join } from "node:path"
-import {resolveExt} from "./tools/resolve";
-import {RequestContext} from "./ctx";
+import {resolveExt, slash, stripExt} from "./tools/resolve";
+import manifest from "./plugins/manifest";
 
-const vfs = new VFS()
 
 export default function vono(config: Partial<Vono> = {}): Plugin[] {
 	let devHandler: any;
 	let updateHandler: any;
 	const vono = createConfig(config);
-	let viteConfig: ResolvedConfig;
+	let viteConfig: ResolvedConfig
 
 	return [
 		httpPlugin(),
-		vfsPlugin({vfs}),
+		manifest({ manifest: join(vono.adaptor.assetDirectory, ".vite/manifest.json")}),
+		vfsPlugin({vfs: useVFS(), alias: "#vono"}),
 		{
 			name: "vono:main",
 			enforce: "pre",
-			config: (vite) => ({
-				appType: "custom",
-			}),
+			config: (vite) => {
+				const ssr = (content: any) => vite.build?.ssr ? content : undefined;
+				const root = vite.root || process.cwd();
+				return {
+					appType: "custom",
+					resolve: {
+						alias: ssr(vono.adaptor.alias),
+					},
+					ssr: ssr({
+						noExternal: true,
+						external: vono.adaptor.external,
+					}),
+					build: {
+						emptyOutDir: !ssr,
+						outDir: ssr(true) ? join(root, vono.adaptor.outputDirectory) : join(root, vono.adaptor.outputDirectory, vono.adaptor.assetDirectory),
+						manifest: !ssr(true),
+						ssrEmitAssets: false,
+						ssr: ssr(true),
+						rollupOptions: ssr({
+							input: {
+								server: vono.adaptor.productionRuntime,
+							},
+							output: {
+								inlineDynamicImports: vono.adaptor.inlineDynamicImports,
+							},
+							external: vono.adaptor.external,
+						})
+					}
+				}
+			},
 			configResolved: (vite) => {
 				viteConfig = vite;
+
+				useVFS().add({
+					path: "entry",
+					serverContent: () => `export {default} from "${slash(join(viteConfig.root, vono.serverEntry))}";`,
+				})
+
 			},
 			configureServer: (server) => {
 				return async () => {
-					const runtime = await createViteRuntime(server)
-					const ctx = await runtime.executeEntrypoint(join(viteConfig.root, "vono/ctx"))
 					if(!resolveExt(join(viteConfig.root, vono.serverEntry))) {
-						throw new Error(`Server entry not found: ${vono.serverEntry}`)
+						throw new Error(`Could not find server entry @ ${vono.serverEntry}. Please provide a path to a file that exports a default handler function with the signature: (request: Request) => Response | Promise<Response>`)
 					}
-					updateHandler = async () => devHandler = (await runtime.executeEntrypoint(
-						join(viteConfig.root, "src/server.entry.ts")
-					)).default;
+					updateHandler = async () => {
+						devHandler = (await server.ssrLoadModule(vono.adaptor.developmentRuntime)).default;
+					}
 					await updateHandler()
 					server.middlewares.use(async (nodeRequest, nodeResponse, next) => {
 						try {
 							const request = createRequest(nodeRequest, nodeResponse);
-							let response: any;
-							await ctx.RequestContext.run(request, async () => {
-								response = await devHandler(request);
-							});
+							const response = await devHandler(request);
 							return handleNodeResponse(response, nodeResponse);
 						} catch(e) {
 							console.error(e);
@@ -54,8 +82,53 @@ export default function vono(config: Partial<Vono> = {}): Plugin[] {
 					})
 				}
 			},
-			handleHotUpdate: (ctx) => {
-				updateHandler()
+			handleHotUpdate: async (ctx) => {
+				const containsEntry = (mod: ModuleNode): boolean => {
+					if(!mod.id) return false;
+					if(stripExt(mod.id) === slash(join(viteConfig.root, vono.serverEntry))) {
+						return true;
+					}
+					for(const dep of mod.importers){
+						if(containsEntry(dep)) return true;
+					}
+					return false;
+				}
+				if(ctx.modules.some(containsEntry)) {
+					await updateHandler()
+					ctx.server.hot.send({type: "full-reload"})
+				}
+			},
+
+			writeBundle: {
+				sequential: true,
+				order: "post",
+				handler: async () => {
+					if (!viteConfig.build?.ssr) {
+						const { spawn } = await import("child_process");
+						await vono.adaptor.buildStart?.()
+						const child = spawn("vite", ["build", "--ssr"], { shell: true});
+						let complete: (() => void);
+						const p = new Promise<void>((resolve) => {
+							complete = resolve;
+						});
+						child.on("disconnect",  () => {
+							complete?.();
+						});
+						child.on("exit",  () => {
+							complete?.();
+						});
+						child.on("error", async (err) => {
+							await vono.adaptor.buildError?.(err);
+							throw new Error(`Failed to build server: ${err}`);
+						});
+						child.stderr.pipe(process.stdout);
+						child.stdout.pipe(process.stdout);
+						await p;
+						await vono.adaptor.prerender?.()
+						await vono.adaptor.buildEnd?.();
+						return;
+					}
+				},
 			},
 		}
 	]
