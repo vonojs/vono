@@ -7,6 +7,8 @@ import {createRequest, handleNodeResponse} from "./tools/req-res";
 import { join } from "node:path"
 import {resolveExt, slash, stripExt} from "./tools/resolve";
 import manifest from "./plugins/manifest";
+import shell from "./plugins/shell";
+import * as fs from "fs/promises";
 
 
 export default function vono(config: Partial<Vono> = {}): Plugin[] {
@@ -17,13 +19,14 @@ export default function vono(config: Partial<Vono> = {}): Plugin[] {
 
 	return [
 		httpPlugin(),
-		manifest({ manifest: join(vono.adaptor.assetDirectory, ".vite/manifest.json")}),
+		manifest({ manifest: "client/.vite/manifest.json"}),
+		shell(),
 		vfsPlugin({vfs: useVFS(), alias: "#vono"}),
 		{
 			name: "vono:main",
 			enforce: "pre",
 			config: (vite) => {
-				const ssr = (content: any) => vite.build?.ssr ? content : undefined;
+				const ssr = <T>(content: T) => vite.build?.ssr ? content : undefined;
 				const root = vite.root || process.cwd();
 				return {
 					appType: "custom",
@@ -36,7 +39,7 @@ export default function vono(config: Partial<Vono> = {}): Plugin[] {
 					}),
 					build: {
 						emptyOutDir: !ssr,
-						outDir: ssr(true) ? join(root, vono.adaptor.outputDirectory) : join(root, vono.adaptor.outputDirectory, vono.adaptor.assetDirectory),
+						outDir: ssr(true) ? join(root, vono.adaptor.outputDirectory) : join(root, vono.adaptor.outputDirectory, "client"),
 						manifest: !ssr(true),
 						ssrEmitAssets: false,
 						ssr: ssr(true),
@@ -47,17 +50,34 @@ export default function vono(config: Partial<Vono> = {}): Plugin[] {
 							output: {
 								inlineDynamicImports: vono.adaptor.inlineDynamicImports,
 							},
-							external: vono.adaptor.external,
+							external:  vono.adaptor.external,
 						})
 					}
 				}
 			},
-			configResolved: (vite) => {
+			configResolved: async (vite) => {
 				viteConfig = vite;
 
 				useVFS().add({
 					path: "entry",
 					serverContent: () => `export {default} from "${slash(join(viteConfig.root, vono.serverEntry))}";`,
+				})
+
+				let buildctx: any;
+				if(viteConfig.build?.ssr) {
+					buildctx = {
+						...(await fs.readFile(join(vono.adaptor.outputDirectory, "vono.json"), "utf-8").then((content) => JSON.parse(content))),
+					}
+				} else {
+					// not needed at the moment
+					buildctx = {}
+				}
+
+				useVFS().add({
+					path: "buildctx",
+					serverContent: () => `export default ${
+						JSON.stringify(buildctx, null, 2)
+					}`,
 				})
 
 			},
@@ -104,6 +124,9 @@ export default function vono(config: Partial<Vono> = {}): Plugin[] {
 				order: "post",
 				handler: async () => {
 					if (!viteConfig.build?.ssr) {
+						await fs.writeFile(join(vono.adaptor.outputDirectory, "vono.json"), JSON.stringify({
+							clientOutputDirectory: viteConfig.build?.outDir,
+						}))
 						const { spawn } = await import("child_process");
 						await vono.adaptor.buildStart?.()
 						const child = spawn("vite", ["build", "--ssr"], { shell: true});
@@ -124,6 +147,11 @@ export default function vono(config: Partial<Vono> = {}): Plugin[] {
 						child.stderr.pipe(process.stdout);
 						child.stdout.pipe(process.stdout);
 						await p;
+						if(!vono.includeIndexHtml){
+							try {
+								await fs.rm(join(viteConfig.build.outDir, "index.html"))
+							} catch {}
+						}
 						await vono.adaptor.prerender?.()
 						await vono.adaptor.buildEnd?.();
 						return;

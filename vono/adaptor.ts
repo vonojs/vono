@@ -5,7 +5,6 @@ export abstract class Adaptor {
 	abstract developmentRuntime: string;
 	// OUTPUT ----------------------------------------------------------------
 	outputDirectory = "dist";
-	assetDirectory = "client"
 	inlineDynamicImports = false;
 	// ENV ---------------------------------------------------------------------
 	alias: {[p: string]: string} = {}

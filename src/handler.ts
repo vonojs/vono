@@ -1,9 +1,13 @@
 import {RequestContext} from "../vono/ctx.ts";
+import shell from "#vono/shell"
 
 async function handler(_request: Request) {
-	await new Promise((resolve) => setTimeout(resolve, 1000));
 	const req = RequestContext.getStore();
-	return new Response(`Sup, ${req!.url}`)
+	return new Response(shell.replace("%vono:ssr%", String(req?.url)), {
+		headers: {
+			"content-type": "text/html"
+		},
+	})
 }
 
 export default handler;
