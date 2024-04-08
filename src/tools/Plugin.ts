@@ -1,4 +1,4 @@
-import type {UserConfig, ResolvedConfig, HmrContext, Plugin} from "vite";
+import type { UserConfig, ResolvedConfig, HmrContext, Plugin } from "vite";
 
 export abstract class VitePlugin {
 	abstract name: string;
@@ -9,16 +9,15 @@ export abstract class VitePlugin {
 	init?: (vite: ResolvedConfig) => void;
 	handleHotUpdate?: (ctx: HmrContext) => void;
 
-	register(){
+	register() {
 		return {
 			name: this.name,
 			config: this.config,
 			configResolved: (vite: ResolvedConfig) => {
 				this.vite = vite;
-				if(this.init) this.init(vite);
+				if (this.init) this.init(vite);
 			},
 			handleHotUpdate: this.handleHotUpdate,
-
 		} satisfies Plugin;
 	}
 }

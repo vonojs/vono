@@ -1,8 +1,7 @@
-import {Plugin, ViteDevServer} from "vite";
+import { Plugin, ViteDevServer } from "vite";
 import * as fs from "fs/promises";
 import { useVFS } from "../vfs";
-import {join} from "node:path";
-
+import { join } from "node:path";
 
 export default function shell(): Plugin {
 	const vfs = useVFS();
@@ -19,15 +18,20 @@ export default function shell(): Plugin {
 					let content = null;
 					if (isBuild) {
 						try {
-							content = JSON.stringify(await fs.readFile(join(dist, "client", "index.html"), "utf-8"))
+							content = JSON.stringify(
+								await fs.readFile(join(dist, "client", "index.html"), "utf-8"),
+							);
 						} catch {
 							console.warn("Attempted to import non-existent shell html file.");
 						}
 						return `export default ${content};`;
 					} else {
 						try {
-							content = await server!.transformIndexHtml("/", await fs.readFile(join(vite.root, "index.html"), "utf-8"))
-						} catch(e) {
+							content = await server!.transformIndexHtml(
+								"/",
+								await fs.readFile(join(vite.root, "index.html"), "utf-8"),
+							);
+						} catch (e) {
 							console.warn("Attempted to import non-existent shell html file.");
 						}
 						return `export default ${JSON.stringify(content)};`;
@@ -37,6 +41,6 @@ export default function shell(): Plugin {
 		},
 		configureServer: (_server) => {
 			server = _server;
-		}
+		},
 	};
 }

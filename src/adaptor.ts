@@ -7,11 +7,14 @@ export abstract class Adaptor {
 	outputDirectory = "dist";
 	inlineDynamicImports = false;
 	// ENV ---------------------------------------------------------------------
-	alias: {[p: string]: string} = {}
-	inject: {[p: string]: string | string[]} = {}
-	polyfill: string[] = []
-	external: string[] = []
-	resolve: {conditions?: string[] | undefined, externalConditions?: string[] | undefined} = {}
+	alias: { [p: string]: string } = {};
+	inject: { [p: string]: string | string[] } = {};
+	polyfill: string[] = [];
+	external: string[] = [];
+	resolve: {
+		conditions?: string[] | undefined;
+		externalConditions?: string[] | undefined;
+	} = {};
 	// ACTIONS ----------------------------------------------------------------
 	buildStart?: () => void | Promise<void>;
 	buildEnd?: () => void | Promise<void>;

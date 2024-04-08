@@ -1,16 +1,19 @@
 import { existsSync } from "fs";
-import {fileURLToPath} from "node:url";
-import {dirname} from "node:path";
+import { fileURLToPath } from "node:url";
+import { dirname } from "node:path";
 
-export function resolveExt(path: string, ext: string[] = [".ts", ".js", ".tsx", ".jsx"]): string | null {
+export function resolveExt(
+	path: string,
+	ext: string[] = [".ts", ".js", ".tsx", ".jsx"],
+): string | null {
 	for (const e of ext) {
 		if (existsSync(path + e)) return path + e;
 	}
 	return null;
 }
 
-export function resolveModuleDirectory(path: string){
-	return dirname(fileURLToPath(path))
+export function resolveModuleDirectory(path: string) {
+	return dirname(fileURLToPath(path));
 }
 
 export function slash(path: string): string {

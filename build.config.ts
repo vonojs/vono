@@ -7,7 +7,7 @@ export default defineBuildConfig({
 			input: "./src",
 			outDir: "./build",
 			declaration: true,
-			ext: "js"
+			ext: "js",
 		},
 	],
 	declaration: true,

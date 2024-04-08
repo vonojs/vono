@@ -1,39 +1,41 @@
 {
-  "name": "@vonojs/vonojs",
-  "version": "next",
-  "publishConfig": {
-	"access": "public"
-  },
-  "type": "module",
-  "scripts": {
-	"dev": "vite",
-	"build": "unbuild",
-	"play": "cd playground && pnpm run dev"
-  },
-  "exports": {
-	".": {
-	  "types": "./build/mod.d.ts",
-	  "import": "./build/mod.js"
+	"name": "@vonojs/vonojs",
+	"version": "next",
+	"publishConfig": {
+		"access": "public"
 	},
-	"./adaptor-node": {
-	  "types": "./build/adaptors/node/index.d.ts",
-	  "import": "./build/adaptors/node/index.js"
+	"type": "module",
+	"scripts": {
+		"dev": "vite",
+		"build": "unbuild",
+		"play": "cd playground && pnpm run dev",
+		"lint": "biome format . --write"
+	},
+	"exports": {
+		".": {
+			"types": "./build/mod.d.ts",
+			"import": "./build/mod.js"
+		},
+		"./adaptor-node": {
+			"types": "./build/adaptors/node/index.d.ts",
+			"import": "./build/adaptors/node/index.js"
+		}
+	},
+	"dependencies": {
+		"@whatwg-node/server": "^0.9.32",
+		"node-html-parser": "^6.1.13",
+		"react": "^18.2.0",
+		"react-dom": "^18.2.0",
+		"set-cookie-parser": "^2.6.0",
+		"sirv": "^2.0.4",
+		"unenv": "^1.9.0"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "1.6.4",
+		"@types/node": "^20.12.4",
+		"mkdist": "^1.4.0",
+		"typescript": "^5.2.2",
+		"unbuild": "^2.0.0",
+		"vite": "^5.2.0"
 	}
-  },
-  "dependencies": {
-	"@whatwg-node/server": "^0.9.32",
-	"node-html-parser": "^6.1.13",
-	"react": "^18.2.0",
-	"react-dom": "^18.2.0",
-	"set-cookie-parser": "^2.6.0",
-	"sirv": "^2.0.4",
-	"unenv": "^1.9.0"
-  },
-  "devDependencies": {
-	"@types/node": "^20.12.4",
-	"mkdist": "^1.4.0",
-	"typescript": "^5.2.2",
-	"unbuild": "^2.0.0",
-	"vite": "^5.2.0"
-  }
 }
