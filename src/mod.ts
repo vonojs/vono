@@ -10,6 +10,8 @@ import manifest from "./plugins/manifest";
 import shell from "./plugins/shell";
 import * as fs from "fs/promises";
 
+export {useVFS} from "./vfs";
+export {getModuleManifest} from "./assets"
 
 export default function vono(config: Partial<Vono> = {}): Plugin[] {
 	let devHandler: any;
@@ -108,6 +110,7 @@ export default function vono(config: Partial<Vono> = {}): Plugin[] {
 					if(stripExt(mod.id) === slash(join(viteConfig.root, vono.serverEntry))) {
 						return true;
 					}
+					// @ts-ignore
 					for(const dep of mod.importers){
 						if(containsEntry(dep)) return true;
 					}

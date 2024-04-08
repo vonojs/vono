@@ -1,6 +1,6 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react-swc'
-import vono from "./vono/mod";
+import vono from "../src/mod";
 
 export default defineConfig({
   plugins: [vono(), react()],
