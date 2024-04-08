@@ -118,7 +118,6 @@ export default function vono(config: Partial<Vono> = {}): Plugin[] {
 					ctx.server.hot.send({type: "full-reload"})
 				}
 			},
-
 			writeBundle: {
 				sequential: true,
 				order: "post",

@@ -39,7 +39,10 @@ async function main() {
 				})
 			})
 		})
-		httpServer.listen(3000)
+		const port = process.argv[2] ?? 8000
+		httpServer.listen(port, () => {
+			console.log(`Server listening on http://localhost:${port}`)
+		})
 	}
 	return handler
 }

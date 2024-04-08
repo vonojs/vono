@@ -19,6 +19,7 @@
     "h3": "^1.11.1",
     "hono": "^4.2.2",
     "itty-router": "^5.0.9",
+    "node-html-parser": "^6.1.13",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "set-cookie-parser": "^2.6.0",

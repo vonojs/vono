@@ -17,7 +17,7 @@ export class VFS {
     serverContent?: SC;
     clientContent?: CC;
   }) {
-    const path = vfile.path.startsWith("/") ? vfile.path : "/" + vfile.path;
+    let path = vfile.path.startsWith("/") ? vfile.path : "/" + vfile.path;
     vfile.path = path;
     this.store.set(path, vfile);
     return vfile as {
@@ -41,7 +41,7 @@ export class VFS {
   }
 }
 
-type ContentFn = (path: string) => string | Promise<string>;
+type ContentFn = (params: Record<string, string[]>) => string | Promise<string>;
 
 export type VFile = {
   path: string;

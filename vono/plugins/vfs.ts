@@ -24,12 +24,18 @@ export default function vfsPlugin(options: { vfs?: VFS, alias?: string } = {}): 
     },
     async load(id, ctx) {
       if (id.startsWith("\0" + virtualModuleId)) {
-        const path = id.replace("\0" + virtualModuleId, "");
+        let path = id.replace("\0" + virtualModuleId, "");
+        const url = new URL(path, "http://localhost")
+        const params: Record<string, string[]> = {}
+        for(const [key, value] of url.searchParams.entries()){
+            params[key] = value.split(",")
+        }
+        path = url.pathname;
         const file = vfs.get(path);
         if (!file) return null;
-        const content = ctx?.ssr ? file.serverContent : file.clientContent;
-        const c = await (content ?? file.content)?.(path);
-        return c;
+        const stringOrFn = ctx?.ssr ? file.serverContent : file.clientContent;
+        const content = await (stringOrFn ?? file.content)?.(params);
+        return content;
       }
     },
     handleHotUpdate(ctx) {
