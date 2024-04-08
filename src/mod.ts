@@ -12,6 +12,7 @@ import * as fs from "fs/promises";
 
 export { useVFS } from "./vfs";
 export { getModuleManifest } from "./assets";
+export { EnvironmentContext, RequestContext } from "./ctx";
 
 export default function vono(config: Partial<Vono> = {}): Plugin[] {
 	let devHandler: any;
