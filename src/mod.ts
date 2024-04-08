@@ -118,7 +118,9 @@ export default function vono(config: Partial<Vono> = {}): Plugin[] {
 				};
 			},
 			configurePreviewServer: () => {
-				throw new Error("Preview server is not supported in Vono. Please replace this command with `node dist/server` if using the default Node adaptor.");
+				throw new Error(
+					"Preview server is not supported in Vono. Please replace this command with `node dist/server` if using the default Node adaptor.",
+				);
 			},
 			handleHotUpdate: async (ctx) => {
 				const containsEntry = (mod: ModuleNode): boolean => {
