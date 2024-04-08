@@ -11,7 +11,7 @@
 		"build": "unbuild",
 		"play": "cd playground && pnpm run dev",
 		"lint": "biome format . --write",
-	  "publish": "pnpm build && npm publish"
+	  "pub": "pnpm build && npm publish"
 	},
 	"exports": {
 		".": {
