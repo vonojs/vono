@@ -1,8 +1,9 @@
 {
 	"name": "@vonojs/vonojs",
-	"version": "next",
+	"version": "1.0.0-alpha-1",
 	"publishConfig": {
-		"access": "public"
+	  "access": "public",
+	  "tag": "next"
 	},
 	"type": "module",
 	"scripts": {
