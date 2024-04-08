@@ -67,7 +67,9 @@ export default function vono(config: Partial<Vono> = {}): Plugin[] {
 				useVFS().add({
 					path: "entry",
 					serverContent: () =>
-						`export {default, $startup} from '${slash(join(viteConfig.root, vono.serverEntry))}';`,
+						`export {default, $startup} from '${slash(
+							join(viteConfig.root, vono.serverEntry),
+						)}';`,
 				});
 
 				let buildctx: any;

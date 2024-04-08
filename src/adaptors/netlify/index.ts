@@ -6,15 +6,15 @@ const dir = resolveModuleDirectory(import.meta.url);
 
 export default class Netlify extends Adaptor {
 	name = "netlify";
-	outputDirectory= "dist/netlify/functions"
+	outputDirectory = "dist/netlify/functions";
 
-	edge: boolean
+	edge: boolean;
 
-	constructor(config: {edge?: boolean} = {}) {
-		super()
+	constructor(config: { edge?: boolean } = {}) {
+		super();
 
-		this.edge = config.edge ?? false
-		if(this.edge) {
+		this.edge = config.edge ?? false;
+		if (this.edge) {
 			this.productionRuntime = join(dir, "runtime.edge.prod");
 		}
 	}

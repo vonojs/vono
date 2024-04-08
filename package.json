@@ -1,6 +1,6 @@
 {
 	"name": "@vonojs/vono",
-	"version": "1.0.0-alpha-3",
+	"version": "1.0.0-alpha-4",
 	"publishConfig": {
 		"access": "public",
 		"tag": "next"
@@ -21,6 +21,10 @@
 		"./adaptor-node": {
 			"types": "./build/adaptors/node/index.d.ts",
 			"import": "./build/adaptors/node/index.js"
+		},
+		"./adaptor-cloudflare": {
+			"types": "./build/adaptors/cloudflare/index.d.ts",
+			"import": "./build/adaptors/cloudflare/index.js"
 		}
 	},
 	"dependencies": {

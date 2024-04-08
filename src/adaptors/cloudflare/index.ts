@@ -24,12 +24,11 @@ export default class Cloudflare extends Adaptor {
 	name = "cloudflare";
 	entryName = "_worker";
 
-
 	developmentRuntime = join(dir, "runtime.dev");
 	productionRuntime = join(dir, "runtime.prod");
 
 	inlineDynamicImports = true;
-	external = [...cloudflareNodeCompatModules.map((p) => `node:${p}`)]
+	external = [...cloudflareNodeCompatModules.map((p) => `node:${p}`)];
 	alias = {
 		...Object.fromEntries(
 			cloudflareNodeCompatModules.map((p) => [p, `node:${p}`]),
@@ -40,7 +39,7 @@ export default class Cloudflare extends Adaptor {
 	};
 
 	buildEnd = async () => {
-		await fs.copyFile("dist/_worker.js", "dist/client/_worker.js")
-		await fs.rm("dist/_worker.js")
+		await fs.copyFile("dist/_worker.js", "dist/client/_worker.js");
+		await fs.rm("dist/_worker.js");
 	};
 }

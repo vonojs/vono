@@ -5,7 +5,7 @@ import shell from "#vono/shell";
 export const $startup = async () => {
 	console.log("Manifest:", manifest);
 	console.log("Environment Context:", EnvironmentContext.getStore());
-}
+};
 
 export default async function handler(_request: Request) {
 	const req = RequestContext.getStore();
