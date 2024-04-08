@@ -9,7 +9,8 @@
 		"dev": "vite",
 		"build": "unbuild",
 		"play": "cd playground && pnpm run dev",
-		"lint": "biome format . --write"
+		"lint": "biome format . --write",
+	  "publish": "pnpm build && npm publish"
 	},
 	"exports": {
 		".": {
