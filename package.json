@@ -2,8 +2,8 @@
 	"name": "@vonojs/vono",
 	"version": "1.0.0-alpha-2",
 	"publishConfig": {
-	  "access": "public",
-	  "tag": "next"
+		"access": "public",
+		"tag": "next"
 	},
 	"type": "module",
 	"scripts": {
@@ -12,7 +12,7 @@
 		"play": "cd playground && pnpm run dev",
 		"lint": "biome format . --write"
 	},
-  	"files": ["build"],
+	"files": ["build"],
 	"exports": {
 		".": {
 			"types": "./build/mod.d.ts",
