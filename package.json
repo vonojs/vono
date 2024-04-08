@@ -1,6 +1,6 @@
 {
-	"name": "@vonojs/vonojs",
-	"version": "1.0.0-alpha-1",
+	"name": "@vonojs/vono",
+	"version": "1.0.0-alpha-2",
 	"publishConfig": {
 	  "access": "public",
 	  "tag": "next"
@@ -10,9 +10,9 @@
 		"dev": "vite",
 		"build": "unbuild",
 		"play": "cd playground && pnpm run dev",
-		"lint": "biome format . --write",
-	  "pub": "pnpm build && npm publish"
+		"lint": "biome format . --write"
 	},
+  	"files": ["build"],
 	"exports": {
 		".": {
 			"types": "./build/mod.d.ts",
