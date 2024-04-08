@@ -48,9 +48,10 @@ export default function vono(config: Partial<Vono> = {}): Plugin[] {
 						manifest: !ssr(true),
 						ssrEmitAssets: false,
 						ssr: ssr(true),
+						inlineDynamicImports: vono.adaptor.inlineDynamicImports,
 						rollupOptions: ssr({
 							input: {
-								server: vono.adaptor.productionRuntime,
+								[vono.adaptor.entryName]: vono.adaptor.productionRuntime,
 							},
 							output: {
 								inlineDynamicImports: vono.adaptor.inlineDynamicImports,
@@ -66,9 +67,7 @@ export default function vono(config: Partial<Vono> = {}): Plugin[] {
 				useVFS().add({
 					path: "entry",
 					serverContent: () =>
-						`export {default} from "${slash(
-							join(viteConfig.root, vono.serverEntry),
-						)}";`,
+						`export {default, $startup} from '${slash(join(viteConfig.root, vono.serverEntry))}';`,
 				});
 
 				let buildctx: any;
