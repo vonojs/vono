@@ -39,7 +39,7 @@ export default class Cloudflare extends Adaptor {
 	};
 
 	buildEnd = async () => {
-		await fs.copyFile("dist/_worker.js", "dist/client/_worker.js");
-		await fs.rm("dist/_worker.js");
+		await fs.cp("dist/client", "dist", { recursive: true });
+		await fs.rm("dist/client", { recursive: true });
 	};
 }

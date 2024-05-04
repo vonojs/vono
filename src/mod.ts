@@ -48,13 +48,14 @@ export default function vono(config: Partial<Vono> = {}): Plugin[] {
 						manifest: !ssr(true),
 						ssrEmitAssets: false,
 						ssr: ssr(true),
-						inlineDynamicImports: vono.adaptor.inlineDynamicImports,
+						inlineDynamicImports: ssr(vono.adaptor.inlineDynamicImports),
 						rollupOptions: ssr({
 							input: {
 								[vono.adaptor.entryName]: vono.adaptor.productionRuntime,
 							},
 							output: {
 								inlineDynamicImports: vono.adaptor.inlineDynamicImports,
+								chunkFileNames: "server/[hash].js",
 							},
 							external: vono.adaptor.external,
 						}),
