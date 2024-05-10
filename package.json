@@ -1,9 +1,8 @@
 {
   "name": "@vonojs/vono",
-  "version": "1.0.0-alpha-6",
+  "version": "0.1.0",
   "publishConfig": {
-	"access": "public",
-	"tag": "next"
+	"access": "public"
   },
   "type": "module",
   "scripts": {
