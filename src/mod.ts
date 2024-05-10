@@ -1,5 +1,5 @@
 import { createConfig, Vono } from "./config";
-import { ModuleNode, type Plugin, ResolvedConfig } from "vite";
+import {ModuleNode, type Plugin, ResolvedConfig} from "vite";
 import vfsPlugin from "./plugins/vfs";
 import { useVFS } from "./vfs";
 import { httpPlugin } from "./plugins/http";
@@ -11,8 +11,6 @@ import shell from "./plugins/shell";
 import * as fs from "fs/promises";
 
 export { useVFS } from "./vfs";
-export { getModuleManifest } from "./assets";
-export { EnvironmentContext, RequestContext } from "./ctx";
 
 export default function vono(config: Partial<Vono> = {}): Plugin[] {
 	let devHandler: any;
@@ -29,8 +27,9 @@ export default function vono(config: Partial<Vono> = {}): Plugin[] {
 			name: "vono:main",
 			enforce: "pre",
 			config: (vite) => {
-				const ssr = <T>(content: T) => (vite.build?.ssr ? content : undefined);
+				const ssr = <T, U>(ssr: T, client?: U): U | T | undefined => (vite.build?.ssr ? ssr : client);
 				const root = vite.root || process.cwd();
+
 				return {
 					appType: "custom",
 					resolve: {
@@ -41,13 +40,14 @@ export default function vono(config: Partial<Vono> = {}): Plugin[] {
 						external: vono.adaptor.external,
 					}),
 					build: {
-						emptyOutDir: !ssr,
-						outDir: ssr(true)
-							? join(root, vono.adaptor.outputDirectory)
-							: join(root, vono.adaptor.outputDirectory, "client"),
-						manifest: !ssr(true),
+						emptyOutDir: false,
+						outDir: ssr(
+							join(root, vono.adaptor.outputDirectory),
+							join(root, vono.adaptor.outputDirectory, "client")
+						),
+						manifest: ssr(false, true),
 						ssrEmitAssets: false,
-						ssr: ssr(true),
+						ssr: ssr(true, false),
 						inlineDynamicImports: ssr(vono.adaptor.inlineDynamicImports),
 						rollupOptions: ssr({
 							input: {
@@ -58,7 +58,7 @@ export default function vono(config: Partial<Vono> = {}): Plugin[] {
 								chunkFileNames: "server/[hash].js",
 							},
 							external: vono.adaptor.external,
-						}),
+						}, { input: resolveExt(vono.clientEntry) ?? undefined }),
 					},
 				};
 			},
@@ -68,7 +68,7 @@ export default function vono(config: Partial<Vono> = {}): Plugin[] {
 				useVFS().add({
 					path: "entry",
 					serverContent: () =>
-						`export {default, $startup} from '${slash(
+						`export {default} from '${slash(
 							join(viteConfig.root, vono.serverEntry),
 						)}';`,
 				});
@@ -93,6 +93,18 @@ export default function vono(config: Partial<Vono> = {}): Plugin[] {
 					serverContent: () =>
 						`export default ${JSON.stringify(buildctx, null, 2)}`,
 				});
+
+				useVFS().add({
+					path: "assets",
+					serverContent: () =>
+						`export default async function (path){ path.startsWith("/") && (path = path.slice(1)); if (import.meta.env.DEV) { const res = await fetch(\`http://localhost:5173/__fetch_asset?mod=\${path}\`); if (!res.ok) {throw new Error("Failed to fetch assets")}; return await res.json();}; const manifest = (await import("#vono/manifest")).default; return manifest[path]}`,
+				})
+
+				useVFS().add({
+					path: "/request",
+					serverContent: () => `import RequestContext from "@vonojs/vono"; export default () => RequestContext.getStore()`,
+					clientContent: () => `export default () => null`,
+				})
 			},
 			configureServer: (server) => {
 				return async () => {

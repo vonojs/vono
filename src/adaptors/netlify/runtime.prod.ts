@@ -1,25 +1,7 @@
-import { EnvironmentContext, RequestContext } from "../../ctx";
+// @ts-ignore - alias
+import entry from "#vono/entry";
 
-async function createHandler() {
-	// @ts-ignore - alias
-	const { default: entry, $startup } = (await import("#vono/entry")) as {
-		default: (request: Request) => Promise<Response>;
-		$startup: () => Promise<void>;
-	};
-
-	return EnvironmentContext.run({}, async () => {
-		await $startup();
-		return (request: Request) =>
-			RequestContext.run(request, () => entry(request));
-	});
-}
-
-const handler = EnvironmentContext.run({}, createHandler);
-
-export default async (request: Request) => {
-	const h = await handler;
-	return h(request);
-};
+export default entry;
 
 export const config = {
 	path: "/*",

@@ -1,7 +1,3 @@
-// @ts-ignore - alias
-import { RequestContext, EnvironmentContext } from "../../ctx";
-
-let hasStarted = false;
 export default {
 	fetch: async (request: Request, env: any) => {
 		if (request.method === "GET") {
@@ -16,17 +12,8 @@ export default {
 		}
 
 		// @ts-ignore - alias
-		const { default: handler, $startup } = await import("#vono/entry");
+		const { default: handler } = await import("#vono/entry");
 
-		await EnvironmentContext.run({ env }, async () => {
-			if (!hasStarted) {
-				hasStarted = true;
-				return $startup?.();
-			}
-		});
-
-		return await EnvironmentContext.run({ env }, async () => {
-			return RequestContext.run(request, async () => handler(request));
-		});
+		return handler(request);
 	},
 };

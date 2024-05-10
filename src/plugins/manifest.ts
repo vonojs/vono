@@ -131,7 +131,10 @@ export default function manifest(config: {
 				}
 
 				const url = new URL(req.originalUrl, "http://localhost");
-				const mod = url.searchParams.get("mod");
+				let mod = url.searchParams.get("mod");
+				if(mod?.startsWith('/')){
+					mod = mod.slice(1);
+				}
 
 				if (!mod) {
 					res.writeHead(400);

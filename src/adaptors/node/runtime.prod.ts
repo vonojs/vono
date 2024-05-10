@@ -1,26 +1,11 @@
 import { createServer, IncomingMessage, ServerResponse } from "node:http";
 import { fileURLToPath } from "node:url";
-import { EnvironmentContext, RequestContext } from "../../ctx";
 import { createRequest, handleNodeResponse } from "../../tools/req-res";
 import { join } from "node:path";
 // @ts-ignore - alias
 import buildctx from "#vono/buildctx";
-
-async function createHandler() {
-	// @ts-ignore - alias
-	const { default: entry, $startup } = (await import("#vono/entry")) as {
-		default: (request: Request) => Promise<Response>;
-		$startup: () => Promise<void>;
-	};
-
-	return EnvironmentContext.run({}, async () => {
-		await $startup();
-		return (request: Request) =>
-			RequestContext.run(request, () => entry(request));
-	});
-}
-
-const handler = EnvironmentContext.run({}, createHandler);
+// @ts-ignore - alias
+import handler from "#vono/entry"
 
 async function main() {
 	const sirv = (await import("sirv")).default;
@@ -37,12 +22,10 @@ async function main() {
 		dev: false,
 	});
 
-	const _handler = await handler;
-
 	const httpServer = createServer((req, res) => {
 		assetHandler(req, res, () => {
 			publicHandler(req, res, () => {
-				_handler(createRequest(req, res)).then((response) =>
+				handler(createRequest(req, res)).then((response: Response) =>
 					handleNodeResponse(response, res),
 				);
 			});
@@ -66,10 +49,10 @@ if (
 	});
 }
 
-export const middleware = async (req: IncomingMessage, res: ServerResponse) => {
-	return handler.then((h) => h(createRequest(req, res)));
+export const createMiddleware = async () => {
+	return (req: IncomingMessage, res: ServerResponse) => handler(createRequest(req, res));
 };
 
-export const webMiddleware = async (request: Request) => {
-	return handler.then((h) => h(request));
+export const createWebMiddleware = async () => {
+	return (request: Request) => handler(request);
 };
