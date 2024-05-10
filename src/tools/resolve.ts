@@ -7,7 +7,7 @@ export function resolveExt(
 	ext: string[] = [".ts", ".js", ".tsx", ".jsx"],
 ): string | null {
 	if (!path) return null;
-	if(ext.some(e => path.endsWith(e))) return path;
+	if (ext.some((e) => path.endsWith(e))) return path;
 	for (const e of ext) {
 		if (existsSync(path + e)) return path + e;
 	}

@@ -9,6 +9,8 @@ declare module "#vono/manifest" {
 }
 
 declare module "#vono/assets" {
-	const getModuleManifest: (path: string) => Promise<import("vite").ManifestChunk | undefined>;
+	const getModuleManifest: (
+		path: string,
+	) => Promise<import("vite").ManifestChunk | undefined>;
 	export default getModuleManifest;
 }

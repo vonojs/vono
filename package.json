@@ -1,55 +1,53 @@
 {
-  "name": "@vonojs/vono",
-  "version": "0.1.0",
-  "publishConfig": {
-	"access": "public"
-  },
-  "type": "module",
-  "scripts": {
-	"dev": "vite",
-	"build": "unbuild",
-	"play": "cd playground && pnpm run dev",
-	"lint": "biome format . --write"
-  },
-  "files": [
-	"build"
-  ],
-  "exports": {
-	".": {
-	  "import": "./build/mod.js",
-	  "types": "./build/mod.d.ts"
+	"name": "@vonojs/vono",
+	"version": "0.1.0",
+	"publishConfig": {
+		"access": "public"
 	},
-	"./adaptor-node": {
-	  "import": "./build/adaptors/node/index.js",
-	  "types": "./build/adaptors/node/index.d.ts"
+	"type": "module",
+	"scripts": {
+		"dev": "vite",
+		"build": "unbuild",
+		"play": "cd playground && pnpm run dev",
+		"lint": "biome format . --write"
 	},
-	"./adaptor-cloudflare": {
-	  "types": "./build/adaptors/cloudflare/index.d.ts",
-	  "import": "./build/adaptors/cloudflare/index.js"
+	"files": ["build"],
+	"exports": {
+		".": {
+			"import": "./build/mod.js",
+			"types": "./build/mod.d.ts"
+		},
+		"./adaptor-node": {
+			"import": "./build/adaptors/node/index.js",
+			"types": "./build/adaptors/node/index.d.ts"
+		},
+		"./adaptor-cloudflare": {
+			"types": "./build/adaptors/cloudflare/index.d.ts",
+			"import": "./build/adaptors/cloudflare/index.js"
+		},
+		"./adaptor-netlify": {
+			"types": "./build/adaptors/netlify/index.d.ts",
+			"import": "./build/adaptors/netlify/index.js"
+		},
+		"./client": {
+			"types": "./build/client.d.ts"
+		}
 	},
-	"./adaptor-netlify": {
-	  "types": "./build/adaptors/netlify/index.d.ts",
-	  "import": "./build/adaptors/netlify/index.js"
+	"dependencies": {
+		"@whatwg-node/server": "^0.9.32",
+		"node-html-parser": "^6.1.13",
+		"set-cookie-parser": "^2.6.0",
+		"sirv": "^2.0.4",
+		"unenv": "^1.9.0"
 	},
-	"./client": {
-	  "types": "./build/client.d.ts"
+	"devDependencies": {
+		"@biomejs/biome": "1.6.4",
+		"@types/node": "^20.12.4",
+		"mkdist": "^1.4.0",
+		"typescript": "^5.2.2",
+		"unbuild": "^2.0.0",
+		"vite": "^5.2.0",
+		"react": "^18.2.0",
+		"react-dom": "^18.2.0"
 	}
-  },
-  "dependencies": {
-	"@whatwg-node/server": "^0.9.32",
-	"node-html-parser": "^6.1.13",
-	"set-cookie-parser": "^2.6.0",
-	"sirv": "^2.0.4",
-	"unenv": "^1.9.0"
-  },
-  "devDependencies": {
-	"@biomejs/biome": "1.6.4",
-	"@types/node": "^20.12.4",
-	"mkdist": "^1.4.0",
-	"typescript": "^5.2.2",
-	"unbuild": "^2.0.0",
-	"vite": "^5.2.0",
-	"react": "^18.2.0",
-	"react-dom": "^18.2.0"
-  }
 }

@@ -1,5 +1,5 @@
 import { createConfig, Vono } from "./config";
-import {ModuleNode, type Plugin, ResolvedConfig} from "vite";
+import { ModuleNode, type Plugin, ResolvedConfig } from "vite";
 import vfsPlugin from "./plugins/vfs";
 import { useVFS } from "./vfs";
 import { httpPlugin } from "./plugins/http";
@@ -27,7 +27,8 @@ export default function vono(config: Partial<Vono> = {}): Plugin[] {
 			name: "vono:main",
 			enforce: "pre",
 			config: (vite) => {
-				const ssr = <T, U>(ssr: T, client?: U): U | T | undefined => (vite.build?.ssr ? ssr : client);
+				const ssr = <T, U>(ssr: T, client?: U): U | T | undefined =>
+					vite.build?.ssr ? ssr : client;
 				const root = vite.root || process.cwd();
 
 				return {
@@ -43,22 +44,25 @@ export default function vono(config: Partial<Vono> = {}): Plugin[] {
 						emptyOutDir: false,
 						outDir: ssr(
 							join(root, vono.adaptor.outputDirectory),
-							join(root, vono.adaptor.outputDirectory, "client")
+							join(root, vono.adaptor.outputDirectory, "client"),
 						),
 						manifest: ssr(false, true),
 						ssrEmitAssets: false,
 						ssr: ssr(true, false),
 						inlineDynamicImports: ssr(vono.adaptor.inlineDynamicImports),
-						rollupOptions: ssr({
-							input: {
-								[vono.adaptor.entryName]: vono.adaptor.productionRuntime,
+						rollupOptions: ssr(
+							{
+								input: {
+									[vono.adaptor.entryName]: vono.adaptor.productionRuntime,
+								},
+								output: {
+									inlineDynamicImports: vono.adaptor.inlineDynamicImports,
+									chunkFileNames: "server/[hash].js",
+								},
+								external: vono.adaptor.external,
 							},
-							output: {
-								inlineDynamicImports: vono.adaptor.inlineDynamicImports,
-								chunkFileNames: "server/[hash].js",
-							},
-							external: vono.adaptor.external,
-						}, { input: resolveExt(vono.clientEntry) ?? undefined }),
+							{ input: resolveExt(vono.clientEntry) ?? undefined },
+						),
 					},
 				};
 			},
@@ -98,13 +102,14 @@ export default function vono(config: Partial<Vono> = {}): Plugin[] {
 					path: "assets",
 					serverContent: () =>
 						`export default async function (path){ path.startsWith("/") && (path = path.slice(1)); if (import.meta.env.DEV) { const res = await fetch(\`http://localhost:5173/__fetch_asset?mod=\${path}\`); if (!res.ok) {throw new Error("Failed to fetch assets")}; return await res.json();}; const manifest = (await import("#vono/manifest")).default; return manifest[path]}`,
-				})
+				});
 
 				useVFS().add({
 					path: "/request",
-					serverContent: () => `import RequestContext from "@vonojs/vono"; export default () => RequestContext.getStore()`,
+					serverContent: () =>
+						`import RequestContext from "@vonojs/vono"; export default () => RequestContext.getStore()`,
 					clientContent: () => `export default () => null`,
-				})
+				});
 			},
 			configureServer: (server) => {
 				return async () => {

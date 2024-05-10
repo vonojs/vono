@@ -5,7 +5,7 @@ import { join } from "node:path";
 // @ts-ignore - alias
 import buildctx from "#vono/buildctx";
 // @ts-ignore - alias
-import handler from "#vono/entry"
+import handler from "#vono/entry";
 
 async function main() {
 	const sirv = (await import("sirv")).default;
@@ -50,7 +50,8 @@ if (
 }
 
 export const createMiddleware = async () => {
-	return (req: IncomingMessage, res: ServerResponse) => handler(createRequest(req, res));
+	return (req: IncomingMessage, res: ServerResponse) =>
+		handler(createRequest(req, res));
 };
 
 export const createWebMiddleware = async () => {
