@@ -9,6 +9,9 @@ import { resolveExt, slash, stripExt } from "./tools/resolve";
 import manifest from "./plugins/manifest";
 import shell from "./plugins/shell";
 import * as fs from "fs/promises";
+import Cloudflare from "./adaptors/cloudflare";
+import Node from "./adaptors/node";
+import Netlify from "./adaptors/netlify";
 
 declare global {
 	var getRequest_unsafe: (() => Request | undefined) | undefined;
@@ -18,13 +21,9 @@ export { useVFS } from "./vfs";
 
 export { Adaptor } from "./adaptor.ts";
 
-import Cloudflare from "./adaptors/cloudflare";
-import Node from "./adaptors/node";
-import Netlify from "./adaptors/netlify";
-
-export const AdaptorCloudflare = Cloudflare;
-export const AdaptorNode = Node;
-export const AdaptorNetlify = Netlify;
+export const CloudflareAdaptor = Cloudflare;
+export const NodeAdaptor = Node;
+export const NetlifyAdaptor = Netlify;
 
 export function getRequest(): Request | null {
 	try {
