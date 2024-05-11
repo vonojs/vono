@@ -19,7 +19,7 @@ declare global {
 
 export { useVFS } from "./vfs";
 
-export { Adaptor } from "./adaptor.ts";
+export { Adaptor } from "./adaptor";
 
 export const CloudflareAdaptor = Cloudflare;
 export const NodeAdaptor = Node;
