@@ -5,7 +5,7 @@ import Cloudflare from "../src/adaptors/cloudflare";
 import Netlify from "../src/adaptors/netlify";
 
 export default defineConfig({
-	plugins: [vono({ adaptor: new Cloudflare() }), react()],
+	plugins: [vono({}), react()],
 	build: {
 		assetsInlineLimit: 0,
 	},

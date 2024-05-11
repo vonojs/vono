@@ -10,7 +10,30 @@ import manifest from "./plugins/manifest";
 import shell from "./plugins/shell";
 import * as fs from "fs/promises";
 
+declare global {
+	var getRequest_unsafe: (() => Request | undefined) | undefined;
+}
+
 export { useVFS } from "./vfs";
+
+export { Adaptor } from "./adaptor.ts";
+
+import Cloudflare from "./adaptors/cloudflare";
+import Node from "./adaptors/node";
+import Netlify from "./adaptors/netlify";
+
+export const AdaptorCloudflare = Cloudflare;
+export const AdaptorNode = Node;
+export const AdaptorNetlify = Netlify;
+
+export function getRequest(): Request | null {
+	try {
+		const request = globalThis.getRequest_unsafe?.();
+		return request ?? null;
+	} catch {
+		return null;
+	}
+}
 
 export default function vono(config: Partial<Vono> = {}): Plugin[] {
 	let devHandler: any;
@@ -61,7 +84,11 @@ export default function vono(config: Partial<Vono> = {}): Plugin[] {
 								},
 								external: vono.adaptor.external,
 							},
-							{ input: resolveExt(vono.clientEntry) ?? undefined },
+							{
+								input: [resolveExt(vono.clientEntry), "/index.html"].filter(
+									Boolean,
+								),
+							},
 						),
 					},
 				};

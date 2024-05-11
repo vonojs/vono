@@ -1,3 +1,5 @@
+import { AsyncLocalStorage } from "node:async_hooks";
+
 export default {
 	fetch: async (request: Request, env: any) => {
 		if (request.method === "GET") {
@@ -13,7 +15,9 @@ export default {
 
 		// @ts-ignore - alias
 		const { default: handler } = await import("#vono/entry");
+		const requestContext = new AsyncLocalStorage<Request>();
+		globalThis.getRequest_unsafe = () => requestContext.getStore();
 
-		return handler(request);
+		return requestContext.run(request, () => handler(request));
 	},
 };

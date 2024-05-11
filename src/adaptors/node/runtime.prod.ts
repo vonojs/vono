@@ -6,6 +6,10 @@ import { join } from "node:path";
 import buildctx from "#vono/buildctx";
 // @ts-ignore - alias
 import handler from "#vono/entry";
+import { AsyncLocalStorage } from "node:async_hooks";
+
+const requestContext = new AsyncLocalStorage<Request>();
+globalThis.getRequest_unsafe = () => requestContext.getStore();
 
 async function main() {
 	const sirv = (await import("sirv")).default;
@@ -25,8 +29,11 @@ async function main() {
 	const httpServer = createServer((req, res) => {
 		assetHandler(req, res, () => {
 			publicHandler(req, res, () => {
-				handler(createRequest(req, res)).then((response: Response) =>
-					handleNodeResponse(response, res),
+				const webRequest = createRequest(req, res);
+				requestContext.run(webRequest, () =>
+					handler(webRequest).then((response: Response) =>
+						handleNodeResponse(response, res),
+					),
 				);
 			});
 		});
@@ -50,10 +57,13 @@ if (
 }
 
 export const createMiddleware = async () => {
-	return (req: IncomingMessage, res: ServerResponse) =>
-		handler(createRequest(req, res));
+	return (req: IncomingMessage, res: ServerResponse) => {
+		const webRequest = createRequest(req, res);
+		return requestContext.run(webRequest, () => handler(webRequest));
+	};
 };
 
 export const createWebMiddleware = async () => {
-	return (request: Request) => handler(request);
+	return (request: Request) =>
+		requestContext.run(request, () => handler(request));
 };

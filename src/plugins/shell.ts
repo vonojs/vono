@@ -22,7 +22,9 @@ export default function shell(): Plugin {
 								await fs.readFile(join(dist, "client", "index.html"), "utf-8"),
 							);
 						} catch {
-							console.warn("Attempted to import non-existent shell html file.");
+							throw new Error(
+								"Attempted to import non-existent shell html file.",
+							);
 						}
 						return `export default ${content};`;
 					} else {

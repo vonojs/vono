@@ -17,18 +17,6 @@
 			"import": "./build/mod.js",
 			"types": "./build/mod.d.ts"
 		},
-		"./adaptor-node": {
-			"import": "./build/adaptors/node/index.js",
-			"types": "./build/adaptors/node/index.d.ts"
-		},
-		"./adaptor-cloudflare": {
-			"types": "./build/adaptors/cloudflare/index.d.ts",
-			"import": "./build/adaptors/cloudflare/index.js"
-		},
-		"./adaptor-netlify": {
-			"types": "./build/adaptors/netlify/index.d.ts",
-			"import": "./build/adaptors/netlify/index.js"
-		},
 		"./client": {
 			"types": "./build/client.d.ts"
 		}
