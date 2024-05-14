@@ -17,7 +17,7 @@ export type Vono = {
 	includeIndexHtml?: boolean;
 }
 
-export const createConfig = (config: Partial<Vono> = {}): Vono => {
+const createConfig = (config: Partial<Vono> = {}): Vono => {
 	return {
 		serverEntry: config.serverEntry || "src/server.entry",
 		clientEntry: config.clientEntry || "index.html",
@@ -218,7 +218,7 @@ function isHttpProtocol(id: string | undefined | null) {
 
 const httpCache = new Map();
 
-export function httpPlugin(): vite.Plugin {
+function httpPlugin(): vite.Plugin {
 	return {
 		name: "vono:http",
 		enforce: "pre",
@@ -326,7 +326,7 @@ function stripLeadingSlash(str: string) {
 	return str.replace(/^\//, "");
 }
 
-export function moduleNodeToManifestChunk(node: vite.ModuleNode): ManifestChunk {
+function moduleNodeToManifestChunk(node: vite.ModuleNode): ManifestChunk {
 	if (!node) {
 		return {
 			file: "",
@@ -503,7 +503,7 @@ export type EndpointConfig = {
 	endpoint: string
 }
 
-export function endpoints(config: Partial<EndpointConfig> = {}): vite.Plugin {
+function endpoints(config: Partial<EndpointConfig> = {}): vite.Plugin {
 	const vfs = useVFS()
 	let vite: vite.ResolvedConfig | null = null
 	let manifest = {}

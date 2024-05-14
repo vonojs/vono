@@ -1,6 +1,6 @@
 {
-	"name": "@vonojs/vono",
-	"version": "0.1.6",
+	"name": "@vonojs/core",
+	"version": "0.1.0",
 	"publishConfig": {
 		"access": "public"
 	},
