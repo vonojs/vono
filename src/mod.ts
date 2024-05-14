@@ -463,42 +463,6 @@ function shell(): vite.Plugin {
 }
 
 /***********************************************************
-    Endpoint Plugin
-************************************************************/
-
-// export type EndpointConfig = {
-// 	endpoint: string
-// }
-//
-// function endpoints(config: Partial<EndpointConfig> = {}): vite.Plugin {
-// 	const vfs = useVFS()
-// 	let vite: vite.ResolvedConfig | null = null
-// 	let manifest = {}
-//
-// 	const generateManifest = (config: vite.ResolvedConfig) => ({})
-//
-// 	return {
-// 		name: "endpoints",
-// 		configResolved: (config) => {
-// 			// need to generate manifest here
-// 			vfs.add({
-// 				path: '/endpoints/manifest',
-// 				serverContent: () => `export default ${JSON.stringify(manifest)}`
-// 			})
-// 		},
-// 		transform(code, id, c) {
-// 			if(c?.ssr) {
-// 				return code
-// 			}
-// 			// transform to client runtime code
-// 		},
-// 		handleHotUpdate: (ctx) => {
-// 			// handle updating manifest here...
-// 		}
-// 	}
-// }
-
-/***********************************************************
 	Vono Plugin
  ************************************************************/
 
