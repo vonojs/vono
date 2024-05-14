@@ -1,7 +1,6 @@
 import { createServer, IncomingMessage, ServerResponse } from "node:http";
 import { fileURLToPath } from "node:url";
-import { createRequest, handleNodeResponse } from "../../tools/req-res";
-import { join } from "node:path";
+import { createRequest, handleNodeResponse } from "../../node-polyfills";
 // @ts-ignore - alias
 import buildctx from "#vono/buildctx";
 // @ts-ignore - alias
@@ -9,6 +8,7 @@ import handler from "#vono/entry";
 import { AsyncLocalStorage } from "node:async_hooks";
 
 const requestContext = new AsyncLocalStorage<Request>();
+// @ts-ignore - alias
 globalThis.getRequest_unsafe = () => requestContext.getStore();
 
 async function main() {
@@ -29,7 +29,7 @@ async function main() {
 	const httpServer = createServer((req, res) => {
 		if(req.url?.startsWith("/__immutables/")){
 			immutablesHandler(req, res, () => {
-				const webRequest = createRequest(req, res);
+				const webRequest = createRequest(req);
 				requestContext.run(webRequest, () =>
 					handler(webRequest).then((response: Response) =>
 						handleNodeResponse(response, res)
@@ -38,7 +38,7 @@ async function main() {
 			});
 		} else {
 			publicHandler(req, res, () => {
-				const webRequest = createRequest(req, res);
+				const webRequest = createRequest(req);
 				requestContext.run(webRequest, () =>
 					handler(webRequest).then((response: Response) =>
 						handleNodeResponse(response, res)

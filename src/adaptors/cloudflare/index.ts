@@ -1,4 +1,4 @@
-import { Adaptor } from "../../mod";
+import { Adaptor } from "../index";
 import { resolveModuleDirectory } from "../../tools";
 import { join } from "node:path";
 import * as fs from "fs/promises";
@@ -20,7 +20,7 @@ const cloudflareNodeCompatModules = [
 
 const dir = resolveModuleDirectory(import.meta.url);
 
-export default class Cloudflare extends Adaptor {
+export class CloudflareAdaptor extends Adaptor {
 	name = "cloudflare";
 	entryName = "_worker";
 

@@ -1,10 +1,10 @@
-import { Adaptor } from "../../mod";
+import { Adaptor } from "../index";
 import { resolveModuleDirectory } from "../../tools";
 import { join } from "node:path";
 
 const dir = resolveModuleDirectory(import.meta.url);
 
-export default class Netlify extends Adaptor {
+export class NetlifyAdaptor extends Adaptor {
 	name = "netlify";
 	outputDirectory = "dist/netlify/functions";
 

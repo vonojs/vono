@@ -4,7 +4,16 @@ import * as fs from "node:fs/promises";
 import * as p from "path";
 import { handleNodeResponse, createRequest } from "./node-polyfills"
 import { existsSync } from "node:fs";
-import NodeAdaptor from "./adaptors/node";
+import { Adaptor } from "./adaptors"
+import { NodeAdaptor } from "./adaptors/node/index";
+
+/***********************************************************
+    Exports
+************************************************************/
+
+export { CloudflareAdaptor } from "./adaptors/cloudflare";
+export { NodeAdaptor } from "./adaptors/node";
+export { NetlifyAdaptor } from "./adaptors/netlify";
 
 /***********************************************************
     Vono Config
@@ -25,48 +34,6 @@ const createConfig = (config: Partial<Vono> = {}): Vono => {
 		includeIndexHtml: config.includeIndexHtml ?? false,
 	};
 };
-
-/***********************************************************
-    Adaptor
- ************************************************************/
-
-export abstract class Adaptor {
-	abstract name: string;
-	// RUNTIME ---------------------------------------------------------------------
-	abstract productionRuntime: string;
-	abstract developmentRuntime: string;
-	// OUTPUT ----------------------------------------------------------------
-	outputDirectory = "dist";
-	entryName = "server";
-	inlineDynamicImports = false;
-	// ENV ---------------------------------------------------------------------
-	alias: { [p: string]: string } = {};
-	inject: { [p: string]: string | string[] } = {};
-	polyfill: string[] = [];
-	external: string[] = [];
-	resolve: {
-		conditions?: string[] | undefined;
-		externalConditions?: string[] | undefined;
-	} = {};
-	// ACTIONS ----------------------------------------------------------------
-	buildStart?: () => void | Promise<void>;
-	buildEnd?: () => void | Promise<void>;
-	buildError?: (err: Error) => void | Promise<void>;
-	prerender?: () => void | Promise<void>;
-}
-
-/***********************************************************
-    Get request via global
- ************************************************************/
-
-export function getRequest(): Request | null {
-	try {
-		const request = globalThis.getRequest_unsafe?.();
-		return request ?? null;
-	} catch {
-		return null;
-	}
-}
 
 /***********************************************************
     Clear Outdir Plugin
@@ -499,37 +466,37 @@ function shell(): vite.Plugin {
     Endpoint Plugin
 ************************************************************/
 
-export type EndpointConfig = {
-	endpoint: string
-}
-
-function endpoints(config: Partial<EndpointConfig> = {}): vite.Plugin {
-	const vfs = useVFS()
-	let vite: vite.ResolvedConfig | null = null
-	let manifest = {}
-
-	const generateManifest = (config: vite.ResolvedConfig) => ({})
-
-	return {
-		name: "endpoints",
-		configResolved: (config) => {
-			// need to generate manifest here
-			vfs.add({
-				path: '/endpoints/manifest',
-				serverContent: () => `export default ${JSON.stringify(manifest)}`
-			})
-		},
-		transform(code, id, c) {
-			if(c?.ssr) {
-				return code
-			}
-			// transform to client runtime code
-		},
-		handleHotUpdate: (ctx) => {
-			// handle updating manifest here...
-		}
-	}
-}
+// export type EndpointConfig = {
+// 	endpoint: string
+// }
+//
+// function endpoints(config: Partial<EndpointConfig> = {}): vite.Plugin {
+// 	const vfs = useVFS()
+// 	let vite: vite.ResolvedConfig | null = null
+// 	let manifest = {}
+//
+// 	const generateManifest = (config: vite.ResolvedConfig) => ({})
+//
+// 	return {
+// 		name: "endpoints",
+// 		configResolved: (config) => {
+// 			// need to generate manifest here
+// 			vfs.add({
+// 				path: '/endpoints/manifest',
+// 				serverContent: () => `export default ${JSON.stringify(manifest)}`
+// 			})
+// 		},
+// 		transform(code, id, c) {
+// 			if(c?.ssr) {
+// 				return code
+// 			}
+// 			// transform to client runtime code
+// 		},
+// 		handleHotUpdate: (ctx) => {
+// 			// handle updating manifest here...
+// 		}
+// 	}
+// }
 
 /***********************************************************
 	Vono Plugin
@@ -587,7 +554,7 @@ export default function vono(config: Partial<Vono> = {}): vite.Plugin[] {
 							},
 							{
 								input: [tools.resolveUnknownExtension(vono.clientEntry), existsSync(p.join(root, 'index.html')) && "/index.html"].filter(
-									String,
+									Boolean,
 								) as string[],
 								output: {
 									assetFileNames: "__immutables/[name]-[hash].[ext]",
@@ -638,10 +605,10 @@ export default function vono(config: Partial<Vono> = {}): vite.Plugin[] {
 				});
 
 				useVFS().add({
-					path: "/request",
+					path: "request",
 					serverContent: () =>
-						`export default () => globalThis.getRequest_unsafe?.() ?? null;`,
-					clientContent: () => `export default () => null`,
+						`export const getRequest = () => globalThis.getRequest_unsafe?.() ?? null;`,
+					clientContent: () => `export const getRequest = () => null`,
 				});
 			},
 			configureServer: (server) => {

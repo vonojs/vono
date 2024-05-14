@@ -1,10 +1,10 @@
-import { Adaptor } from "../../mod";
+import { Adaptor } from "../index";
 import { resolveModuleDirectory } from "../../tools";
 import { join } from "node:path";
 
 const dir = resolveModuleDirectory(import.meta.url);
 
-export default class Node extends Adaptor {
+export class NodeAdaptor extends Adaptor {
 	name = "node";
 
 	developmentRuntime = join(dir, "runtime.dev");
