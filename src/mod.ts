@@ -7,6 +7,8 @@ import { existsSync } from "node:fs";
 import { Adaptor } from "./adaptors"
 import { NodeAdaptor } from "./adaptors/node/index";
 
+import { endpoints } from "./endpoint";
+
 /***********************************************************
     Exports
 ************************************************************/
@@ -476,6 +478,7 @@ export default function vono(config: Partial<Vono> = {}): vite.Plugin[] {
 		httpPlugin(),
 		manifest({manifest: "client/.vite/manifest.json"}),
 		shell(),
+		endpoints(),
 		vfsPlugin({vfs: useVFS(), alias: "#vono"}),
 		clearOutdir(vono.adaptor.outputDirectory),
 		{

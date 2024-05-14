@@ -1,5 +1,5 @@
 // @ts-ignore
-import manifest from "#actions/manifest";
+import manifest from "#vono/endpoints/manifest";
 
 type EndpointConfig = {
 	method: 'GET' | 'POST' | 'PUT' | 'DELETE';
@@ -23,22 +23,28 @@ export function endpoint<
 	return handler as unknown as  (...args: Args[]) => ReturnType<T>;
 }
 
-export async function middleware (request: Request): Promise<Response | null> {
-	const body = await request.json();
-	if(!body.name) {
+export const middleware = (path = "/__endpoints") => async (request: Request): Promise<Response | null> => {
+	if(!new URL(request.url).pathname.startsWith(path)){
 		return null;
 	}
 
-	const action = manifest[body.name];
-	if(!action) {
+	const body = await request.json();
+	if(!body.key) {
 		return null;
 	}
+
+	const action = await manifest[body.key]();
+	if(!action) {
+		console.log("No action key found for action")
+		return null;
+	}
+
 	if(!action.isAction) {
 		return null;
 	}
 
 	const args = body.args;
-	const result = await action.endpoint(request, ...args);
+	const result = await action[body.name](request, ...args);
 	return new Response(JSON.stringify(result), {
 		headers: {
 			'Content-Type': 'application/json',

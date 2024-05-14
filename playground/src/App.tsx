@@ -1,4 +1,7 @@
 import { useState } from "react";
+import { lol } from "./users.endpoints.ts";
+
+console.log(await lol(1234))
 
 function App() {
 	const [count, setCount] = useState(0);
