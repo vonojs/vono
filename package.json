@@ -17,8 +17,8 @@
 			"import": "./build/mod.js",
 			"types": "./build/mod.d.ts"
 		},
-		"./client": {
-			"types": "./build/client.d.ts"
+		"./types": {
+			"types": "./build/types.d.ts"
 		}
 	},
 	"dependencies": {
