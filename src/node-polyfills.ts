@@ -1,82 +1,16 @@
 /***********************************************************
  *
- *  This module has been adapted from Remix's Vite plugin.
- *  https://remix.run
+ *  This module has been adapted from Remix's Vite plugin. https://remix.run
+ *	Big thanks to them!
+ *  Although I did have to convert a bunch of lets to consts o_o
  *
  ***********************************************************/
 
-import type { Readable, Writable } from "node:stream";
-import { Stream } from "node:stream";
-
-export async function writeReadableStreamToWritable(
-	stream: ReadableStream,
-	writable: Writable,
-) {
-	let reader = stream.getReader();
-	let flushable = writable as { flush?: Function };
-
-	try {
-		while (true) {
-			let { done, value } = await reader.read();
-
-			if (done) {
-				writable.end();
-				break;
-			}
-
-			writable.write(value);
-			if (typeof flushable.flush === "function") {
-				flushable.flush();
-			}
-		}
-	} catch (error: unknown) {
-		writable.destroy(error as Error);
-		throw error;
-	}
-}
-
-export async function writeAsyncIterableToWritable(
-	iterable: AsyncIterable<Uint8Array>,
-	writable: Writable,
-) {
-	try {
-		for await (let chunk of iterable) {
-			writable.write(chunk);
-		}
-		writable.end();
-	} catch (error: any) {
-		writable.destroy(error);
-		throw error;
-	}
-}
-
-export async function readableStreamToString(
-	stream: ReadableStream<Uint8Array>,
-	encoding?: BufferEncoding,
-) {
-	let reader = stream.getReader();
-	let chunks: Uint8Array[] = [];
-
-	while (true) {
-		let { done, value } = await reader.read();
-		if (done) {
-			break;
-		}
-		if (value) {
-			chunks.push(value);
-		}
-	}
-
-	return Buffer.concat(chunks).toString(encoding);
-}
-
-export const createReadableStreamFromReadable = (
-	source: Readable & { readableHighWaterMark?: number },
-) => {
-	let pump = new StreamPump(source);
-	let stream = new ReadableStream(pump, pump);
-	return stream;
-};
+import { Readable, Stream } from "node:stream";
+import type { IncomingHttpHeaders, IncomingMessage, ServerResponse, } from "node:http";
+// @ts-expect-error
+import { splitCookiesString } from "set-cookie-parser";
+import { once } from "node:events";
 
 class StreamPump {
 	public highWaterMark: number;
@@ -181,5 +115,83 @@ class StreamPump {
 			this.controller.error(error);
 			delete this.controller;
 		}
+	}
+}
+
+const createReadableStreamFromReadable = (
+	source: Readable & { readableHighWaterMark?: number },
+) => {
+	const pump = new StreamPump(source);
+	const stream = new ReadableStream(pump, pump);
+	return stream;
+};
+
+function createHeaders(requestHeaders: IncomingHttpHeaders) {
+	let headers = new Headers();
+
+	for (let [key, values] of Object.entries(requestHeaders)) {
+		if (values) {
+			if (Array.isArray(values)) {
+				for (let value of values) {
+					headers.append(key, value);
+				}
+			} else {
+				headers.set(key, values);
+			}
+		}
+	}
+
+	return headers;
+}
+
+export function createRequest(
+	req: IncomingMessage,
+): Request {
+	const origin =
+		req.headers.origin && "null" !== req.headers.origin
+			? req.headers.origin
+			: `http://${req.headers.host}`;
+	const url = new URL(req.url!, origin);
+
+	const init: RequestInit = {
+		method: req.method,
+		headers: createHeaders(req.headers),
+	};
+
+	if (req.method !== "GET" && req.method !== "HEAD") {
+		init.body = createReadableStreamFromReadable(req);
+		(init as { duplex: "half" }).duplex = "half";
+	}
+
+	return new Request(url.href, init);
+}
+
+export async function handleNodeResponse(
+	webRes: Response,
+	res: ServerResponse,
+) {
+	res.statusCode = webRes.status;
+	res.statusMessage = webRes.statusText;
+
+	const cookiesStrings = [];
+
+	for (let [name, value] of webRes.headers) {
+		if (name === "set-cookie") {
+			cookiesStrings.push(...splitCookiesString(value));
+		} else res.setHeader(name, value);
+	}
+
+	if (cookiesStrings.length) {
+		res.setHeader("set-cookie", cookiesStrings);
+	}
+
+	if (webRes.body) {
+		// https://github.com/microsoft/TypeScript/issues/29867
+		const responseBody = webRes.body as unknown as AsyncIterable<Uint8Array>;
+		const readable = Readable.from(responseBody);
+		readable.pipe(res);
+		await once(readable, "end");
+	} else {
+		res.end();
 	}
 }
