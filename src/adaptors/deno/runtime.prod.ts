@@ -14,38 +14,29 @@ globalThis.getRequest_unsafe = () => requestContext.getStore();
 async function main() {
 	const sirv = (await import("sirv")).default;
 
-	const immutablesHandler = sirv(buildctx.clientOutputDirectory, {
+	const assetHandler = sirv(join(buildctx.clientOutputDirectory, "assets"), {
 		immutable: true,
 		maxAge: 31536000,
 		dev: false,
 	});
 
 	const publicHandler = sirv(buildctx.clientOutputDirectory, {
+		immutable: true,
 		maxAge: 0,
 		dev: false,
-		etag: true,
 	});
 
 	const httpServer = createServer((req, res) => {
-		if(req.url?.startsWith("/__immutables/")){
-			immutablesHandler(req, res, () => {
-				const webRequest = createRequest(req, res);
-				requestContext.run(webRequest, () =>
-					handler(webRequest).then((response: Response) =>
-						handleNodeResponse(response, res)
-					)
-				);
-			});
-		} else {
+		assetHandler(req, res, () => {
 			publicHandler(req, res, () => {
 				const webRequest = createRequest(req, res);
 				requestContext.run(webRequest, () =>
 					handler(webRequest).then((response: Response) =>
-						handleNodeResponse(response, res)
+						handleNodeResponse(response, res),
 					),
 				);
 			});
-		}
+		});
 	});
 
 	const port = process.argv[2] ?? 8000;

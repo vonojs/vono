@@ -1,4 +1,3 @@
-import { createConfig, Vono } from "./config";
 import { ModuleNode, type Plugin, ResolvedConfig } from "vite";
 import vfsPlugin from "./plugins/vfs";
 import { useVFS } from "./vfs";
@@ -9,21 +8,31 @@ import { resolveExt, slash, stripExt } from "./tools/resolve";
 import manifest from "./plugins/manifest";
 import shell from "./plugins/shell";
 import * as fs from "fs/promises";
-import Cloudflare from "./adaptors/cloudflare";
-import Node from "./adaptors/node";
-import Netlify from "./adaptors/netlify";
+import NodeAdaptor from "./adaptors/node";
+import {existsSync} from "fs";
+import { Adaptor } from "./adaptor";
+
+export type Vono = {
+	serverEntry: string;
+	clientEntry?: string;
+	adaptor: Adaptor;
+	includeIndexHtml?: boolean;
+};
+
+export const createConfig = (config: Partial<Vono> = {}): Vono => {
+	return {
+		serverEntry: config.serverEntry || "src/server.entry",
+		clientEntry: config.clientEntry || "index.html",
+		adaptor: config.adaptor || new NodeAdaptor(),
+		includeIndexHtml: config.includeIndexHtml ?? false,
+	};
+};
 
 declare global {
 	var getRequest_unsafe: (() => Request | undefined) | undefined;
 }
 
 export { useVFS } from "./vfs";
-
-export { Adaptor } from "./adaptor";
-
-export const CloudflareAdaptor = Cloudflare;
-export const NodeAdaptor = Node;
-export const NetlifyAdaptor = Netlify;
 
 export function getRequest(): Request | null {
 	try {
@@ -32,6 +41,23 @@ export function getRequest(): Request | null {
 	} catch {
 		return null;
 	}
+}
+
+const clearOutdir = (outDir: string): Plugin => {
+	let viteConfig: ResolvedConfig;
+	return {
+		name: 'vono:clear-outdir',
+		configResolved: async (vite) => {
+			viteConfig = vite;
+		},
+		buildStart: async (vite) => {
+			if(viteConfig.build.ssr) return;
+			try {
+				await fs.rm(outDir, { recursive: true });
+			} catch {}
+		}
+	}
+
 }
 
 export default function vono(config: Partial<Vono> = {}): Plugin[] {
@@ -45,6 +71,7 @@ export default function vono(config: Partial<Vono> = {}): Plugin[] {
 		manifest({ manifest: "client/.vite/manifest.json" }),
 		shell(),
 		vfsPlugin({ vfs: useVFS(), alias: "#vono" }),
+		clearOutdir(vono.adaptor.outputDirectory),
 		{
 			name: "vono:main",
 			enforce: "pre",
@@ -79,14 +106,19 @@ export default function vono(config: Partial<Vono> = {}): Plugin[] {
 								},
 								output: {
 									inlineDynamicImports: vono.adaptor.inlineDynamicImports,
-									chunkFileNames: "server/[hash].js",
+									chunkFileNames: "server/[name]-[hash].js",
 								},
 								external: vono.adaptor.external,
 							},
 							{
-								input: [resolveExt(vono.clientEntry), "/index.html"].filter(
+								input: [resolveExt(vono.clientEntry), existsSync(join(root, 'index.html')) && "/index.html"].filter(
 									Boolean,
 								),
+								output: {
+									assetFileNames: "__immutables/[name]-[hash].[ext]",
+									chunkFileNames: "__immutables/[name]-[hash].js",
+									entryFileNames: "__immutables/[name]-[hash].js",
+								}
 							},
 						),
 					},
@@ -127,13 +159,13 @@ export default function vono(config: Partial<Vono> = {}): Plugin[] {
 				useVFS().add({
 					path: "assets",
 					serverContent: () =>
-						`export default async function (path){ path.startsWith("/") && (path = path.slice(1)); if (import.meta.env.DEV) { const res = await fetch(\`http://localhost:5173/__fetch_asset?mod=\${path}\`); if (!res.ok) {throw new Error("Failed to fetch assets")}; return await res.json();}; const manifest = (await import("#vono/manifest")).default; return manifest[path]}`,
+						`export async function getModuleInfo (path){ path.startsWith("/") && (path = path.slice(1)); if (import.meta.env.DEV) { const res = await fetch(\`http://localhost:5173/__fetch_asset?mod=\${path}\`); if (!res.ok) {throw new Error("Failed to fetch assets")}; return await res.json();}; const manifest = (await import("#vono/manifest")).default; return manifest[path]}`,
 				});
 
 				useVFS().add({
 					path: "/request",
 					serverContent: () =>
-						`import RequestContext from "@vonojs/vono"; export default () => RequestContext.getStore()`,
+						`export default () => globalThis.getRequest_unsafe?.() ?? null;`,
 					clientContent: () => `export default () => null`,
 				});
 			},
@@ -191,6 +223,7 @@ export default function vono(config: Partial<Vono> = {}): Plugin[] {
 				order: "post",
 				handler: async () => {
 					if (!viteConfig.build?.ssr) {
+						// clear the directory
 						await fs.writeFile(
 							join(vono.adaptor.outputDirectory, "vono.json"),
 							JSON.stringify({
@@ -217,6 +250,12 @@ export default function vono(config: Partial<Vono> = {}): Plugin[] {
 						child.stderr.pipe(process.stdout);
 						child.stdout.pipe(process.stdout);
 						await p;
+						// server cleanup
+						try {
+							await fs.rm(join(viteConfig.build.outDir, '.vite'), {recursive: true});
+						} catch(e) {
+							console.log(e)
+						}
 						if (!vono.includeIndexHtml) {
 							try {
 								await fs.rm(join(viteConfig.build.outDir, "index.html"));

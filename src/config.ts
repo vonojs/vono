@@ -11,7 +11,7 @@ export type Vono = {
 export const createConfig = (config: Partial<Vono> = {}): Vono => {
 	return {
 		serverEntry: config.serverEntry || "src/server.entry",
-		clientEntry: config.clientEntry || "src/client.entry",
+		clientEntry: config.clientEntry || "index.html",
 		adaptor: config.adaptor || new NodeAdaptor(),
 		includeIndexHtml: config.includeIndexHtml ?? false,
 	};

@@ -51,24 +51,6 @@ export type VFile = {
 	write?: boolean;
 };
 
-export function createVFile<
-	C extends ContentFn | undefined,
-	SC extends ContentFn | undefined,
-	CC extends ContentFn | undefined,
->(vfile: {
-	path: string;
-	content?: C;
-	serverContent?: SC;
-	clientContent?: CC;
-}) {
-	return vfile as {
-		path: string;
-		content: C;
-		serverContent: SC;
-		clientContent: CC;
-	} satisfies VFile;
-}
-
 // Global VFS instance;
 const vfs = new VFS();
 export const useVFS = () => vfs;
