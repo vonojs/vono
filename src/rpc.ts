@@ -2,10 +2,9 @@ import * as vite from "vite"
 import { useVFS } from "./mod"
 import * as fs from "node:fs/promises"
 import * as p from "node:path"
-// @ts-ignore no types available
 import { init, parse } from 'es-module-lexer';
 
-const isRpcPath = (path: string) => path.endsWith(".rpc.ts") || path.endsWith(".rpc.tsx")
+const isRpcPath = (path: string) => path.endsWith(".rpc.ts") || path.endsWith(".rpc.js") || path.endsWith(".rpc.tsx") || path.endsWith(".rpc.jsx")
 
 const clientRuntime = `
 export default function rpc(key, name, path) {
@@ -31,10 +30,14 @@ export default function rpc(key, name, path) {
 	}
 }
 `
+
 const serverRuntime = `
 import manifest from "#vono/rpc/manifest";
 
 export default function rpc(handler, config) {
+	if(typeof document !== "undefined") {
+		throw Error("RPC definition function imported into client. This is a bug.")
+	}
 	handler.isRPC = true;
 	handler.config = config;
 	return handler;
@@ -99,6 +102,7 @@ export default function rpc(): vite.Plugin {
 
 	return {
 		name: "rpc",
+		enforce: "pre",
 		configResolved: async (config) => {
 			vite = config
 			manifest = await generateManifest(config);
@@ -112,15 +116,22 @@ export default function rpc(): vite.Plugin {
 				clientContent: () => clientRuntime,
 			})
 		},
-		transform: async (code, id, c) =>{
-			if(c?.ssr) {
+		resolveId: (id) => {
+			console.log(id)
+			if(id === "server-only"){
+				console.log("YES")
+			}
+		},
+		transform: async (code, id, ctx) =>{
+			if(ctx?.ssr) {
 				return code
 			}
+
+			await init;
+
 			if(isRpcPath(id)) {
 				const file = Object.entries(manifest).find(([, v]) => v === id)
 				if(!file) throw new Error("File not found in manifest")
-
-				await init;
 
 				const [, exports] = parse(code);
 
@@ -128,9 +139,9 @@ export default function rpc(): vite.Plugin {
 
 				for(const exp of exports) {
 					if(exp.n === "default") {
-						result += `export default rpc("${file![0]}", "default", "/__rpc");\n`
+						result += `export default rpc("${file[0]}", "default", "/__rpc");\n`
 					} else {
-						result += `export const ${exp.n} = rpc("${file![0]}", "${exp.n}", "/__rpc");\n`
+						result += `export const ${exp.n} = rpc("${file[0]}", "${exp.n}", "/__rpc");\n`
 					}
 				}
 
@@ -138,6 +149,25 @@ export default function rpc(): vite.Plugin {
 					code: result,
 					map: null
 				}
+			}
+
+			if(
+				!id.endsWith(".ts") &&
+				!id.endsWith(".js") &&
+				!id.endsWith(".jsx") &&
+				!id.endsWith(".tsx")
+			) { return; }
+
+			let imports: ReturnType<typeof parse>
+			try {
+				 imports = parse(code)
+			} catch {
+				return;
+			}
+
+			if(imports.flat().some(imp => typeof imp === "object" && imp.n === "#vono/rpc")){
+				console.log(code)
+				throw Error(`You are leaking server code into\n${id}\nmost likely because it's not postfixed with .rpc.{ts|js}`)
 			}
 		},
 		handleHotUpdate: async (ctx) => {

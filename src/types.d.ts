@@ -15,7 +15,7 @@ declare module "#vono/request" {
 }
 
 declare module "#vono/rpc" {
-	export function rpc<
+	export default function rpc<
 		Args extends Serializable,
 		T extends ((...args: Args[]) => Serializable | Promise<Serializable>) & { isEndpoint?: boolean, config?: EndpointConfig }
 	>(handler: T, config?: EndpointConfig): (...args: Args[]) => ReturnType<T | Error>;
