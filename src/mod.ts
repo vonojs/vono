@@ -274,7 +274,7 @@ async function getBuildManifest(path: string) {
 	const manifestRaw = await fs.readFile(path, "utf-8");
 	const manifest = JSON.parse(manifestRaw);
 	if (!manifest) {
-		throw new Error("Build manifest not found at " + path);
+		throw new Error("Build assets not found at " + path);
 	}
 	return manifest;
 }
@@ -315,37 +315,30 @@ function moduleNodeToManifestChunk(node: vite.ModuleNode): ManifestChunk {
 	};
 }
 
-function manifest(config: {
+function assets(config: {
 	manifest: string | (() => string);
 }): vite.Plugin {
 	const vfs = useVFS();
 	let server: vite.ViteDevServer;
 	return {
-		name: "vono:manifest",
+		name: "vono:assets",
 		enforce: "pre",
 		configResolved: async (vite) => {
 			const isBuild = vite.mode === "production";
 
 			vfs.add({
-				path: "/manifest",
+				path: "/assets",
 				serverContent: async () => {
+					const getAsset = `export async function getModuleInfo (path){ path.startsWith("/") && (path = path.slice(1)); if (import.meta.env.DEV) { const res = await fetch(\`http://localhost:5173/__fetch_asset?mod=\${path}\`); if (!res.ok) {throw new Error("Failed to fetch assets")}; return await res.json();}; const manifest = (await import("#vono/manifest")).default; return manifest[path]};`
 					if (isBuild) {
-						const path =
-							typeof config.manifest === "function"
-								? config.manifest()
-								: config.manifest;
-						return `export default ${JSON.stringify(
-							await getBuildManifest(p.join(vite.build.outDir, path)),
-						)};`;
+						const path = typeof config.manifest === "function" ? config.manifest() : config.manifest;
+						return `export const manifest = ${JSON.stringify(await getBuildManifest(p.join(vite.build.outDir, path)),)};${getAsset}`;
 					} else {
-						return `export default ${JSON.stringify(
-							createDevManifest(vite.build.rollupOptions),
-						)};`;
+						return `export const manifest = ${JSON.stringify(createDevManifest(vite.build.rollupOptions))};${getAsset}`;
 					}
 				},
 			});
 		},
-
 		configureServer(_server) {
 			server = _server;
 
@@ -476,7 +469,7 @@ export default function vono(config: Partial<Vono> = {}): vite.Plugin[] {
 
 	return [
 		httpPlugin(),
-		manifest({manifest: "client/.vite/manifest.json"}),
+		assets({manifest: "client/.vite/manifest.json"}),
 		shell(),
 		vfsPlugin({vfs: useVFS(), alias: "#vono"}),
 		clearOutdir(vono.adaptor.outputDirectory),
