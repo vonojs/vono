@@ -8,9 +8,9 @@
 
 import { Readable, Stream } from "node:stream";
 import type { IncomingHttpHeaders, IncomingMessage, ServerResponse, } from "node:http";
+import { once } from "node:events";
 // @ts-expect-error
 import { splitCookiesString } from "set-cookie-parser";
-import { once } from "node:events";
 
 class StreamPump {
 	public highWaterMark: number;

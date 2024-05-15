@@ -478,7 +478,6 @@ export default function vono(config: Partial<Vono> = {}): vite.Plugin[] {
 		httpPlugin(),
 		manifest({manifest: "client/.vite/manifest.json"}),
 		shell(),
-		endpoints(),
 		vfsPlugin({vfs: useVFS(), alias: "#vono"}),
 		clearOutdir(vono.adaptor.outputDirectory),
 		{

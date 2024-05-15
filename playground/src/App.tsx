@@ -1,13 +1,10 @@
 import { useState } from "react";
-import { lol } from "./users.endpoints.ts";
-
-console.log(await lol(1234))
 
 function App() {
-	const [count, setCount] = useState(0);
+	const [count, setCount] = useState(Math.random());
 	return (
 		<main>
-			<button onClick={(_) => setCount(count + 1)}>the count is {count}</button>
+			<input value={count} readOnly />
 		</main>
 	);
 }

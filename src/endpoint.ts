@@ -2,21 +2,77 @@ import * as vite from "vite"
 import { useVFS } from "./mod"
 import * as fs from "node:fs/promises"
 import * as p from "node:path"
+// @ts-ignore
 import { init, parse } from 'es-module-lexer';
-import { runtimeDir } from "./runtime"
-
-export type EndpointConfig = {
-	endpoint: string
-}
-
-type EndpointManifest = Record<string, {
-	path: string,
-	endpoint: string
-}>
 
 const isEndpointPath = (path: string) => path.endsWith(".endpoints.ts") || path.endsWith(".endpoints.tsx")
 
-export function endpoints(config: Partial<EndpointConfig> = {}): vite.Plugin {
+const clientRuntime = `
+export default function endpoint(key, name, path) {
+	return async (...args) => {
+		try {
+			const res = await fetch(path, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({key, name, args}),
+			});
+			if (!res.ok) {
+				return Error(res.statusText);
+			}
+			return await res.json()
+		} catch (e) {
+			if (e instanceof Error) {
+				return e
+			}
+			return Error('Unknown error');
+		}
+	}
+}
+`
+const serverRuntime = `
+import manifest from "#vono/endpoints/manifest";
+
+export default function endpoint(handler, config) {
+	handler.isEndpoint = true;
+	handler.config = config;
+	return handler;
+}
+
+export const middleware = (path = "/__endpoints") => async (request) => {
+	if(!new URL(request.url).pathname.startsWith(path)){
+		return null;
+	}
+
+	const body = await request.json();
+	if(!body.key) {
+		console.warn("No key provided in request body.")
+		return null;
+	}
+
+	const endpointFile = await manifest[body.key]();
+	if(!endpointFile) {
+		console.warn("No endpoint file found for key in request body:", body.key);
+		return null;
+	}
+
+	const endpoint = endpointFile[body.name];
+	if(!endpoint || !endpoint.isEndpoint) {
+		console.warn("No endpoint found for name in request body:", body.name);
+		return null;
+	}
+
+	const result = await endpoint(...body.args);
+	return new Response(JSON.stringify(result), {
+		headers: {
+			'Content-Type': 'application/json',
+		},
+	});
+}
+`
+
+export function endpoints(): vite.Plugin {
 	const vfs = useVFS()
 	let vite: vite.ResolvedConfig | null = null
 	let manifest: Record<string, string>
@@ -43,8 +99,8 @@ export function endpoints(config: Partial<EndpointConfig> = {}): vite.Plugin {
 			});
 			vfs.add({
 				path: "endpoints",
-				serverContent: () => `import { endpoint, middleware } from '${p.join(runtimeDir, 'endpoint.server.ts')}'; export default endpoint; export middleware;`,
-				clientContent: () => `import { endpoint } from '${p.join(runtimeDir, 'endpoint.client.ts')}'; export default endpoint;`,
+				serverContent: () => serverRuntime,
+				clientContent: () => clientRuntime,
 			})
 		},
 		transform: async (code, id, c) =>{
@@ -63,7 +119,7 @@ export function endpoints(config: Partial<EndpointConfig> = {}): vite.Plugin {
 
 				for(const exp of exports) {
 					if(exp.n === "default") {
-						result += 'export default endpoint("${file![0]}", "default", "/__endpoints");\n'
+						result += `export default endpoint("${file![0]}", "default", "/__endpoints");\n`
 					} else {
 						result += `export const ${exp.n} = endpoint("${file![0]}", "${exp.n}", "/__endpoints");\n`
 					}
@@ -78,6 +134,12 @@ export function endpoints(config: Partial<EndpointConfig> = {}): vite.Plugin {
 		handleHotUpdate: async (ctx) => {
 			if(isEndpointPath(ctx.file)) {
 				manifest = await generateManifest(vite!)
+				ctx.server.reloadModule(
+					await ctx.server.moduleGraph.getModuleById("\0" + "virtual:vfs:/endpoints")!
+				)
+				ctx.server.reloadModule(
+					await ctx.server.moduleGraph.getModuleById("\0" + "virtual:vfs:/endpoints/manifest")!
+				)
 			}
 		}
 	}
