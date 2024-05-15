@@ -129,12 +129,6 @@ export default function rpc(): vite.Plugin {
 				clientContent: () => clientRuntime,
 			});
 		},
-		resolveId: (id) => {
-			console.log(id);
-			if (id === "server-only") {
-				console.log("YES");
-			}
-		},
 		transform: async (code, id, ctx) => {
 			if (ctx?.ssr) {
 				return code;
@@ -185,7 +179,6 @@ export default function rpc(): vite.Plugin {
 					.flat()
 					.some((imp) => typeof imp === "object" && imp.n === "#vono/rpc")
 			) {
-				console.log(code);
 				throw Error(
 					`You are leaking server code into\n${id}\nmost likely because it's not postfixed with .rpc.{ts|js}`,
 				);
