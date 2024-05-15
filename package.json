@@ -1,7 +1,7 @@
 {
 	"name": "@vonojs/core",
-  	"description": "Core Vite plugin for Vono.js.",
-	"version": "0.2.0",
+	"description": "Core Vite plugin for Vono.js.",
+	"version": "0.2.1",
 	"publishConfig": {
 		"access": "public"
 	},
@@ -12,7 +12,9 @@
 		"play": "cd playground && pnpm run dev",
 		"lint": "biome format . --write"
 	},
-	"files": ["build"],
+	"files": [
+		"build"
+	],
 	"exports": {
 		".": {
 			"import": "./build/mod.js",
@@ -24,6 +26,7 @@
 	},
 	"dependencies": {
 		"@whatwg-node/server": "^0.9.32",
+		"es-module-lexer": "^1.5.2",
 		"node-html-parser": "^6.1.13",
 		"set-cookie-parser": "^2.6.0",
 		"sirv": "^2.0.4",
@@ -33,10 +36,10 @@
 		"@biomejs/biome": "1.6.4",
 		"@types/node": "^20.12.4",
 		"mkdist": "^1.4.0",
+		"react": "^18.2.0",
+		"react-dom": "^18.2.0",
 		"typescript": "^5.2.2",
 		"unbuild": "^2.0.0",
-		"vite": "^5.2.0",
-		"react": "^18.2.0",
-		"react-dom": "^18.2.0"
+		"vite": "^5.2.0"
 	}
 }
