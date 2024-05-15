@@ -4,7 +4,11 @@
 // add them as a sort of "plugin" system.
 
 import ENTRY from "/Users/benten/dev/vonojs/core/playground/.wrangler/tmp/bundle-ctwCI8/middleware-insertion-facade.js";
-import { __facade_invoke__, __facade_register__, Dispatcher } from "/Users/benten/Library/pnpm/global/5/.pnpm/wrangler@3.53.1/node_modules/wrangler/templates/middleware/common.ts";
+import {
+	__facade_invoke__,
+	__facade_register__,
+	Dispatcher,
+} from "/Users/benten/Library/pnpm/global/5/.pnpm/wrangler@3.53.1/node_modules/wrangler/templates/middleware/common.ts";
 import type {
 	WithMiddleware,
 	WorkerEntrypointConstructor,
@@ -19,7 +23,7 @@ class __Facade_ScheduledController__ implements ScheduledController {
 	constructor(
 		readonly scheduledTime: number,
 		readonly cron: string,
-		noRetry: ScheduledController["noRetry"]
+		noRetry: ScheduledController["noRetry"],
 	) {
 		this.#noRetry = noRetry;
 	}
@@ -34,7 +38,7 @@ class __Facade_ScheduledController__ implements ScheduledController {
 }
 
 function wrapExportedHandler(
-	worker: WithMiddleware<ExportedHandler>
+	worker: WithMiddleware<ExportedHandler>,
 ): ExportedHandler {
 	// If we don't have any middleware defined, just return the handler as is
 	if (worker.middleware === undefined || worker.middleware.length === 0) {
@@ -48,7 +52,7 @@ function wrapExportedHandler(
 	const fetchDispatcher: ExportedHandlerFetchHandler = function (
 		request,
 		env,
-		ctx
+		ctx,
 	) {
 		if (worker.fetch === undefined) {
 			throw new Error("Handler does not export a fetch() function.");
@@ -64,7 +68,7 @@ function wrapExportedHandler(
 					const controller = new __Facade_ScheduledController__(
 						Date.now(),
 						init.cron ?? "",
-						() => {}
+						() => {},
 					);
 					return worker.scheduled(controller, env, ctx);
 				}
@@ -75,7 +79,7 @@ function wrapExportedHandler(
 }
 
 function wrapWorkerEntrypoint(
-	klass: WithMiddleware<WorkerEntrypointConstructor>
+	klass: WithMiddleware<WorkerEntrypointConstructor>,
 ): WorkerEntrypointConstructor {
 	// If we don't have any middleware defined, just return the handler as is
 	if (klass.middleware === undefined || klass.middleware.length === 0) {
@@ -91,7 +95,7 @@ function wrapWorkerEntrypoint(
 		#fetchDispatcher: ExportedHandlerFetchHandler<Record<string, unknown>> = (
 			request,
 			env,
-			ctx
+			ctx,
 		) => {
 			this.env = env;
 			this.ctx = ctx;
@@ -106,7 +110,7 @@ function wrapWorkerEntrypoint(
 				const controller = new __Facade_ScheduledController__(
 					Date.now(),
 					init.cron ?? "",
-					() => {}
+					() => {},
 				);
 				return super.scheduled(controller);
 			}
@@ -118,7 +122,7 @@ function wrapWorkerEntrypoint(
 				this.env,
 				this.ctx,
 				this.#dispatcher,
-				this.#fetchDispatcher
+				this.#fetchDispatcher,
 			);
 		}
 	};

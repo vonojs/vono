@@ -27,13 +27,13 @@ async function main() {
 	});
 
 	const httpServer = createServer((req, res) => {
-		if(req.url?.startsWith("/__immutables/")){
+		if (req.url?.startsWith("/__immutables/")) {
 			immutablesHandler(req, res, () => {
 				const webRequest = createRequest(req);
 				requestContext.run(webRequest, () =>
 					handler(webRequest).then((response: Response) =>
-						handleNodeResponse(response, res)
-					)
+						handleNodeResponse(response, res),
+					),
 				);
 			});
 		} else {
@@ -41,7 +41,7 @@ async function main() {
 				const webRequest = createRequest(req);
 				requestContext.run(webRequest, () =>
 					handler(webRequest).then((response: Response) =>
-						handleNodeResponse(response, res)
+						handleNodeResponse(response, res),
 					),
 				);
 			});

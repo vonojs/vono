@@ -12,9 +12,7 @@
 		"play": "cd playground && pnpm run dev",
 		"lint": "biome format . --write"
 	},
-	"files": [
-		"build"
-	],
+	"files": ["build"],
 	"exports": {
 		".": {
 			"import": "./build/mod.js",

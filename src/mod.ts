@@ -2,12 +2,12 @@ import * as vite from "vite";
 import * as tools from "./tools";
 import * as fs from "node:fs/promises";
 import * as p from "path";
-import { handleNodeResponse, createRequest } from "./node-polyfills"
+import { handleNodeResponse, createRequest } from "./node-polyfills";
 import { existsSync } from "node:fs";
-import { Adaptor } from "./adaptors"
+import { Adaptor } from "./adaptors";
 import { NodeAdaptor } from "./adaptors/node";
 
-import rpc from "./rpc"
+import rpc from "./rpc";
 export { rpc };
 
 /***********************************************************
@@ -27,7 +27,7 @@ export type Vono = {
 	clientEntry?: string;
 	adaptor: Adaptor;
 	includeIndexHtml?: boolean;
-}
+};
 
 const createConfig = (config: Partial<Vono> = {}): Vono => {
 	return {
@@ -45,19 +45,17 @@ const createConfig = (config: Partial<Vono> = {}): Vono => {
 function clearOutdir(outDir: string): vite.Plugin {
 	let viteConfig: vite.ResolvedConfig;
 	return {
-		name: 'vono:clear-outdir',
+		name: "vono:clear-outdir",
 		configResolved: async (vite) => {
 			viteConfig = vite;
 		},
 		buildStart: async () => {
 			if (viteConfig.build.ssr) return;
 			try {
-				await fs.rm(outDir, {recursive: true});
-			} catch {
-			}
-		}
-	}
-
+				await fs.rm(outDir, { recursive: true });
+			} catch {}
+		},
+	};
 }
 
 /***********************************************************
@@ -197,7 +195,7 @@ function httpPlugin(): vite.Plugin {
 				if (id.startsWith("https://")) {
 					return id;
 				}
-				const {pathname, protocol, host} = new URL(importer);
+				const { pathname, protocol, host } = new URL(importer);
 				// for skypack
 				if (id.startsWith("/")) {
 					return `${protocol}//${host}${id}`;
@@ -330,12 +328,19 @@ function assets(config: {
 			vfs.add({
 				path: "/assets",
 				serverContent: async () => {
-					const getAsset = `export async function getModuleInfo (path){ path.startsWith("/") && (path = path.slice(1)); if (import.meta.env.DEV) { const res = await fetch(\`http://localhost:5173/__fetch_asset?mod=\${path}\`); if (!res.ok) {throw new Error("Failed to fetch assets")}; return await res.json();}; const manifest = (await import("#vono/assets")).manifest; return manifest[path]};`
+					const getAsset = `export async function getModuleInfo (path){ path.startsWith("/") && (path = path.slice(1)); if (import.meta.env.DEV) { const res = await fetch(\`http://localhost:5173/__fetch_asset?mod=\${path}\`); if (!res.ok) {throw new Error("Failed to fetch assets")}; return await res.json();}; const manifest = (await import("#vono/assets")).manifest; return manifest[path]};`;
 					if (isBuild) {
-						const path = typeof config.manifest === "function" ? config.manifest() : config.manifest;
-						return `export const manifest = ${JSON.stringify(await getBuildManifest(p.join(vite.build.outDir, path)),)};${getAsset}`;
+						const path =
+							typeof config.manifest === "function"
+								? config.manifest()
+								: config.manifest;
+						return `export const manifest = ${JSON.stringify(
+							await getBuildManifest(p.join(vite.build.outDir, path)),
+						)};${getAsset}`;
 					} else {
-						return `export const manifest = ${JSON.stringify(createDevManifest(vite.build.rollupOptions))};${getAsset}`;
+						return `export const manifest = ${JSON.stringify(
+							createDevManifest(vite.build.rollupOptions),
+						)};${getAsset}`;
 					}
 				},
 			});
@@ -401,7 +406,7 @@ function assets(config: {
 						?.filter(Boolean),
 				};
 
-				res.writeHead(200, {"content-type": "application/json"});
+				res.writeHead(200, { "content-type": "application/json" });
 				// @ts-ignore
 				res.write(JSON.stringify(result));
 				res.end();
@@ -430,7 +435,10 @@ function shell(): vite.Plugin {
 					if (isBuild) {
 						try {
 							content = JSON.stringify(
-								await fs.readFile(p.join(dist, "client", "index.html"), "utf-8"),
+								await fs.readFile(
+									p.join(dist, "client", "index.html"),
+									"utf-8",
+								),
 							);
 						} catch {
 							throw new Error(
@@ -470,9 +478,9 @@ export default function vono(config: Partial<Vono> = {}): vite.Plugin[] {
 
 	return [
 		httpPlugin(),
-		assets({manifest: "client/.vite/manifest.json"}),
+		assets({ manifest: "client/.vite/manifest.json" }),
 		shell(),
-		vfsPlugin({vfs: useVFS(), alias: "#vono"}),
+		vfsPlugin({ vfs: useVFS(), alias: "#vono" }),
 		clearOutdir(vono.adaptor.outputDirectory),
 		{
 			name: "vono:main",
@@ -513,14 +521,15 @@ export default function vono(config: Partial<Vono> = {}): vite.Plugin[] {
 								external: vono.adaptor.external,
 							},
 							{
-								input: [tools.resolveUnknownExtension(vono.clientEntry), existsSync(p.join(root, 'index.html')) && "/index.html"].filter(
-									Boolean,
-								) as string[],
+								input: [
+									tools.resolveUnknownExtension(vono.clientEntry),
+									existsSync(p.join(root, "index.html")) && "/index.html",
+								].filter(Boolean) as string[],
 								output: {
 									assetFileNames: "__immutables/[name]-[hash].[ext]",
 									chunkFileNames: "__immutables/[name]-[hash].js",
 									entryFileNames: "__immutables/[name]-[hash].js",
-								}
+								},
 							},
 						),
 					},
@@ -567,7 +576,11 @@ export default function vono(config: Partial<Vono> = {}): vite.Plugin[] {
 			},
 			configureServer: (server) => {
 				return async () => {
-					if (!tools.resolveUnknownExtension(p.join(viteConfig.root, vono.serverEntry))) {
+					if (
+						!tools.resolveUnknownExtension(
+							p.join(viteConfig.root, vono.serverEntry),
+						)
+					) {
 						throw new Error(
 							`Could not find server entry @ ${vono.serverEntry}. Please provide a path to a file that exports a default handler function with the signature: (request: Request) => Response | Promise<Response>`,
 						);
@@ -599,7 +612,8 @@ export default function vono(config: Partial<Vono> = {}): vite.Plugin[] {
 				const containsEntry = (mod: vite.ModuleNode): boolean => {
 					if (!mod.id) return false;
 					if (
-						tools.stripExt(mod.id) === tools.slash(p.join(viteConfig.root, vono.serverEntry))
+						tools.stripExt(mod.id) ===
+						tools.slash(p.join(viteConfig.root, vono.serverEntry))
 					) {
 						return true;
 					}
@@ -611,7 +625,7 @@ export default function vono(config: Partial<Vono> = {}): vite.Plugin[] {
 				};
 				if (ctx.modules.some(containsEntry)) {
 					await updateHandler();
-					ctx.server.hot.send({type: "full-reload"});
+					ctx.server.hot.send({ type: "full-reload" });
 				}
 			},
 			writeBundle: {
@@ -626,9 +640,9 @@ export default function vono(config: Partial<Vono> = {}): vite.Plugin[] {
 								clientOutputDirectory: viteConfig.build?.outDir,
 							}),
 						);
-						const {spawn} = await import("child_process");
+						const { spawn } = await import("child_process");
 						await vono.adaptor.buildStart?.();
-						const child = spawn("vite", ["build", "--ssr"], {shell: true});
+						const child = spawn("vite", ["build", "--ssr"], { shell: true });
 						let complete: () => void;
 						const promise = new Promise<void>((resolve) => {
 							complete = resolve;
@@ -648,15 +662,16 @@ export default function vono(config: Partial<Vono> = {}): vite.Plugin[] {
 						await promise;
 						// server cleanup
 						try {
-							await fs.rm(p.join(viteConfig.build.outDir, '.vite'), {recursive: true});
+							await fs.rm(p.join(viteConfig.build.outDir, ".vite"), {
+								recursive: true,
+							});
 						} catch (e) {
-							console.log(e)
+							console.log(e);
 						}
 						if (!vono.includeIndexHtml) {
 							try {
 								await fs.rm(p.join(viteConfig.build.outDir, "index.html"));
-							} catch {
-							}
+							} catch {}
 						}
 						await vono.adaptor.prerender?.();
 						await vono.adaptor.buildEnd?.();

@@ -5,7 +5,7 @@ import "./assets/styles.css";
 
 import { getUser } from "./endpoints.rpc.ts";
 
-getUser()
+getUser();
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
 	<React.StrictMode>
