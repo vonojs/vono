@@ -7,6 +7,9 @@ import { existsSync } from "node:fs";
 import { Adaptor } from "./adaptors"
 import { NodeAdaptor } from "./adaptors/node";
 
+import rpc from "./rpc"
+export { rpc };
+
 /***********************************************************
     Exports
 ************************************************************/
