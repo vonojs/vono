@@ -5,9 +5,7 @@ import * as p from "path";
 import { handleNodeResponse, createRequest } from "./node-polyfills"
 import { existsSync } from "node:fs";
 import { Adaptor } from "./adaptors"
-import { NodeAdaptor } from "./adaptors/node/index";
-
-import { endpoints } from "./endpoint";
+import { NodeAdaptor } from "./adaptors/node";
 
 /***********************************************************
     Exports
@@ -555,12 +553,6 @@ export default function vono(config: Partial<Vono> = {}): vite.Plugin[] {
 					path: "buildctx",
 					serverContent: () =>
 						`export default ${JSON.stringify(buildctx, null, 2)}`,
-				});
-
-				useVFS().add({
-					path: "assets",
-					serverContent: () =>
-						`export async function getModuleInfo (path){ path.startsWith("/") && (path = path.slice(1)); if (import.meta.env.DEV) { const res = await fetch(\`http://localhost:5173/__fetch_asset?mod=\${path}\`); if (!res.ok) {throw new Error("Failed to fetch assets")}; return await res.json();}; const manifest = (await import("#vono/assets")).manifest; return manifest[path]}`,
 				});
 
 				useVFS().add({
