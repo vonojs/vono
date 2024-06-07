@@ -7,9 +7,6 @@ import { existsSync } from "node:fs";
 import { Adaptor } from "./adaptors";
 import { NodeAdaptor } from "./adaptors/node";
 
-import rpc from "./rpc";
-export { rpc };
-
 /***********************************************************
     Exports
 ************************************************************/
@@ -304,11 +301,11 @@ function moduleNodeToManifestChunk(node: vite.ModuleNode): ManifestChunk {
 		src: stripLeadingSlash(node.url),
 		file: stripLeadingSlash(node.url),
 		// @ts-ignore
-		css: [...node.staticImportedUrls]
+		css: [...node.staticImportedUrls ?? []]
 			.filter((url) => url.endsWith(".css"))
 			.map(stripLeadingSlash),
 		// @ts-ignore
-		assets: [...node.staticImportedUrls]
+		assets: [...node.staticImportedUrls ?? []]
 			.filter((url) => !url.endsWith(".css"))
 			.map(stripLeadingSlash),
 	};
