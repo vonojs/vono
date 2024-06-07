@@ -1,7 +1,7 @@
 {
 	"name": "@vonojs/core",
 	"description": "Core Vite plugin for Vono.js.",
-	"version": "0.2.3",
+	"version": "0.2.4",
 	"publishConfig": {
 		"access": "public"
 	},
