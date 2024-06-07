@@ -514,6 +514,7 @@ export default function vono(config: Partial<Vono> = {}): vite.Plugin[] {
 								output: {
 									inlineDynamicImports: vono.adaptor.inlineDynamicImports,
 									chunkFileNames: "server/[name]-[hash].js",
+									manualChunks: !vono.adaptor.inlineDynamicImports
 								},
 								external: vono.adaptor.external,
 							},
