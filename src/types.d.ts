@@ -13,17 +13,3 @@ declare module "#vono/assets" {
 declare module "#vono/request" {
 	export function getRequest(): Request | null;
 }
-
-declare module "#vono/rpc" {
-	export default function rpc<
-		Args extends Serializable,
-		T extends ((...args: Args[]) => Serializable | Promise<Serializable>) & {
-			isEndpoint?: boolean;
-			config?: EndpointConfig;
-		},
-	>(
-		handler: T,
-		config?: EndpointConfig,
-	): (...args: Args[]) => ReturnType<T | Error>;
-	export function middleware(req: Request): Promise<Response>;
-}

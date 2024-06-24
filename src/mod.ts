@@ -3,7 +3,6 @@ import * as tools from "./tools";
 import * as fs from "node:fs/promises";
 import * as p from "path";
 import { handleNodeResponse, createRequest } from "./node-polyfills";
-import { existsSync } from "node:fs";
 import { Adaptor } from "./adaptors";
 import { NodeAdaptor } from "./adaptors/node";
 
@@ -23,15 +22,31 @@ export type Vono = {
 	serverEntry: string;
 	clientEntry?: string;
 	adaptor: Adaptor;
-	includeIndexHtml?: boolean;
+	includeIndexHtml: boolean;
+	clearOutputDirectory: boolean;
+	manifestPath: string;
+	exclude: RegExp[];
 };
 
 const createConfig = (config: Partial<Vono> = {}): Vono => {
 	return {
 		serverEntry: config.serverEntry || "src/server.entry",
-		clientEntry: config.clientEntry || "index.html",
+		clientEntry: config.clientEntry,
 		adaptor: config.adaptor || new NodeAdaptor(),
 		includeIndexHtml: config.includeIndexHtml ?? false,
+		clearOutputDirectory: config.clearOutputDirectory ?? true,
+		manifestPath: config.manifestPath ?? "client/.vite/manifest.json",
+		exclude: [
+			/.*\.css$/,
+			/.*\.ts$/,
+			/.*\.tsx$/,
+			/^\/@.+$/,
+			/\?t\=\d+$/,
+			/^\/favicon\.ico$/,
+			/^\/static\/.+/,
+			/^\/node_modules\/.*/,
+			...config.exclude ?? [],
+		]
 	};
 };
 
@@ -168,59 +183,6 @@ export function vfsPlugin(
 					"\0" + virtualModuleId + path,
 				);
 				mod && ctx.server.reloadModule(mod);
-			}
-		},
-	};
-}
-
-/***********************************************************
-    HTTP Plugin
- ************************************************************/
-
-function isHttpProtocol(id: string | undefined | null) {
-	return id?.startsWith("http://") || id?.startsWith("https://");
-}
-
-const httpCache = new Map();
-
-function httpPlugin(): vite.Plugin {
-	return {
-		name: "vono:http",
-		enforce: "pre",
-		async resolveId(id, importer) {
-			if (importer && isHttpProtocol(importer)) {
-				if (id.startsWith("https://")) {
-					return id;
-				}
-				const { pathname, protocol, host } = new URL(importer);
-				// for skypack
-				if (id.startsWith("/")) {
-					return `${protocol}//${host}${id}`;
-				} else if (id.startsWith(".")) {
-					const resolvedPathname = p.join(p.dirname(pathname), id);
-					const newId = `${protocol}//${host}${resolvedPathname}`;
-					return newId;
-				}
-			} else if (isHttpProtocol(id)) {
-				return id;
-			}
-		},
-		async load(id) {
-			if (id === null) {
-				return;
-			}
-			if (isHttpProtocol(id)) {
-				const cached = httpCache.get(id);
-				if (cached) {
-					return cached;
-				}
-				const res = await fetch(id);
-				if (!res.ok) {
-					throw res.statusText;
-				}
-				const code = await res.text();
-				httpCache.set(id, code);
-				return code;
 			}
 		},
 	};
@@ -474,65 +436,81 @@ export default function vono(config: Partial<Vono> = {}): vite.Plugin[] {
 	let viteConfig: vite.ResolvedConfig;
 
 	return [
-		httpPlugin(),
-		assets({ manifest: "client/.vite/manifest.json" }),
-		shell(),
+		vono.clientEntry && assets({ manifest: vono.manifestPath }),
+		vono.clientEntry && shell(),
 		vfsPlugin({ vfs: useVFS(), alias: "#vono" }),
-		clearOutdir(vono.adaptor.outputDirectory),
+		vono.clearOutputDirectory && clearOutdir(vono.adaptor.outputDirectory),
 		{
 			name: "vono:main",
 			enforce: "pre",
-			config: (vite) => {
-				const ssr = <T, U>(ssr: T, client?: U): U | T | undefined =>
-					vite.build?.ssr ? ssr : client;
-				const root = vite.root || process.cwd();
 
-				return {
+			config: (vite) => {
+				const root = vite.root || process.cwd();
+				
+				const baseOptions: Omit<vite.UserConfig, "plugins"> = {
 					appType: "custom",
 					resolve: {
-						alias: ssr(vono.adaptor.alias),
+						alias: vono.adaptor.alias,
 					},
-					ssr: ssr({
-						noExternal: true,
-						external: vono.adaptor.external,
-					}),
-					build: {
-						emptyOutDir: false,
-						outDir: ssr(
-							p.join(root, vono.adaptor.outputDirectory),
-							p.join(root, vono.adaptor.outputDirectory, "client"),
-						),
-						manifest: ssr(false, true),
-						ssrEmitAssets: false,
-						ssr: ssr(true, false),
-						inlineDynamicImports: ssr(vono.adaptor.inlineDynamicImports),
-						rollupOptions: ssr(
-							{
+				}
+
+				if(vite.build?.ssr){
+					console.log("SSR Build")
+					return {
+						...baseOptions,
+						resolve: {
+							alias: vono.adaptor.alias,
+						},
+						ssr: {
+							noExternal: true,
+							external: vono.adaptor.external,
+						},
+						build: {
+							...baseOptions.build,
+							emptyOutDir: false,
+							outDir: p.join(root, vono.adaptor.outputDirectory),
+							manifest: false,
+							ssr: true,
+							inlineDynamicImports: vono.adaptor.inlineDynamicImports,
+							rollupOptions: {
 								input: {
 									[vono.adaptor.entryName]: vono.adaptor.productionRuntime,
 								},
 								output: {
 									inlineDynamicImports: vono.adaptor.inlineDynamicImports,
 									chunkFileNames: "server/[name]-[hash].js",
-									manualChunks: !vono.adaptor.inlineDynamicImports
 								},
 								external: vono.adaptor.external,
 							},
-							{
+						}
+					}
+
+				}
+
+				if(vono.clientEntry) {
+					return {
+						...baseOptions,
+						outDir: p.join(root, vono.adaptor.outputDirectory, "client"),
+						build: {
+							...baseOptions.build,
+							emptyOutDir: false,
+							manifest: true,
+							ssrEmitAssets: false,
+							rollupOptions: {
 								input: [
-									tools.resolveUnknownExtension(vono.clientEntry),
-									existsSync(p.join(root, "index.html")) && "/index.html",
-								].filter(Boolean) as string[],
+									vono.clientEntry,
+								],
 								output: {
 									assetFileNames: "__immutables/[name]-[hash].[ext]",
 									chunkFileNames: "__immutables/[name]-[hash].js",
 									entryFileNames: "__immutables/[name]-[hash].js",
 								},
 							},
-						),
-					},
-				};
+						}
+					}
+				}
 			},
+
 			configResolved: async (vite) => {
 				viteConfig = vite;
 
@@ -544,27 +522,6 @@ export default function vono(config: Partial<Vono> = {}): vite.Plugin[] {
 						)}';`,
 				});
 
-				let buildctx: any;
-				if (viteConfig.build?.ssr) {
-					buildctx = {
-						...(await fs
-							.readFile(
-								p.join(vono.adaptor.outputDirectory, "vono.json"),
-								"utf-8",
-							)
-							.then((content) => JSON.parse(content))),
-					};
-				} else {
-					// not needed at the moment
-					buildctx = {};
-				}
-
-				useVFS().add({
-					path: "buildctx",
-					serverContent: () =>
-						`export default ${JSON.stringify(buildctx, null, 2)}`,
-				});
-
 				useVFS().add({
 					path: "request",
 					serverContent: () =>
@@ -572,40 +529,45 @@ export default function vono(config: Partial<Vono> = {}): vite.Plugin[] {
 					clientContent: () => `export const getRequest = () => null`,
 				});
 			},
-			configureServer: (server) => {
-				return async () => {
-					if (
-						!tools.resolveUnknownExtension(
-							p.join(viteConfig.root, vono.serverEntry),
-						)
-					) {
-						throw new Error(
-							`Could not find server entry @ ${vono.serverEntry}. Please provide a path to a file that exports a default handler function with the signature: (request: Request) => Response | Promise<Response>`,
-						);
-					}
-					updateHandler = async () => {
-						devHandler = (
-							await server.ssrLoadModule(vono.adaptor.developmentRuntime)
-						).default;
-					};
-					await updateHandler();
-					server.middlewares.use(async (nodeRequest, nodeResponse, next) => {
-						try {
-							const request = createRequest(nodeRequest);
-							const response = await devHandler(request);
-							return handleNodeResponse(response, nodeResponse);
-						} catch (e) {
-							console.error(e);
-							next();
-						}
-					});
+
+			configureServer: async (server) => {
+				if (
+					!tools.resolveUnknownExtension(
+						p.join(viteConfig.root, vono.serverEntry),
+					)
+				) {
+					console.warn(
+						`Could not find server entry @ ${vono.serverEntry}. Please provide a path to a file that exports a default handler function with the signature: (request: Request) => Response | Promise<Response>`,
+					);
+					return;
+				}
+
+				updateHandler = async () => {
+					devHandler = (
+						await server.ssrLoadModule(vono.adaptor.developmentRuntime)
+					).default;
 				};
+
+				server.middlewares.use(async (nodeRequest, nodeResponse, next) => {
+					try {
+						if(vono.exclude.some((p) => nodeRequest.url && p.test(nodeRequest.url))) return next();
+						if(!devHandler) await updateHandler();
+						const request = createRequest(nodeRequest);
+						const response = await devHandler(request);
+						return handleNodeResponse(response, nodeResponse);
+					} catch (e) {
+						console.error(e);
+						next();
+					}
+				});
 			},
+
 			configurePreviewServer: () => {
 				throw new Error(
 					"Preview server is not supported in Vono. Please replace this command with `node dist/server` if using the default Node adaptor.",
 				);
 			},
+
 			handleHotUpdate: async (ctx) => {
 				const containsEntry = (mod: vite.ModuleNode): boolean => {
 					if (!mod.id) return false;
@@ -626,18 +588,12 @@ export default function vono(config: Partial<Vono> = {}): vite.Plugin[] {
 					ctx.server.hot.send({ type: "full-reload" });
 				}
 			},
+
 			writeBundle: {
 				sequential: true,
 				order: "post",
 				handler: async () => {
 					if (!viteConfig.build?.ssr) {
-						// clear the directory
-						await fs.writeFile(
-							p.join(vono.adaptor.outputDirectory, "vono.json"),
-							JSON.stringify({
-								clientOutputDirectory: viteConfig.build?.outDir,
-							}),
-						);
 						const { spawn } = await import("child_process");
 						await vono.adaptor.buildStart?.();
 						const child = spawn("vite", ["build", "--ssr"], { shell: true });
@@ -678,5 +634,5 @@ export default function vono(config: Partial<Vono> = {}): vite.Plugin[] {
 				},
 			},
 		},
-	];
+	] as vite.Plugin[];
 }
