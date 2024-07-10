@@ -12,10 +12,6 @@ import { Adaptor } from "./adaptors";
 import { NodeAdaptor } from "./adaptors/node";
 import { createLogger, Logger } from "@benstack/logger";
 
-export { CloudflareAdaptor } from "./adaptors/cloudflare";
-export { NodeAdaptor } from "./adaptors/node";
-export { NetlifyAdaptor } from "./adaptors/netlify";
-
 /****************************************************************************************
  * Logger
  *****************************************************************************************/
