@@ -1,10 +1,24 @@
+import { buildTags } from "../../src/runtime";
+import { name } from "./shell";
 
+
+const shell = async () => `
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Playground</title>
+		${await buildTags(["src/client.entry.tsx"])}
+	</head>
+	<body>
+		<h1>Hello, ${name}!</h1>
+	</body>
+</html>
+`;
 
 export default async function handler(req: Request): Promise<Response> {
-	// console.log(await getModuleInfo('/src/client.entry.tsx'))
-	return new Response("shell".replace("%vono:ssr%", String(req?.url)), {
-		headers: {
-			"content-type": "text/html",
-		},
+	const s = await shell();
+	await buildTags(["src/client.entry.tsx"])
+	return new Response(s, {
+		headers: { "content-type": "text/html" },
 	});
 }

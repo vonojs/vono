@@ -1,10 +1,6 @@
-/***********************************************************
- *
- *  This module has been adapted from Remix's Vite plugin. https://remix.run
- *	Big thanks to them!
- *  Although I did have to convert a bunch of lets to consts o_o
- *
- ***********************************************************/
+/****************************************************************************************
+ * This module has been adapted from Remix's Vite plugin. https://remix.run
+ *****************************************************************************************/
 
 import { Readable, Stream } from "node:stream";
 import type {
@@ -13,8 +9,84 @@ import type {
 	ServerResponse,
 } from "node:http";
 import { once } from "node:events";
-// @ts-expect-error
-import { splitCookiesString } from "set-cookie-parser";
+
+function splitCookiesString(cookiesString: string | string[]) {
+	if (Array.isArray(cookiesString)) {
+		return cookiesString;
+	}
+
+	if (typeof cookiesString !== "string") {
+		return [];
+	}
+
+	let cookiesStrings = [];
+	let pos = 0;
+	let start;
+	let ch;
+	let lastComma;
+	let nextStart;
+	let cookiesSeparatorFound;
+
+	function skipWhitespace() {
+		if (typeof cookiesString !== "string")
+			throw new Error("cookiesString is not a string");
+		while (pos < cookiesString.length && /\s/.test(cookiesString.charAt(pos))) {
+			pos += 1;
+		}
+		return pos < cookiesString.length;
+	}
+
+	function notSpecialChar() {
+		if (typeof cookiesString !== "string")
+			throw new Error("cookiesString is not a string");
+		ch = cookiesString.charAt(pos);
+
+		return ch !== "=" && ch !== ";" && ch !== ",";
+	}
+
+	while (pos < cookiesString.length) {
+		start = pos;
+		cookiesSeparatorFound = false;
+
+		while (skipWhitespace()) {
+			ch = cookiesString.charAt(pos);
+			if (ch === ",") {
+				// ',' is a cookie separator if we have later first '=', not ';' or ','
+				lastComma = pos;
+				pos += 1;
+
+				skipWhitespace();
+				nextStart = pos;
+
+				while (pos < cookiesString.length && notSpecialChar()) {
+					pos += 1;
+				}
+
+				// currently special character
+				if (pos < cookiesString.length && cookiesString.charAt(pos) === "=") {
+					// we found cookies separator
+					cookiesSeparatorFound = true;
+					// pos is inside the next cookie, so back up and return it.
+					pos = nextStart;
+					cookiesStrings.push(cookiesString.substring(start, lastComma));
+					start = pos;
+				} else {
+					// in param ',' or param separator ';',
+					// we continue from that comma
+					pos = lastComma + 1;
+				}
+			} else {
+				pos += 1;
+			}
+		}
+
+		if (!cookiesSeparatorFound || pos >= cookiesString.length) {
+			cookiesStrings.push(cookiesString.substring(start, cookiesString.length));
+		}
+	}
+
+	return cookiesStrings;
+}
 
 class StreamPump {
 	public highWaterMark: number;

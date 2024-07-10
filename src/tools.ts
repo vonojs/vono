@@ -30,3 +30,7 @@ export function slash(path: string): string {
 export function stripExt(path: string): string {
 	return path.replace(/\.[^/.]+$/, "");
 }
+
+export function stripLeadingSlash(str: string) {
+	return str.replace(/^\//, "");
+}

@@ -16,6 +16,7 @@ export default {
 		// @ts-ignore - alias
 		const { default: handler } = await import("#vono/entry");
 		const requestContext = new AsyncLocalStorage<Request>();
+		// @ts-ignore
 		globalThis.getRequest_unsafe = () => requestContext.getStore();
 
 		return requestContext.run(request, () => handler(request));

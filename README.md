@@ -11,12 +11,6 @@
 
 </div>
 
-### @Next
-
-This is the next branch, undergoing a complete refactor to an agnostic Request => Promise<Response> interface, and
-will eventually support the upcoming Vite Environment API. It's designed with the goal of running and deploying [Vike](https://vike.dev)
-apps and other plugins designed to fit into the framework-as-a-plugin ecosystem.
-
 ### Usage
 
 #### Install the plugin
@@ -27,19 +21,20 @@ import vono from '@vonojs/vono'
 
 export default defineConfig({
   plugins: [
-    vono()
+    vono(
+      clientEntry: "src/client.ts",
+      serverEntry: "src/server.ts"
+    )
   ]
 })
 ```
 
-#### Create a server (default `src/server.entry.ts`)
+#### Create a server (default `src/server.ts`)
 
 ```ts
-// we can access our index.html file from the shell virtual module
-import shell from '#vono/shell'
+import { buildTags } from "vonojs/runtime"
 
-// return the index.html file
-export default (request: Request) => new Response(shell, { headers: { 'content-type': 'text/html' }})
+export default (request: Request) => new Response(await buildTags("src/client.ts"), { headers: { 'content-type': 'text/html' }})
 ```
 
 #### Running a built app

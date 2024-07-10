@@ -9,14 +9,14 @@
 		/* Bundler mode */
 		"moduleResolution": "bundler",
 		"allowImportingTsExtensions": true,
+		"declaration": true,
+		"emitDeclarationOnly": true,
 		"resolveJsonModule": true,
 		"isolatedModules": true,
-		"noEmit": true,
 
 		/* Linting */
 		"strict": true,
-		"noUnusedLocals": true,
-		"noUnusedParameters": true,
 		"noFallthroughCasesInSwitch": true
-	}
+	},
+	"include": ["src/mod.ts"]
 }

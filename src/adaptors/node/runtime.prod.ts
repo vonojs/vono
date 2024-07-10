@@ -2,8 +2,6 @@ import { createServer, IncomingMessage, ServerResponse } from "node:http";
 import { fileURLToPath } from "node:url";
 import { createRequest, handleNodeResponse } from "../../node-polyfills";
 // @ts-ignore - alias
-import buildctx from "#vono/buildctx";
-// @ts-ignore - alias
 import handler from "#vono/entry";
 import { AsyncLocalStorage } from "node:async_hooks";
 
@@ -14,13 +12,13 @@ globalThis.getRequest_unsafe = () => requestContext.getStore();
 async function main() {
 	const sirv = (await import("sirv")).default;
 
-	const immutablesHandler = sirv(buildctx.clientOutputDirectory, {
+	const immutablesHandler = sirv("./client", {
 		immutable: true,
 		maxAge: 31536000,
 		dev: false,
 	});
 
-	const publicHandler = sirv(buildctx.clientOutputDirectory, {
+	const publicHandler = sirv("./client", {
 		maxAge: 0,
 		dev: false,
 		etag: true,
@@ -66,8 +64,8 @@ if (
 }
 
 export const createMiddleware = async () => {
-	return (req: IncomingMessage, res: ServerResponse) => {
-		const webRequest = createRequest(req, res);
+	return (req: IncomingMessage) => {
+		const webRequest = createRequest(req);
 		return requestContext.run(webRequest, () => handler(webRequest));
 	};
 };
