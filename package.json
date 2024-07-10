@@ -1,7 +1,7 @@
 {
 	"name": "vonojs",
 	"description": "Dual-build server & client with Vite.",
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"publishConfig": {
 		"access": "public"
 	},
@@ -12,19 +12,19 @@
 		"play": "cd playground && pnpm run dev",
 		"lint": "biome format . --write"
 	},
-	"files": ["build"],
+	"files": ["dist"],
 	"exports": {
 		".": {
-			"import": "./build/mod.js",
-			"types": "./build/mod.d.ts"
+			"import": "./dist/mod.js",
+			"types": "./dist/mod.d.ts"
 		},
 		"./runtime": {
-			"import": "./build/runtime.js",
-			"types": "./build/runtime.d.ts"
+			"import": "./dist/runtime.js",
+			"types": "./dist/runtime.d.ts"
 		},
 		"./adaptors": {
-			"import": "./build/adaptors/index.js",
-			"types": "./build/adaptors/index.d.ts"
+			"import": "./dist/adaptors/index.js",
+			"types": "./dist/adaptors/index.d.ts"
 		}
 	},
 	"peerDependencies": {
