@@ -8,7 +8,7 @@ const bundleDepsOnly: () => Plugin = () => ({
 		build.onResolve({ filter: /^\./ }, (args) => {
 			return {
 				external: true,
-				path: args.path,
+				path: args.path + ".js",
 			}
 		})
 	}
@@ -22,5 +22,5 @@ export default defineConfig({
 	platform: "node",
 	format: "esm",
 	target: "esnext",
-	plugins: [dtsPlugin(), bundleDepsOnly],
+	plugins: [dtsPlugin(), bundleDepsOnly()],
 });
