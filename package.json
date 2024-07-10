@@ -1,7 +1,7 @@
 {
 	"name": "vonojs",
 	"description": "Dual-build server & client with Vite.",
-	"version": "0.0.2",
+	"version": "0.0.3",
 	"publishConfig": {
 		"access": "public"
 	},
@@ -22,9 +22,17 @@
 			"import": "./dist/runtime.js",
 			"types": "./dist/runtime.d.ts"
 		},
-		"./adaptors": {
-			"import": "./dist/adaptors/index.js",
-			"types": "./dist/adaptors/index.d.ts"
+		"./adaptor-cloudflare": {
+			"import": "./dist/adaptors/cloudflare/index.js",
+			"types": "./dist/adaptors/cloudflare/index.d.ts"
+		},
+		"./adaptor-netlify": {
+			"import": "./dist/adaptors/netlify/index.js",
+			"types": "./dist/adaptors/netlify/index.d.ts"
+		},
+		"./adaptor-node": {
+			"import": "./dist/adaptors/node/index.js",
+			"types": "./dist/adaptors/node/index.d.ts"
 		}
 	},
 	"peerDependencies": {

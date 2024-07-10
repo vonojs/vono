@@ -22,7 +22,3 @@ export abstract class Adaptor {
 	buildError?: (err: Error) => void | Promise<void>;
 	prerender?: () => void | Promise<void>;
 }
-
-export { NodeAdaptor } from './node';
-export { CloudflareAdaptor } from './cloudflare';
-export { NetlifyAdaptor } from './netlify';
