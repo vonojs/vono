@@ -1,7 +1,7 @@
 {
 	"name": "vonojs",
 	"description": "Dual-build server & client with Vite.",
-	"version": "0.0.11",
+	"version": "0.0.12",
 	"publishConfig": {
 		"access": "public"
 	},
@@ -11,6 +11,10 @@
 		"build": "pnpm builder",
 		"play": "cd playground && pnpm run dev",
 		"lint": "biome format . --write"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/vonojs/vono.git"
 	},
 	"files": ["dist"],
 	"exports": {
