@@ -1,7 +1,7 @@
 {
 	"name": "vonojs",
 	"description": "Dual-build server & client with Vite.",
-	"version": "0.0.10",
+	"version": "0.0.11",
 	"publishConfig": {
 		"access": "public"
 	},
@@ -43,7 +43,6 @@
 		"@benstack/builder": "^0.0.9",
 		"@biomejs/biome": "1.6.4",
 		"@types/node": "^20.12.4",
-		"unenv": "^1.9.0",
 		"esbuild": "^0.23.0",
 		"esbuild-plugin-d.ts": "^1.2.3",
 		"typescript": "^5.2.2"

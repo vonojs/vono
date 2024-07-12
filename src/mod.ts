@@ -22,7 +22,7 @@ export const Log = createLogger({
 
 export type Vono = {
 	serverEntry: string;
-	clientEntry?: string;
+	clientEntry?: string | string[];
 	adaptor: Adaptor;
 	exclude: RegExp[];
 };
@@ -377,7 +377,7 @@ export default function vono(config: Partial<Vono> = {}): vite.Plugin[] {
 							emptyOutDir: false,
 							manifest: true,
 							rollupOptions: {
-								input: [vono.clientEntry],
+								input: vono.clientEntry,
 								output: {
 									assetFileNames: "__immutables/[name]-[hash].[ext]",
 									chunkFileNames: "__immutables/[name]-[hash].js",
