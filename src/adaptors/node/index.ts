@@ -1,5 +1,5 @@
-import { Adaptor } from "../index";
-import { resolveModuleDirectory } from "../../tools";
+import { Adaptor } from "../index.ts";
+import { resolveModuleDirectory } from "../../tools.ts";
 import { join } from "node:path";
 
 const dir = resolveModuleDirectory(import.meta.url);

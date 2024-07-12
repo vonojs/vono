@@ -1,7 +1,7 @@
-import { Adaptor } from "../index";
-import { resolveModuleDirectory } from "../../tools";
+import { Adaptor } from "../index.ts";
+import { resolveModuleDirectory } from "../../tools.ts";
 import { join } from "node:path";
-import * as fs from "fs/promises";
+import * as fs from "node:fs/promises";
 
 // thanks unenv!
 const cloudflareNodeCompatModules = [

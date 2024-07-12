@@ -1,6 +1,5 @@
-import { buildTags } from "../../src/runtime";
+import { buildTags } from "../../dist/runtime";
 import { name } from "./shell";
-
 
 const shell = async () => `
 <!DOCTYPE html>
@@ -17,7 +16,7 @@ const shell = async () => `
 
 export default async function handler(req: Request): Promise<Response> {
 	const s = await shell();
-	await buildTags(["src/client.entry.tsx"])
+	await buildTags(["src/client.entry.tsx"]);
 	return new Response(s, {
 		headers: { "content-type": "text/html" },
 	});

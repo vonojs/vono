@@ -8,11 +8,11 @@ const bundleDepsOnly: () => Plugin = () => ({
 		build.onResolve({ filter: /^\./ }, (args) => {
 			return {
 				external: true,
-				path: args.path + ".js",
-			}
-		})
-	}
-})
+				path: args.path.replace(".ts", ".js"),
+			};
+		});
+	},
+});
 
 export default defineConfig({
 	entryPoints: ["src/**/*.*"],

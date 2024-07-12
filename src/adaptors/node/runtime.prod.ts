@@ -1,16 +1,24 @@
-import { createServer, IncomingMessage, ServerResponse } from "node:http";
+import { createServer, IncomingMessage } from "node:http";
 import { fileURLToPath } from "node:url";
-import { createRequest, handleNodeResponse } from "../../node-polyfills";
-// @ts-ignore - alias
-import handler from "#vono/entry";
 import { AsyncLocalStorage } from "node:async_hooks";
 
-const requestContext = new AsyncLocalStorage<Request>();
 // @ts-ignore - alias
+import handler from "#vono/entry";
+
+const requestContext = new AsyncLocalStorage<Request>();
+// @ts-ignore - undeclared global
 globalThis.getRequest_unsafe = () => requestContext.getStore();
 
 async function main() {
-	const sirv = (await import("sirv")).default;
+	// @ts-ignore - no types
+	const sirv = (await import("./sirv.dist.js")).default;
+	const { createRequest, handleNodeResponse } = await import(
+		"../../node-polyfills.js"
+	);
+
+	const port =
+		process.argv.find((arg) => arg.startsWith("--port="))?.split("=")[1] ??
+		8000;
 
 	const immutablesHandler = sirv("./client", {
 		immutable: true,
@@ -46,7 +54,6 @@ async function main() {
 		}
 	});
 
-	const port = process.argv[2] ?? 8000;
 	httpServer.listen(port, () => {
 		console.log(`Server listening on http://localhost:${port}`);
 	});
@@ -64,6 +71,9 @@ if (
 }
 
 export const createMiddleware = async () => {
+	const { createRequest, handleNodeResponse } = await import(
+		"../../node-polyfills.js"
+	);
 	return (req: IncomingMessage) => {
 		const webRequest = createRequest(req);
 		return requestContext.run(webRequest, () => handler(webRequest));
@@ -71,6 +81,9 @@ export const createMiddleware = async () => {
 };
 
 export const createWebMiddleware = async () => {
+	const { createRequest, handleNodeResponse } = await import(
+		"../../node-polyfills.js"
+	);
 	return (request: Request) =>
 		requestContext.run(request, () => handler(request));
 };
