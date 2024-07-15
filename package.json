@@ -22,10 +22,6 @@
 			"import": "./dist/mod.js",
 			"types": "./dist/mod.d.ts"
 		},
-		"./runtime": {
-			"import": "./dist/runtime.js",
-			"types": "./dist/runtime.d.ts"
-		},
 		"./adaptor-cloudflare": {
 			"import": "./dist/adaptors/cloudflare/index.js",
 			"types": "./dist/adaptors/cloudflare/index.d.ts"

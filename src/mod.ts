@@ -250,17 +250,58 @@ function assetsPlugin(): vite.Plugin {
 			vfs.add({
 				path: "/assets",
 				serverContent: async () => {
-					const asset = `export async function asset (path){ path.startsWith("/") && (path = path.slice(1)); if (import.meta.env.DEV) { const res = await fetch(\`http://localhost:5173/__fetch_asset?mod=\${path}\`); if (!res.ok) {throw new Error("Failed to fetch assets")}; return await res.json();}; const manifest = (await import("#vono/assets")).manifest; return manifest[path]};`;
+
+					const result: string[] = [];
+
 					if (isBuild) {
 						const path = "client/.vite/manifest.json";
-						return `export const manifest = ${JSON.stringify(
+						result.push(`export const manifest = ${JSON.stringify(
 							await createBuildManifest(p.join(vite.build.outDir, path)),
-						)};${asset}`;
+						)};`)
 					} else {
-						return `export const manifest = ${JSON.stringify(
+						result.push(`export const manifest = ${JSON.stringify(
 							createDevManifest(vite.build.rollupOptions),
-						)};${asset}`;
+						)};`);
 					}
+
+					result.push(
+						`export async function asset (path){ 
+							path.startsWith("/") && (path = path.slice(1)); 
+							if (import.meta.env.DEV) { 
+								const res = await fetch('http://localhost:' + ${vite.server.port ?? 5173} + '/__fetch_asset?mod=' + path); 
+								if (!res.ok) { throw new Error("Failed to fetch assets") }; 
+								return await res.json();
+							}; 
+							const manifest = (await import("#vono/assets")).manifest; 
+							return manifest[path]
+						};`
+					)
+
+					result.push(`
+						export async function buildTags(scripts) {
+							const assetFn = await import("#vono/assets").then((m) => m.asset);
+							const result = [];
+							const mods = [];
+							for (const script of scripts) {
+								const mod = await asset(script);
+								mod && mods.push(mod);
+							}
+							for (const mod of mods) {
+								if (mod.file) {
+									result.push('<script type="module" src="/' + mod.file + '"></script>')
+								}
+								for (const css of mod.css ?? []) {
+									result.push('<link rel="stylesheet" href="/' + css + '">');
+								}
+								if (mod.imports) {
+									result.push(await buildTags(mod.imports));
+								}
+							}
+							return result.join("\\n");
+						}
+					`)
+
+					return result.join("\n");
 				},
 			});
 		},
@@ -392,16 +433,10 @@ export default function vono(config: Partial<Vono> = {}): vite.Plugin[] {
 			configResolved: async (vite) => {
 				viteConfig = vite;
 
-				if (!viteConfig.build.ssr) {
-					console.log(viteConfig.build.outDir);
-				}
-
 				useVFS().add({
 					path: "entry",
 					serverContent: () =>
-						`export {default} from '${tools.slash(
-							p.join(viteConfig.root, vono.serverEntry),
-						)}';`,
+						`export { default } from '${tools.slash(p.join(viteConfig.root, vono.serverEntry))}';`,
 				});
 
 				useVFS().add({
@@ -425,6 +460,7 @@ export default function vono(config: Partial<Vono> = {}): vite.Plugin[] {
 				}
 
 				updateHandler = async () => {
+
 					devHandler = (
 						await server.ssrLoadModule(vono.adaptor.developmentRuntime)
 					).default;

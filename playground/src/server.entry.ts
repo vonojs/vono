@@ -1,4 +1,4 @@
-import { buildTags } from "../../dist/runtime";
+import { buildTags } from "#vono/assets";
 import { name } from "./shell";
 
 const shell = async () => `
