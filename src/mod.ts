@@ -278,7 +278,7 @@ function assetsPlugin(): vite.Plugin {
 					)
 
 					result.push(`
-						export async function buildTags(scripts) {
+						export async function buildTags(...scripts) {
 							const assetFn = await import("#vono/assets").then((m) => m.asset);
 							const result = [];
 							const mods = [];

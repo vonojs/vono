@@ -1,7 +1,7 @@
 declare module '#vono/assets' {
 	export const manifest: import("vite").Manifest;
-	export const asset: (url: string) => import("vite").ManifestChunk;
-	export const buildTags: (url: string) => string;
+	export const asset: (url: string) => Promise<import("vite").ManifestChunk | undefined>;
+	export const buildTags: (url: string) => Promise<string>;
 }
 
 declare module '#vono/entry' {
