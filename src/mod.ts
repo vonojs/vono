@@ -473,12 +473,12 @@ export default function vono(config: Partial<Vono> = {}): vite.Plugin[] {
 
 				server.middlewares.use(async (nodeRequest, nodeResponse, next) => {
 					try {
+						const pathname = new URL(nodeRequest.url ?? "", "http://localhost").pathname
 						if (
 							vono.exclude.some(
-								(p) => nodeRequest.url && p.test(nodeRequest.url),
+								(p) => pathname && p.test(pathname),
 							)
-						)
-							return next();
+						) { return next() }
 						if (!devHandler) await updateHandler();
 						const request = createRequest(nodeRequest);
 						const response = await devHandler(request);
