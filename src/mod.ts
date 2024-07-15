@@ -1,10 +1,10 @@
 import * as vite from "vite";
-import * as tools from "./tools.ts";
+import * as tools from "./tools";
 import * as fs from "node:fs/promises";
 import * as p from "path";
-import { handleNodeResponse, createRequest } from "./node-polyfills.ts";
-import { Adaptor } from "./adaptors/index.ts";
-import { NodeAdaptor } from "./adaptors/node/index.ts";
+import { handleNodeResponse, createRequest } from "./node-polyfills";
+import { Adaptor } from "./adaptors/index";
+import { NodeAdaptor } from "./adaptors/node/index";
 import { createLogger, Logger } from "@benstack/logger";
 
 /****************************************************************************************

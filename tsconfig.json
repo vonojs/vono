@@ -3,11 +3,11 @@
 		"target": "ESNext",
 		"useDefineForClassFields": true,
 		"lib": ["ESNext", "DOM", "DOM.Iterable"],
-		"module": "NodeNext",
+		"module": "ES2022",
 		"skipLibCheck": true,
 
 		/* Bundler mode */
-		"moduleResolution": "NodeNext",
+		"moduleResolution": "Bundler",
 		"allowImportingTsExtensions": true,
 		"declaration": true,
 		"emitDeclarationOnly": true,
