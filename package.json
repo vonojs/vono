@@ -1,14 +1,14 @@
 {
 	"name": "vonojs",
 	"description": "Dual-build server & client with Vite.",
-	"version": "0.0.13",
+	"version": "0.0.14",
 	"publishConfig": {
 		"access": "public"
 	},
 	"type": "module",
 	"scripts": {
 		"dev": "vite",
-		"build": "pnpm builder",
+		"build": "pnpm mkdist --src=src --dist=dist --format=esm -d --ext=js",
 		"play": "cd playground && pnpm run dev",
 		"lint": "biome format . --write"
 	},
@@ -21,6 +21,9 @@
 		".": {
 			"import": "./dist/mod.js",
 			"types": "./dist/mod.d.ts"
+		},
+		"./types": {
+			"types": "./dist/types.d.ts"
 		},
 		"./adaptor-cloudflare": {
 			"import": "./dist/adaptors/cloudflare/index.js",
@@ -45,6 +48,7 @@
 		"@types/node": "^20.12.4",
 		"esbuild": "^0.23.0",
 		"esbuild-plugin-d.ts": "^1.2.3",
-		"typescript": "^5.2.2"
+		"typescript": "^5.2.2",
+		"mkdist": "1.5.3"
 	}
 }
