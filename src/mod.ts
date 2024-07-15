@@ -279,7 +279,9 @@ function assetsPlugin(): vite.Plugin {
 
 					result.push(`
 						export async function buildTags(...scripts) {
+
 							const assetFn = await import("#vono/assets").then((m) => m.asset);
+
 							const result = new Set;
 							const mods = [];
 
@@ -379,9 +381,6 @@ export default function vono(config: Partial<Vono> = {}): vite.Plugin[] {
 
 				const baseOptions: Omit<vite.UserConfig, "plugins"> = {
 					appType: "custom",
-					resolve: {
-						alias: vono.adaptor.alias,
-					},
 				};
 
 				if (vite.build?.ssr) {
