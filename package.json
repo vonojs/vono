@@ -1,7 +1,7 @@
 {
 	"name": "vonojs",
 	"description": "Dual-build server & client with Vite.",
-	"version": "0.0.17",
+	"version": "0.0.18",
 	"publishConfig": {
 		"access": "public"
 	},

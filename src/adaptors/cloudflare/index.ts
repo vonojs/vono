@@ -1,5 +1,5 @@
-import { Adaptor } from "../index.ts";
-import { resolveModuleDirectory } from "../../tools.ts";
+import { Adaptor } from "../index";
+import { resolveModuleDirectory } from "../../tools";
 import { join } from "node:path";
 import * as fs from "node:fs/promises";
 
