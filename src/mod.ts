@@ -282,10 +282,16 @@ function assetsPlugin(): vite.Plugin {
 							const assetFn = await import("#vono/assets").then((m) => m.asset);
 							const result = [];
 							const mods = [];
+
+							if(import.meta.env.DEV){
+								result.push('<script type="module" src="/@vite/client"></script>');
+							}
+
 							for (const script of scripts.flat()) {
 								const mod = await asset(script);
 								mod && mods.push(mod);
 							}
+								
 							for (const mod of mods) {
 								if (mod.file) {
 									result.push('<script type="module" src="/' + mod.file + '"></script>')
