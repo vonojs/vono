@@ -280,30 +280,30 @@ function assetsPlugin(): vite.Plugin {
 					result.push(`
 						export async function buildTags(...scripts) {
 							const assetFn = await import("#vono/assets").then((m) => m.asset);
-							const result = [];
+							const result = new Set;
 							const mods = [];
 
 							if(import.meta.env.DEV){
-								result.push('<script type="module" src="/@vite/client"></script>');
+								result.add('<script type="module" src="/@vite/client"></script>');
 							}
 
 							for (const script of scripts.flat()) {
 								const mod = await asset(script);
 								mod && mods.push(mod);
 							}
-								
+
 							for (const mod of mods) {
 								if (mod.file) {
-									result.push('<script type="module" src="/' + mod.file + '"></script>')
+									result.add('<script type="module" src="/' + mod.file + '"></script>')
 								}
 								for (const css of mod.css ?? []) {
-									result.push('<link rel="stylesheet" href="/' + css + '">');
+									result.add('<link rel="stylesheet" href="/' + css + '">');
 								}
 								if (mod.imports) {
-									result.push(await buildTags(mod.imports));
+									result.add(await buildTags(mod.imports));
 								}
 							}
-							return result.join("\\n");
+							return [...result].join("\\n");
 						}
 					`)
 
