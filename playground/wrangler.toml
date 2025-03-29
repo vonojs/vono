@@ -1,2 +1,3 @@
-name = "my-pages-app"
-compatibility_flags = [ "nodejs_compat" ]
+name = "vono-playground"
+compatibility_date = "2025-03-28"
+main = "./server/index.ts"

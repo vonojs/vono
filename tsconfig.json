@@ -1,22 +1,18 @@
 {
-	"compilerOptions": {
-		"target": "ESNext",
-		"useDefineForClassFields": true,
-		"lib": ["ESNext", "DOM", "DOM.Iterable"],
-		"module": "ES2022",
-		"skipLibCheck": true,
-
-		/* Bundler mode */
-		"moduleResolution": "Bundler",
-		"allowImportingTsExtensions": true,
-		"declaration": true,
-		"emitDeclarationOnly": true,
-		"resolveJsonModule": true,
-		"isolatedModules": true,
-
-		/* Linting */
-		"strict": true,
-		"noFallthroughCasesInSwitch": true
-	},
-	"include": ["src/mod.ts"]
+  "compilerOptions": {
+    "allowImportingTsExtensions": true,
+    "moduleResolution": "Bundler",
+    "isolatedModules": true,
+    "verbatimModuleSyntax": true,
+    "target": "ES2023",
+    "lib": ["ES2023", "DOM"],
+    "module": "ESNext",
+    "declaration": true,
+    "outDir": ".dist",
+    "removeComments": true,
+    "allowUnusedLabels": true,
+    "allowUnreachableCode": true,
+    "noEmitOnError": false,
+  },
+  "include": ["src/**/*.ts"],
 }

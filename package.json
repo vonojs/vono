@@ -1,54 +1,49 @@
 {
-	"name": "vonojs",
-	"description": "Dual-build server & client with Vite.",
-	"version": "0.0.24",
-	"publishConfig": {
-		"access": "public"
-	},
-	"type": "module",
-	"scripts": {
-		"dev": "vite",
-		"build": "pnpm mkdist --src=src --dist=dist --format=esm -d --ext=js",
-		"play": "cd playground && pnpm run dev",
-		"lint": "biome format . --write"
-	},
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/vonojs/vono.git"
-	},
-	"files": ["dist"],
-	"exports": {
-		".": {
-			"import": "./dist/mod.js",
-			"types": "./dist/mod.d.ts"
-		},
-		"./types": {
-			"types": "./dist/types.d.ts"
-		},
-		"./adaptor-cloudflare": {
-			"import": "./dist/adaptors/cloudflare/index.js",
-			"types": "./dist/adaptors/cloudflare/index.d.ts"
-		},
-		"./adaptor-netlify": {
-			"import": "./dist/adaptors/netlify/index.js",
-			"types": "./dist/adaptors/netlify/index.d.ts"
-		},
-		"./adaptor-node": {
-			"import": "./dist/adaptors/node/index.js",
-			"types": "./dist/adaptors/node/index.d.ts"
-		}
-	},
-	"peerDependencies": {
-		"vite": "^5.3.0"
-	},
-	"devDependencies": {
-		"@benstack/logger": "^0.1.0",
-		"@benstack/builder": "^0.0.9",
-		"@biomejs/biome": "1.6.4",
-		"@types/node": "^20.12.4",
-		"esbuild": "^0.23.0",
-		"esbuild-plugin-d.ts": "^1.2.3",
-		"typescript": "^5.2.2",
-		"mkdist": "1.5.3"
-	}
+  "name": "@vonojs/vono",
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "build": "tsx build && tsc --declaration --emitDeclarationOnly --project tsconfig.json"
+  },
+  "files": [
+    ".dist"
+  ],
+  "exports": {
+    ".": {
+      "import": "./.dist/mod.js",
+      "types": "./.dist/mod.d.ts"
+    },
+    "./cloudflare": {
+      "import": "./.dist/runtime/cloudflare/index.js",
+      "types": "./.dist/runtime/cloudflare/index.d.ts"
+    },
+    "./netlify": {
+      "import": "./.dist/runtime/netlify/*.js",
+      "types": "./.dist/runtime/netlify/*.d.ts"
+    },
+    "./node": {
+      "import": "./.dist/runtime/node/*.js",
+      "types": "./.dist/runtime/node/*.d.ts"
+    },
+    "./types/server": {
+      "types": "./.dist/server.d.ts"
+    },
+    "./types/client": {
+      "types": "./.dist/client.d.ts"
+    }
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.13",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.2",
+    "wrangler": "^4.6.0",
+    "elysiatech": "^1.0.11"
+  },
+  "dependencies": {
+    "@cloudflare/vite-plugin": "^0.1.19",
+    "@cloudflare/workers-types": "^4.20250327.0"
+  },
+  "peerDependencies": {
+    "vite": "^6.2.3"
+  }
 }

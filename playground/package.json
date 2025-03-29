@@ -1,25 +1,15 @@
 {
-	"name": "vite-project",
-	"private": true,
-	"version": "0.0.0",
-	"type": "module",
-	"scripts": {
-		"dev": "vite",
-		"build": "vite build",
-		"lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-		"preview": "vite preview"
-	},
-	"dependencies": {
-		"es-module-lexer": "^1.5.2",
-		"react": "^18.2.0",
-		"react-dom": "^18.2.0"
-	},
-	"devDependencies": {
-		"@types/react": "^18.2.66",
-		"@types/react-dom": "^18.2.22",
-		"@vitejs/plugin-react-swc": "^3.5.0",
-		"typescript": "^5.2.2",
-		"vite": "^5.2.0",
-		"wrangler": "^3.55.0"
-	}
+  "name": "playground",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build --app"
+  },
+  "private": true,
+  "dependencies": {
+    "@cloudflare/vite-plugin": "^0.1.19",
+    "vite": "^6.2.3"
+  }
 }
