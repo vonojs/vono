@@ -22,8 +22,8 @@ export const config = {
 export class NetlifyAdaptor implements Adaptor {
 	name = "netlify"
 
-	serverDevEntry = path.join(dir, "dev.ts");
-	serverProdEntry = path.join(dir, "prod.ts");
+	serverDevEntry = path.join(dir, "dev");
+	serverProdEntry = path.join(dir, "prod");
 
 	async serverBuildEnd(
 		context: VonoContext,

@@ -11,9 +11,9 @@ import * as fs from "fs/promises";
 import * as path from "node:path";
 import { createRequest, sendResponse } from "./node.ts";
 import { type Adaptor } from "./adaptor.ts";
-import { NodeAdaptor } from "./runtime/adaptors/node";
+import { NodeAdaptor } from "./runtime/adaptors/node/index.ts";
 import { VirtualModules } from "./virtualModules.ts";
-import { CloudflareAdaptor } from "./runtime/adaptors/cloudflare";
+import { CloudflareAdaptor } from "./runtime/adaptors/cloudflare/index.ts";
 import { cloudflare } from "@cloudflare/vite-plugin";
 import { fileExists, isClientEnvironment, isSsrEnvironment, isVonoEnvironment, logger } from "./util.ts";
 
@@ -318,7 +318,7 @@ let resolveDevManifest = (
 	)
 }
 
-export default (config: VonoConfig = {}): Plugin | Plugin[] => {
+export let vono = (config: VonoConfig = {}): Plugin | Plugin[] => {
 	let c = makeVonoContext(config)
 
 	// @ts-ignore
@@ -501,4 +501,6 @@ export let getServerVirtualModules = () => globalThis.__vono__serverVirtualModul
 // @ts-ignore
 export let getClientVirtualModules = () => globalThis.__vono__clientVirtualModules
 export { type Adaptor } from "./adaptor.ts";
+export { NodeAdaptor, CloudflareAdaptor }
+export { NetlifyAdaptor } from "./runtime/adaptors/netlify/index.ts";
 export type { VonoContext, VonoConfig };

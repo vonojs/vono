@@ -14,8 +14,8 @@ let dir = resolveThisDir(import.meta.url);
 export class NodeAdaptor implements Adaptor {
 	name = "node"
 
-	serverDevEntry = path.join(dir, "dev.ts");
-	serverProdEntry = path.join(dir, "prod.ts");
+	serverDevEntry = path.join(dir, "dev");
+	serverProdEntry = path.join(dir, "prod");
 
 	clientBuildStart() {
 		logger.info(`Building client`);

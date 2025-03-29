@@ -5,6 +5,7 @@ import { createRequest, sendResponse } from "../../../node.ts";
 // @ts-ignore - virtual
 import serverEntry from "#vono/server";
 import { fileURLToPath } from "node:url";
+import sirv from "sirv"
 
 export let webHandler = async (request: Request, context: any) => {
 	let handler = typeof serverEntry === "function"
@@ -33,9 +34,6 @@ export let nodeHandler = (
 }
 
 async function main() {
-	// @ts-ignore
-	const sirv = (await import("./sirv.dist.js")).default;
-
 	const immutablesHandler = sirv("./dist", {
 		immutable: true,
 		maxAge: 31536000,

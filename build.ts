@@ -22,7 +22,9 @@ export let build = async (args: { defines: Record<string, any>, drop: string[] }
 			setup(build) {
 				build.onResolve({ filter: /.*/ }, args => {
 					if(
-						args.path.includes("elysiatech")
+						args.path === "sirv"
+						|| args.importer.includes("sirv")
+						|| args.path.includes("elysiatech")
 						|| args.importer.includes("elysiatech")
 					) {
 						return;
