@@ -1,17 +1,11 @@
 import { defineConfig } from "vite";
-import vono, { CloudflareAdaptor } from "../src/mod";
+import { vono, CloudflareAdaptor } from "../src/mod";
 
 export default defineConfig({
 	plugins: [
 		vono({
 			server: "./server/index.ts",
-			// adaptor: new CloudflareAdaptor,
-			preserveHtml: false,
+			adaptor: new CloudflareAdaptor,
 		}),
 	],
-	// build: {
-	// 	rollupOptions: {
-	// 		input: "client/main.ts"
-	// 	}
-	// }
 })

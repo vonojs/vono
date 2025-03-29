@@ -1,10 +1,10 @@
+/// <reference types="../../src/server" />
+
 import html from "#vono/html"
-import manifest from "#vono/manifest"
 
 export default {
 	fetch: () => {
-		console.log(manifest)
-		return new Response(html, {
+		return new Response(html.replace("%title%", "Vono Playground"), {
 			headers: {
 				"Content-Type": "text/html"
 			}

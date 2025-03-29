@@ -9,7 +9,6 @@
   },
   "private": true,
   "dependencies": {
-    "@cloudflare/vite-plugin": "^0.1.19",
     "vite": "^6.2.3"
   }
 }
