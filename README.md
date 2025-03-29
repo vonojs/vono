@@ -114,7 +114,7 @@ export default defineConfig({
   plugins: [
     vono({
         server: "src/server.ts", // The server entry file
-        adaptor: new NetlifyAdaptor
+        adaptor: NetlifyAdaptor // can also call new NetlifyAdaptor()
     })
   ]
 })

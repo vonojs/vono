@@ -20,7 +20,7 @@ import { fileExists, isClientEnvironment, isSsrEnvironment, isVonoEnvironment, l
 type VonoConfig = {
 	server?: string,
 	preserveManifest?: boolean,
-	adaptor?: Adaptor,
+	adaptor?: Adaptor | (new () => Adaptor),
 	preserveHtml?: boolean,
 }
 
@@ -41,7 +41,11 @@ let makeVonoContext = (config: VonoConfig): VonoContext => {
 		serverVirtualModules: new VirtualModules,
 		clientVirtualModules: new VirtualModules,
 		preserveManifest: config.preserveManifest,
-		adaptor: config.adaptor ?? new NodeAdaptor,
+		adaptor: config.adaptor
+			? typeof config.adaptor === "function"
+				? new config.adaptor
+				: config.adaptor
+			: new NodeAdaptor,
 		preserveHtml: config.preserveHtml ?? true,
 	}
 }

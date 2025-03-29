@@ -3,7 +3,6 @@ import typescriptLogo from './typescript.svg'
 import viteLogo from '/vite.svg'
 import { setupCounter } from './counter.ts'
 
-import("./async.ts").then(console.log)
 
 document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
   <div>
