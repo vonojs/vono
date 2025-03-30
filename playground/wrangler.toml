@@ -1,3 +1,4 @@
 name = "vono-playground"
 compatibility_date = "2025-03-28"
 main = "./server/index.ts"
+assets = { html_handling = "none" }

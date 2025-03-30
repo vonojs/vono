@@ -92,7 +92,10 @@ export default defineConfig({
 name = "my-project"
 compatibility_date = "2025-03-28"
 main = "./server/index.ts"
+assets = { html_handling = "none" }
 ```
+
+Note: If you want the worker to run on all requests, set `assets.html_handling` to "none". If you want Cloudflare to serve `index.html` statically, set it to "single-page-application"
 
 3. Add a `server/index.ts` file to your project.
 
