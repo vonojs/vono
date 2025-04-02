@@ -32,23 +32,23 @@ export class NetlifyAdaptor implements Adaptor {
 	): Promise<void> {
 		console.log("\t")
 		setTimeout(async () => {
-			logger.info("Copying server files to .netlify/v1/functions");
+			logger.info("Copying server files to netlify/functions");
 
 			await fs.rm(
-				".netlify/v1/functions",
+				"netlify/functions",
 				{ recursive: true, force: true }
 			);
 
 			await fs.cp(
 				"dist-server",
-				".netlify/v1/functions/",
+				"netlify/functions/",
 				{ recursive: true }
 			);
-
-			await fs.appendFile(
-				".netlify/v1/functions/entry.js",
-				config
-			);
+			//
+			// await fs.appendFile(
+			// 	".netlify/v1/functions/entry.js",
+			// 	config
+			// );
 
 			logger.success(
 				"Built for Netlify successfully",
