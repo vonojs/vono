@@ -1,0 +1,6 @@
+[build]
+publish = "dist"
+
+[functions.entry]
+path = "/*"
+preferStatic = true
