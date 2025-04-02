@@ -15,7 +15,7 @@ import { NodeAdaptor } from "./runtime/adaptors/node/index.ts";
 import { VirtualModules } from "./virtualModules.ts";
 import { CloudflareAdaptor } from "./runtime/adaptors/cloudflare/index.ts";
 import { cloudflare } from "@cloudflare/vite-plugin";
-import { fileExists, isClientEnvironment, isSsrEnvironment, isVonoEnvironment, logger } from "./util.ts";
+import { fileExists, isClientEnvironment, isSsrEnvironment, isVonoEnvironment, logger, vonoEnv } from "./util.ts";
 
 type VonoConfig = {
 	server?: string,
@@ -61,10 +61,14 @@ let makeVonoEnvironment = (c: VonoContext): EnvironmentOptions => {
 				input: {
 					entry: c.adaptor.serverProdEntry,
 				},
+				external: [
+
+				]
 			},
 			outDir: "dist-server",
 			manifest: false,
-		}
+		},
+		consumer: "server",
 	}
 }
 
@@ -125,11 +129,11 @@ let invalidateHtmlVirtualModule = (ctx: HmrContext, htmlEntryPath?: string) => {
 	if(!htmlEntryPath) return;
 
 	if(htmlEntryPath && ctx.file.endsWith(htmlEntryPath)) {
-		const mod = ctx.server.environments.vono.moduleGraph.getModuleById(
+		const mod = ctx.server.environments[vonoEnv].moduleGraph.getModuleById(
 			"\0" + VirtualModules.ID + "html",
 		);
 		if (mod) {
-			ctx.server.environments.vono.moduleGraph.invalidateModule(mod);
+			ctx.server.environments[vonoEnv].moduleGraph.invalidateModule(mod);
 			ctx.server.ws.send({ type: 'full-reload' })
 		}
 	}
@@ -172,7 +176,7 @@ let makeDevServerMiddleware = (
 	server: ViteDevServer,
 ) => {
 	server.middlewares.use(async (req, res, next) => {
-		let handlerModule = await (<RunnableDevEnvironment>server.environments.vono)
+		let handlerModule = await (<RunnableDevEnvironment>server.environments[vonoEnv])
 			.runner.import(serverDevEntry);
 
 		let handler = typeof handlerModule.default === "function"
@@ -247,7 +251,9 @@ let serverBuildEndImpl = async (c: VonoContext, resolvedViteConfig: ResolvedConf
 let clientBuildStartImpl =  (
 	c: VonoContext,
 	resolvedViteConfig: ResolvedConfig
-) =>  c.adaptor.clientBuildStart?.(c, resolvedViteConfig)
+) =>  {
+	c.adaptor.clientBuildStart?.(c, resolvedViteConfig)
+}
 
 let clientBuildEndImpl = async (
 	c: VonoContext,
@@ -257,6 +263,13 @@ let clientBuildEndImpl = async (
 		c,
 		resolvedViteConfig,
 	)
+	if(!resolvedViteConfig.builder){
+		setTimeout(() => {
+			logger.warn(
+				`The server was not built because it was ran without the --app flag. Run \`vite build --app\` to fix.`,
+			)
+		}, 100)
+	}
 }
 
 let configEnvImpl = (
@@ -337,6 +350,10 @@ export let vono = (config: VonoConfig = {}): Plugin | Plugin[] => {
 			{
 				name: "vono",
 				enforce: "pre",
+				config(viteConfig){
+					viteConfig.ssr ??= {}
+					viteConfig.ssr.noExternal = true;
+				},
 				async configResolved(viteConfig) {
 					resolvedViteConfig = viteConfig
 					await setHtmlEntryPath(c, viteConfig)
@@ -418,7 +435,9 @@ export let vono = (config: VonoConfig = {}): Plugin | Plugin[] => {
 			order: "post",
 			handler(viteConfig) {
 				viteConfig.environments ??= {}
-				viteConfig.environments.vono = makeVonoEnvironment(c)
+				viteConfig.environments[vonoEnv] = makeVonoEnvironment(c)
+				viteConfig.ssr ??= {}
+				viteConfig.ssr.noExternal = true;
 			}
 		},
 		configEnvironment(name, options) {

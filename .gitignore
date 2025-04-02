@@ -11,7 +11,9 @@ node_modules
 dist
 .dist
 dist-server
+playground/netlify/netlify
 *.local
+.wrangler
 
 # Editor directories and files
 .vscode/*

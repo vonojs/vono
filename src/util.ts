@@ -5,11 +5,13 @@ import type { Environment } from "vite";
 import fs from "fs/promises";
 import { createLogger, gradients, LogLevel } from "elysiatech/logging";
 
-export let isVonoEnvironment = (e: Environment) => e.name === "vono"
+export let isVonoEnvironment = (e: Environment) => e.name === "ssr"
 
 export let isSsrEnvironment = (e: Environment) => e.name === "ssr"
 
 export let isClientEnvironment = (e: Environment) => e.name === "client"
+
+export let vonoEnv = "ssr"
 
 export let resolveThisDir = (path: string): string =>
 	dirname(fileURLToPath(path));

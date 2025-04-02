@@ -44,11 +44,8 @@ export class NetlifyAdaptor implements Adaptor {
 				"netlify/functions/",
 				{ recursive: true }
 			);
-			//
-			// await fs.appendFile(
-			// 	".netlify/v1/functions/entry.js",
-			// 	config
-			// );
+
+			await fs.rm("dist-server", { recursive: true, force: true });
 
 			logger.success(
 				"Built for Netlify successfully",
