@@ -24,6 +24,9 @@ importers:
       elysiatech:
         specifier: ^1.0.11
         version: 1.0.11(jolt-physics@0.31.0)(postprocessing@6.37.2(three@0.172.0))(three@0.172.0)
+      esbuild:
+        specifier: ^0.25.2
+        version: 0.25.2
       sirv:
         specifier: ^3.0.1
         version: 3.0.1

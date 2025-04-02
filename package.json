@@ -1,6 +1,6 @@
 {
   "name": "@vonojs/vite",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "type": "module",
   "publishConfig": {
     "access": "public"
@@ -29,7 +29,8 @@
     "sirv": "^3.0.1",
     "tsx": "^4.19.3",
     "typescript": "^5.8.2",
-    "wrangler": "^4.6.0"
+    "wrangler": "^4.6.0",
+    "esbuild": "^0.25.2"
   },
   "dependencies": {
     "@cloudflare/vite-plugin": "^0.1.19",
