@@ -37,6 +37,7 @@ export default defineConfig({
 ### Create a server
 
 ```ts
+/// <reference types="@vonojs/vite/server" />
 export default (request: Request) => 
     new Response("Hello world!")
 ```
@@ -117,7 +118,7 @@ export default defineConfig({
   plugins: [
     vono({
         server: "src/server.ts", // The server entry file
-        adaptor: NetlifyAdaptor // can also call new NetlifyAdaptor()
+        adaptor: NetlifyAdaptor // or new NetlifyAdaptor({}) for options
     })
   ]
 })
@@ -126,10 +127,11 @@ export default defineConfig({
 ### #vono/html
 
 If you are using an html file as your Vite entry, you can access the transformed html on the server through
-the `#vono/html` import. This allows you to return the transformed html as a response, possibly with some
+the `#vono/html` virtual import. This allows you to return the transformed html as a response, possibly with some
 additional data like meta tags or a title.
 
 ```ts
+/// <reference types="@vonojs/vite/server" />
 import html from '#vono/html'
 
 export default (request: Request) => {
@@ -144,14 +146,9 @@ export default (request: Request) => {
 
 ### #vono/manifest
 
-You can access the Vite manifest through the `#vono/manifest` import. This allows you to access the
+You can access the Vite manifest through the `#vono/manifest` virtual import. This allows you to access the
 transformed assets and their paths. This is useful for adding preload links or getting the hashed paths of
 assets.
-
-### Types
-
-You can include `@vonojs/vite/server` to your `types` array in tsconfig.json to include types for Vono's virtual modules (#vono/html and #vono/manifest).
-
 
 ### License
 

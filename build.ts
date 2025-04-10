@@ -63,9 +63,4 @@ if(mode === "production") {
 	})
 }
 
-fs.copyFile("src/server.d.ts", ".dist/server.d.ts")
-fs.rm(".dist/server.d.js", { force: true })
-fs.copyFile("src/client.d.ts", ".dist/client.d.ts")
-fs.rm(".dist/client.d.js", { force: true })
-
 console.info(`Built in ${(performance.now() - t).toFixed(0)}ms`)

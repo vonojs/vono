@@ -85,7 +85,9 @@ let makeDevHtmlVirtualModule = async (
 					htmlEntryPath!,
 					"utf-8"
 				)
-				return `export default ${JSON.stringify(await server.transformIndexHtml("/", html))}`
+				return `export default ${JSON.stringify(
+					await server.transformIndexHtml("/", html)
+				)}`
 			} catch {
 				return `export default "";`
 			}
@@ -350,9 +352,12 @@ export let vono = (config: VonoConfig = {}): Plugin | Plugin[] => {
 			{
 				name: "vono",
 				enforce: "pre",
-				config(viteConfig){
-					viteConfig.ssr ??= {}
-					viteConfig.ssr.noExternal = true;
+				config(){
+					return {
+						ssr: {
+							noExternal: true,
+						},
+					}
 				},
 				async configResolved(viteConfig) {
 					resolvedViteConfig = viteConfig
@@ -434,10 +439,14 @@ export let vono = (config: VonoConfig = {}): Plugin | Plugin[] => {
 		config: {
 			order: "post",
 			handler(viteConfig) {
-				viteConfig.environments ??= {}
-				viteConfig.environments[vonoEnv] = makeVonoEnvironment(c)
-				viteConfig.ssr ??= {}
-				viteConfig.ssr.noExternal = true;
+				return {
+					environments: {
+						[vonoEnv]: makeVonoEnvironment(c),
+					},
+					ssr: {
+						noExternal: true,
+					},
+				}
 			}
 		},
 		configEnvironment(name, options) {

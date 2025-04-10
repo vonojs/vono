@@ -1,4 +1,4 @@
-/// <reference types="../../../src/server" />
+/// <reference path="../../../src/server.ts" />
 
 import html from "#vono/html"
 
