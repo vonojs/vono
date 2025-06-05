@@ -1,0 +1,1497 @@
+<!doctype html>
+<html lang="en" data-webtui-theme="nord">
+    <head>
+        <meta charset="UTF-8" />
+        <link
+            rel="icon"
+            type="image/svg+xml"
+            href="https://raw.githubusercontent.com/vonojs/site/refs/heads/main/public/favicon.ico"
+        />
+        <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/siimple-icons/siimple-icons.css"
+        />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta
+            name="description"
+            content="Vono.js is a Vite plugin that adds a server endpoint to your client app and can deploy to cloudflare, netlify, and more."
+        />
+        <meta property="og:title" content="Vono Docs" />
+        <meta
+            property="og:description"
+            content="Vono.js is a Vite plugin that adds a server endpoint to your client app and can deploy to cloudflare, netlify, and more."
+        />
+        <meta property="og:image" content="https://vonojs.dev/ogimage.png" />
+        <title>Vono Docs</title>
+        <script>
+            // 🌘 CSS Scope Inline (https://github.com/gnat/css-scope-inline)
+            window.cssScopeCount ??= 1; // Let extra copies share the scope count.
+            window.cssScope ??= new MutationObserver((mutations) => {
+                // Allow 1 observer.
+                document?.body
+                    ?.querySelectorAll("style:not([ready])")
+                    .forEach((node) => {
+                        // Faster than walking MutationObserver results when recieving subtree (DOM swap, htmx, ajax, jquery).
+                        var scope = "me__" + window.cssScopeCount++; // Ready. Make unique scope, example: .me__1234
+                        node.parentNode.classList.add(scope);
+                        node.textContent = node.textContent
+                            .replace(
+                                /(?:^|\.|(\s|[^a-zA-Z0-9\-\_]))(me|this|self)(?![a-zA-Z])/g,
+                                "$1." + scope,
+                            ) // Can use: me this self
+                            .replace(
+                                /((@keyframes|animation:|animation-name:)[^{};]*)\.me__/g,
+                                "$1me__",
+                            ) // Optional. Removes need to escape names, ex: "\.me"
+                            .replace(
+                                /(?:@media)\s(xs-|sm-|md-|lg-|xl-|sm|md|lg|xl|xx)/g, // Optional. Responsive design. Mobile First (above breakpoint): 🟢 None sm md lg xl xx 🏁  Desktop First (below breakpoint): 🏁 xs- sm- md- lg- xl- None 🟢 *- matches must be first!
+                                (match, part1) => {
+                                    return (
+                                        "@media " +
+                                        {
+                                            sm: "(min-width: 640px)",
+                                            md: "(min-width: 768px)",
+                                            lg: "(min-width: 1024px)",
+                                            xl: "(min-width: 1280px)",
+                                            xx: "(min-width: 1536px)",
+                                            "xs-": "(max-width: 639px)",
+                                            "sm-": "(max-width: 767px)",
+                                            "md-": "(max-width: 1023px)",
+                                            "lg-": "(max-width: 1279px)",
+                                            "xl-": "(max-width: 1535px)",
+                                        }[part1]
+                                    );
+                                },
+                            );
+                        node.setAttribute("ready", "");
+                    });
+            }).observe(document.documentElement, {
+                childList: true,
+                subtree: true,
+            });
+        </script>
+        <script>
+            /* esm.sh - hyperapp@2.0.22 */
+            var Q = 1,
+                F = 3,
+                G = {},
+                J = [],
+                j = "http://www.w3.org/2000/svg",
+                P = (r) => r,
+                s = J.map,
+                X = Array.isArray,
+                T =
+                    typeof requestAnimationFrame < "u"
+                        ? requestAnimationFrame
+                        : setTimeout,
+                U = (r) => {
+                    var t = "";
+                    if (typeof r == "string") return r;
+                    if (X(r))
+                        for (var f = 0, v; f < r.length; f++)
+                            (v = U(r[f])) && (t += (t && " ") + v);
+                    else for (var f in r) r[f] && (t += (t && " ") + f);
+                    return t;
+                },
+                y = (r, t) => {
+                    for (var f in { ...r, ...t })
+                        if (typeof (X(r[f]) ? r[f][0] : r[f]) == "function")
+                            t[f] = r[f];
+                        else if (r[f] !== t[f]) return !0;
+                },
+                N = (r, t = J, f) => {
+                    for (
+                        var v = [], m = 0, a, h;
+                        m < r.length || m < t.length;
+                        m++
+                    )
+                        (a = r[m]),
+                            (h = t[m]),
+                            v.push(
+                                h && h !== !0
+                                    ? !a || h[0] !== a[0] || y(h[1], a[1])
+                                        ? [
+                                              h[0],
+                                              h[1],
+                                              (a && a[2](), h[0](f, h[1])),
+                                          ]
+                                        : a
+                                    : a && a[2](),
+                            );
+                    return v;
+                },
+                q = (r) => (r == null ? r : r.key),
+                W = (r, t, f, v, m, a) => {
+                    if (t === "style")
+                        for (var h in { ...f, ...v })
+                            (f = v == null || v[h] == null ? "" : v[h]),
+                                h[0] === "-"
+                                    ? r[t].setProperty(h, f)
+                                    : (r[t][h] = f);
+                    else
+                        t[0] === "o" && t[1] === "n"
+                            ? ((r.events || (r.events = {}))[(t = t.slice(2))] =
+                                  v)
+                                ? f || r.addEventListener(t, m)
+                                : r.removeEventListener(t, m)
+                            : !a && t !== "list" && t !== "form" && t in r
+                              ? (r[t] = v ?? "")
+                              : v == null || v === !1
+                                ? r.removeAttribute(t)
+                                : r.setAttribute(t, v);
+                },
+                z = (r, t, f) => {
+                    var v = r.props,
+                        m =
+                            r.type === F
+                                ? document.createTextNode(r.tag)
+                                : (f = f || r.tag === "svg")
+                                  ? document.createElementNS(
+                                        j,
+                                        r.tag,
+                                        v.is && v,
+                                    )
+                                  : document.createElement(r.tag, v.is && v);
+                    for (var a in v) W(m, a, null, v[a], t, f);
+                    for (var h = 0; h < r.children.length; h++)
+                        m.appendChild(
+                            z((r.children[h] = x(r.children[h])), t, f),
+                        );
+                    return (r.node = m);
+                },
+                L = (r, t, f, v, m, a) => {
+                    if (f !== v)
+                        if (f != null && f.type === F && v.type === F)
+                            f.tag !== v.tag && (t.nodeValue = v.tag);
+                        else if (f == null || f.tag !== v.tag)
+                            (t = r.insertBefore(z((v = x(v)), m, a), t)),
+                                f != null && r.removeChild(f.node);
+                        else {
+                            var h,
+                                c,
+                                A,
+                                _,
+                                O = f.props,
+                                D = v.props,
+                                u = f.children,
+                                C = v.children,
+                                p = 0,
+                                g = 0,
+                                B = u.length - 1,
+                                R = C.length - 1;
+                            a = a || v.tag === "svg";
+                            for (var E in { ...O, ...D })
+                                (E === "value" ||
+                                E === "selected" ||
+                                E === "checked"
+                                    ? t[E]
+                                    : O[E]) !== D[E] &&
+                                    W(t, E, O[E], D[E], m, a);
+                            for (
+                                ;
+                                g <= R &&
+                                p <= B &&
+                                !((A = q(u[p])) == null || A !== q(C[g]));
+
+                            )
+                                L(
+                                    t,
+                                    u[p].node,
+                                    u[p],
+                                    (C[g] = x(C[g++], u[p++])),
+                                    m,
+                                    a,
+                                );
+                            for (
+                                ;
+                                g <= R &&
+                                p <= B &&
+                                !((A = q(u[B])) == null || A !== q(C[R]));
+
+                            )
+                                L(
+                                    t,
+                                    u[B].node,
+                                    u[B],
+                                    (C[R] = x(C[R--], u[B--])),
+                                    m,
+                                    a,
+                                );
+                            if (p > B)
+                                for (; g <= R; )
+                                    t.insertBefore(
+                                        z((C[g] = x(C[g++])), m, a),
+                                        (c = u[p]) && c.node,
+                                    );
+                            else if (g > R)
+                                for (; p <= B; ) t.removeChild(u[p++].node);
+                            else {
+                                for (var M = {}, Y = {}, E = p; E <= B; E++)
+                                    (A = u[E].key) != null && (M[A] = u[E]);
+                                for (; g <= R; ) {
+                                    if (
+                                        ((A = q((c = u[p]))),
+                                        (_ = q((C[g] = x(C[g], c)))),
+                                        Y[A] ||
+                                            (_ != null && _ === q(u[p + 1])))
+                                    ) {
+                                        A == null && t.removeChild(c.node), p++;
+                                        continue;
+                                    }
+                                    _ == null || f.type === Q
+                                        ? (A == null &&
+                                              (L(t, c && c.node, c, C[g], m, a),
+                                              g++),
+                                          p++)
+                                        : (A === _
+                                              ? (L(t, c.node, c, C[g], m, a),
+                                                (Y[_] = !0),
+                                                p++)
+                                              : (h = M[_]) != null
+                                                ? (L(
+                                                      t,
+                                                      t.insertBefore(
+                                                          h.node,
+                                                          c && c.node,
+                                                      ),
+                                                      h,
+                                                      C[g],
+                                                      m,
+                                                      a,
+                                                  ),
+                                                  (Y[_] = !0))
+                                                : L(
+                                                      t,
+                                                      c && c.node,
+                                                      null,
+                                                      C[g],
+                                                      m,
+                                                      a,
+                                                  ),
+                                          g++);
+                                }
+                                for (; p <= B; )
+                                    q((c = u[p++])) == null &&
+                                        t.removeChild(c.node);
+                                for (var E in M)
+                                    Y[E] == null && t.removeChild(M[E].node);
+                            }
+                        }
+                    return (v.node = t);
+                },
+                b = (r, t) => {
+                    for (var f in r) if (r[f] !== t[f]) return !0;
+                    for (var f in t) if (r[f] !== t[f]) return !0;
+                },
+                x = (r, t) =>
+                    r !== !0 && r !== !1 && r
+                        ? typeof r.tag == "function"
+                            ? ((!t || t.memo == null || b(t.memo, r.memo)) &&
+                                  ((t = r.tag(r.memo)).memo = r.memo),
+                              t)
+                            : r
+                        : $(""),
+                Z = (r) =>
+                    r.nodeType === F
+                        ? $(r.nodeValue, r)
+                        : I(
+                              r.nodeName.toLowerCase(),
+                              G,
+                              s.call(r.childNodes, Z),
+                              Q,
+                              r,
+                          ),
+                I = (r, { key: t, ...f }, v, m, a) => ({
+                    tag: r,
+                    props: f,
+                    key: t,
+                    children: v,
+                    type: m,
+                    node: a,
+                }),
+                k = (r, t) => ({ tag: r, memo: t }),
+                $ = (r, t) => I(r, G, J, F, t),
+                i = (r, { class: t, ...f }, v = J) =>
+                    I(
+                        r,
+                        { ...f, ...(t ? { class: U(t) } : G) },
+                        X(v) ? v : [v],
+                    ),
+                S = ({
+                    node: r,
+                    view: t,
+                    subscriptions: f,
+                    dispatch: v = P,
+                    init: m = G,
+                }) => {
+                    var a = r && Z(r),
+                        h = [],
+                        c,
+                        A,
+                        _ = (u) => {
+                            c !== u &&
+                                ((c = u) == null && (v = f = O = P),
+                                f && (h = N(h, f(c), v)),
+                                t && !A && T(O, (A = !0)));
+                        },
+                        O = () =>
+                            (r = L(
+                                r.parentNode,
+                                r,
+                                a,
+                                (a = t(c)),
+                                D,
+                                (A = !1),
+                            )),
+                        D = function (u) {
+                            v(this.events[u.type], u);
+                        };
+                    return (
+                        (v = v((u, C) =>
+                            typeof u == "function"
+                                ? v(u(c, C))
+                                : X(u)
+                                  ? typeof u[0] == "function"
+                                      ? v(u[0], u[1])
+                                      : u
+                                            .slice(1)
+                                            .map(
+                                                (p) =>
+                                                    p &&
+                                                    p !== !0 &&
+                                                    (p[0] || p)(v, p[1]),
+                                                _(u[0]),
+                                            )
+                                  : _(u),
+                        ))(m),
+                        v
+                    );
+                };
+            window.Hyperapp = S;
+            window.h = i;
+            window.memo = k;
+            window.text = $;
+        </script>
+        <script type="module">
+            let getRoute = () => {
+                if (location.protocol.startsWith("file")) {
+                    return location.hash === "" ? "/" : location.hash.slice(1);
+                } else {
+                    return location.pathname;
+                }
+            };
+            let setRoute = (path) => {
+                if (location.protocol.startsWith("file")) {
+                    location.hash = "#" + path;
+                } else {
+                    history.pushState({}, "", path);
+                }
+            };
+            customElements.define(
+                "link-to",
+                class extends HTMLElement {
+                    constructor() {
+                        super();
+                    }
+                    connectedCallback() {
+                        this.addEventListener("click", this.click);
+                        this.setAttribute("tabindex", 0);
+                    }
+                    click = () => {
+                        event.preventDefault();
+                        let href = this.getAttribute("href");
+                        if (href) {
+                            setRoute(href);
+                        }
+                    };
+                },
+            );
+            customElements.define(
+                "route-view",
+                class extends HTMLElement {
+                    connectedCallback() {
+                        this.update();
+                    }
+                    update = () => {
+                        requestAnimationFrame(this.update);
+                        let route = getRoute();
+                        let view =
+                            document.querySelector(`template[href="${route}"]`)
+                                ?.content ??
+                            document.querySelector(`template[href="404"]`)
+                                ?.content;
+                        if (view) {
+                            this.innerHTML = "";
+                            this.appendChild(view.cloneNode(true));
+                        } else {
+                            this.innerHTML = "";
+                            this.appendChild(
+                                document.createTextNode("500 HTML Error"),
+                            );
+                        }
+                    };
+                },
+            );
+        </script>
+        <style webtui-base>
+            @layer reset, base,utils,components;
+            @layer reset {
+                /* Box sizing rules */
+                *,
+                *::before,
+                *::after {
+                    box-sizing: border-box;
+                }
+
+                /* Prevent font size inflation */
+                html {
+                    -moz-text-size-adjust: none;
+                    -webkit-text-size-adjust: none;
+                    text-size-adjust: none;
+                }
+
+                /* Remove default margin in favour of better control in authored CSS */
+                body,
+                h1,
+                h2,
+                h3,
+                h4,
+                p,
+                figure,
+                blockquote,
+                dl,
+                dd {
+                    margin-block-end: 0;
+                }
+
+                /* Remove list styles on ul, ol elements with a list role, which suggests default styling will be removed */
+                ul[role="list"],
+                ol[role="list"] {
+                    list-style: none;
+                }
+
+                /* Set core body defaults */
+                body {
+                    min-height: 100vh;
+                    line-height: 1.5;
+                }
+
+                /* Set shorter line heights on headings and interactive elements */
+                h1,
+                h2,
+                h3,
+                h4,
+                button,
+                input,
+                label {
+                    line-height: 1.1;
+                }
+
+                /* Balance text wrapping on headings */
+                h1,
+                h2,
+                h3,
+                h4 {
+                    text-wrap: balance;
+                }
+
+                /* A elements that don't have a class get default styles */
+                a:not([class]) {
+                    text-decoration-skip-ink: auto;
+                    color: currentColor;
+                }
+
+                /* Make images easier to work with */
+                img,
+                picture {
+                    max-width: 100%;
+                    display: block;
+                }
+
+                /* Inherit fonts for inputs and buttons */
+                input,
+                button,
+                textarea,
+                select {
+                    font-family: inherit;
+                    font-size: inherit;
+                }
+
+                /* Make sure textareas without a rows attribute are not tiny */
+                textarea:not([rows]) {
+                    min-height: 10em;
+                }
+
+                /* Anything that has been anchored to should have extra scroll margin */
+                :target {
+                    scroll-margin-block: 5ex;
+                }
+            }
+            @layer base {
+                :root {
+                    --background0: #fff;
+                    --background1: #ddd;
+                    --background2: #bbb;
+                    --background3: #999;
+                    --foreground0: #000;
+                    --foreground1: #444;
+                    --foreground2: #888;
+                    --font-size: 16px;
+                    --line-height: 1.3;
+                    --font-weight-bold: 700;
+                    --font-weight-normal: 400;
+                    --font-family: monospace;
+                }
+                [data-webtui-theme="dark"] {
+                    --background0: #000;
+                    --background1: #222;
+                    --background2: #444;
+                    --background3: #666;
+                    --foreground0: #fff;
+                    --foreground1: #ccc;
+                    --foreground2: #999;
+                }
+                body,
+                html {
+                    background-color: var(--background0);
+                    color: var(--foreground0);
+                    font-family: var(--font-family);
+                    font-size: var(--font-size);
+                    font-weight: var(--font-weight-normal);
+                    line-height: var(--line-height, 1.5);
+                    font-variant-ligatures: common-ligatures;
+                }
+                * {
+                    box-sizing: border-box;
+                    margin: 0;
+                    padding: 0;
+                    outline: none;
+                }
+            }
+            @layer utils {
+                @property --box-rounded-radius {
+                    syntax: "<length>";
+                    inherits: false;
+                    initial-value: 4px;
+                }
+                @property --box-border-width {
+                    syntax: "<length>";
+                    inherits: false;
+                    initial-value: 2px;
+                }
+                @property --box-double-border-width {
+                    syntax: "<length>";
+                    inherits: false;
+                    initial-value: 1px;
+                }
+                [box-~="square"],
+                [box-~="round"],
+                [box-~="double"] {
+                    --box-border-color: var(--foreground0);
+                    position: relative;
+                    isolation: isolate;
+                    padding: 1lh 1ch;
+                }
+                [box-~="square"]:before,
+                [box-~="round"]:before,
+                [box-~="double"]:before {
+                    content: "";
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    translate: -50% -50%;
+                    width: calc(100% - 1ch - 2px);
+                    height: calc(100% - 1lh - 2px);
+                    border: solid var(--box-border-width)
+                        var(--box-border-color);
+                    z-index: -1;
+                }
+                [box-~="square"][box-~="round"]:before,
+                [box-~="round"][box-~="round"]:before,
+                [box-~="double"][box-~="round"]:before {
+                    border-radius: var(--box-rounded-radius);
+                }
+                [box-~="square"][box-~="round"]:after,
+                [box-~="round"][box-~="round"]:after,
+                [box-~="double"][box-~="round"]:after {
+                    border-radius: calc(var(--box-rounded-radius) + 2px);
+                }
+                [box-~="square"][box-~="double"]:before,
+                [box-~="round"][box-~="double"]:before,
+                [box-~="double"][box-~="double"]:before {
+                    border-width: var(--box-double-border-width);
+                }
+                [box-~="square"][box-~="double"]:after,
+                [box-~="round"][box-~="double"]:after,
+                [box-~="double"][box-~="double"]:after {
+                    content: "";
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    translate: -50% -50%;
+                    width: calc(100% - 1ch + 2px);
+                    height: calc(100% - 1lh + 2px);
+                    border: solid var(--box-double-border-width)
+                        var(--box-border-color);
+                    z-index: -1;
+                }
+                [box-~="square"][box-~="contain:none"],
+                [box-~="round"][box-~="contain:none"],
+                [box-~="double"][box-~="contain:none"] {
+                    padding-top: 0;
+                    padding-bottom: 0;
+                }
+                [box-~="square"][box-~="contain:!top"],
+                [box-~="round"][box-~="contain:!top"],
+                [box-~="double"][box-~="contain:!top"] {
+                    padding-top: 0;
+                }
+                [box-~="square"][box-~="contain:!bottom"],
+                [box-~="round"][box-~="contain:!bottom"],
+                [box-~="double"][box-~="contain:!bottom"] {
+                    padding-bottom: 0;
+                }
+            }
+            @layer components {
+                button,
+                [is-~="button"] {
+                    --button-primary: var(--foreground0);
+                    --button-secondary: var(--background0);
+                    color: var(--button-secondary);
+                    background-color: var(--button-primary);
+                    font-family: var(--font-family);
+                    font-size: var(--font-size);
+                    line-height: var(--line-height);
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                    border: none;
+                    padding: 0 2ch;
+                    height: 3lh;
+                    outline: none;
+                }
+                button[box-],
+                [is-~="button"][box-] {
+                    color: var(--button-primary);
+                    background-color: transparent;
+                    --box-border-color: var(--button-primary);
+                }
+                button:focus,
+                [is-~="button"]:focus {
+                    font-weight: 700;
+                    text-decoration: underline;
+                }
+                button:active,
+                [is-~="button"]:active {
+                    color: var(--button-primary);
+                    background-color: var(--button-secondary);
+                }
+                button:active[box-],
+                [is-~="button"]:active[box-] {
+                    --box-border-color: var(--button-secondary);
+                    background-color: transparent;
+                }
+                button:disabled,
+                [is-~="button"]:disabled {
+                    text-decoration: line-through;
+                    pointer-events: none;
+                }
+                button[size-="small"],
+                [is-~="button"][size-="small"] {
+                    padding: 0 1ch;
+                    height: 1lh;
+                }
+                button[variant-="foreground0"],
+                button:not([variant]),
+                [is-~="button"][variant-="foreground0"],
+                [is-~="button"]:not([variant]) {
+                    --button-primary: var(--foreground0);
+                    --button-secondary: var(--background0);
+                }
+                button[variant-="foreground1"],
+                [is-~="button"][variant-="foreground1"] {
+                    --button-primary: var(--foreground1);
+                    --button-secondary: var(--background0);
+                }
+                button[variant-="foreground2"],
+                [is-~="button"][variant-="foreground2"] {
+                    --button-primary: var(--foreground2);
+                    --button-secondary: var(--background0);
+                }
+                button[variant-="background0"],
+                [is-~="button"][variant-="background0"] {
+                    --button-primary: var(--background0);
+                    --button-secondary: var(--foreground0);
+                }
+                button[variant-="background1"],
+                [is-~="button"][variant-="background1"] {
+                    --button-primary: var(--background1);
+                    --button-secondary: var(--foreground0);
+                }
+                button[variant-="background2"],
+                [is-~="button"][variant-="background2"] {
+                    --button-primary: var(--background2);
+                    --button-secondary: var(--foreground0);
+                }
+                button[variant-="background3"],
+                [is-~="button"][variant-="background3"] {
+                    --button-primary: var(--background3);
+                    --button-secondary: var(--foreground0);
+                }
+            }
+            @layer components {
+                h1,
+                h2,
+                h3,
+                h4,
+                h5,
+                h6 {
+                    font-family: var(--font-family);
+                    font-size: var(--font-size);
+                    line-height: var(--line-height);
+                    font-weight: var(--font-weight-bold);
+                }
+                h1 code,
+                h2 code,
+                h3 code,
+                h4 code,
+                h5 code,
+                h6 code {
+                    color: inherit;
+                    background-color: var(--background1);
+                    padding: 0 1ch;
+                }
+                h1:before {
+                    content: "# ";
+                }
+                h2:before {
+                    content: "## ";
+                }
+                h3:before {
+                    content: "### ";
+                }
+                h4:before {
+                    content: "#### ";
+                }
+                h5:before {
+                    content: "##### ";
+                }
+                h6:before {
+                    content: "###### ";
+                }
+                ol {
+                    list-style-position: inside;
+                }
+                ol li > ol {
+                    margin-left: 2ch;
+                }
+                ul {
+                    list-style-type: none;
+                }
+                ul li:before {
+                    color: inherit;
+                    content: "- ";
+                }
+                ul[marker-="bullet"] li:before {
+                    content: "• ";
+                }
+                ul[marker-~="tree"] li:before {
+                    content: "├ ";
+                }
+                ul[marker-~="tree"]:not([marker-^="open"])
+                    li:first-of-type:before {
+                    content: "┌ ";
+                }
+                ul[marker-~="tree"]:not([marker-$="open"])
+                    li:last-of-type:before {
+                    content: "└ ";
+                }
+                ul li > ul {
+                    margin-left: 2ch;
+                }
+                p,
+                blockquote,
+                li,
+                [is-~="typography-block"] {
+                    font-family: var(--font-family);
+                    font-size: var(--font-size);
+                    line-height: var(--line-height);
+                    color: var(--foreground1);
+                }
+                p:is(blockquote),
+                blockquote:is(blockquote),
+                li:is(blockquote),
+                [is-~="typography-block"]:is(blockquote) {
+                    padding-left: 2ch;
+                    position: relative;
+                }
+                p:is(blockquote):before,
+                blockquote:is(blockquote):before,
+                li:is(blockquote):before,
+                [is-~="typography-block"]:is(blockquote):before {
+                    content: "";
+                    position: absolute;
+                    top: 0;
+                    left: 0.5ch;
+                    width: var(--box-border-width, 2px);
+                    height: 100%;
+                    translate: -50%;
+                    background-color: var(--background2);
+                }
+                p strong,
+                blockquote strong,
+                li strong,
+                [is-~="typography-block"] strong {
+                    font-weight: var(--font-weight-bold);
+                    color: var(--foreground0);
+                }
+                p a,
+                blockquote a,
+                li a,
+                [is-~="typography-block"] a {
+                    text-decoration: underline;
+                }
+                p code,
+                blockquote code,
+                li code,
+                [is-~="typography-block"] code {
+                    display: inline-block;
+                    background-color: var(--background1);
+                    padding-left: 1ch;
+                    padding-right: 1ch;
+                }
+            }
+            @layer components {
+                [is-~="badge"] {
+                    color: var(--badge-text);
+                    background-image: linear-gradient(
+                        90deg,
+                        transparent 0,
+                        transparent calc(1ch - 1px),
+                        var(--badge-color) calc(1ch - 1px),
+                        var(--badge-color) calc(100% - 1ch + 1px),
+                        transparent calc(100% - 1ch + 1px),
+                        transparent
+                    );
+                    display: inline-flex;
+                    vertical-align: middle;
+                    white-space: nowrap;
+                    height: 1lh;
+                    line-height: 1lh;
+                }
+                [is-~="badge"][variant-="foreground0"],
+                [is-~="badge"]:not([variant]) {
+                    --badge-color: var(--foreground0);
+                    --badge-text: var(--background0);
+                }
+                [is-~="badge"][variant-="foreground1"] {
+                    --badge-color: var(--foreground1);
+                    --badge-text: var(--background0);
+                }
+                [is-~="badge"][variant-="foreground2"] {
+                    --badge-color: var(--foreground2);
+                    --badge-text: var(--background0);
+                }
+                [is-~="badge"][variant-="background0"] {
+                    --badge-color: var(--background0);
+                    --badge-text: var(--foreground0);
+                }
+                [is-~="badge"][variant-="background1"] {
+                    --badge-color: var(--background1);
+                    --badge-text: var(--foreground0);
+                }
+                [is-~="badge"][variant-="background2"] {
+                    --badge-color: var(--background2);
+                    --badge-text: var(--foreground0);
+                }
+                [is-~="badge"][variant-="background3"] {
+                    --badge-color: var(--background3);
+                    --badge-text: var(--foreground0);
+                }
+                [is-~="badge"]:before,
+                [is-~="badge"]:after {
+                    content: "";
+                    width: 1ch;
+                    height: 1lh;
+                    display: inline-block;
+                    vertical-align: middle;
+                    background-color: var(--badge-color);
+                    overflow: hidden;
+                }
+                [is-~="badge"][cap-^="round"]:before {
+                    border-top-left-radius: 1lh;
+                    border-bottom-left-radius: 1lh;
+                }
+                [is-~="badge"][cap-$="round"]:after {
+                    border-top-right-radius: 1lh;
+                    border-bottom-right-radius: 1lh;
+                }
+                [is-~="badge"][cap-^="triangle"]:before {
+                    clip-path: polygon(100% 0, 100% 100%, 0 50%);
+                }
+                [is-~="badge"][cap-$="triangle"]:after {
+                    clip-path: polygon(0 0, 0 100%, 100% 50%);
+                }
+                [is-~="badge"][cap-^="slant-top"]:before {
+                    clip-path: polygon(0 0, 100% 0, 100% 100%);
+                }
+                [is-~="badge"][cap-$="slant-top"]:after {
+                    clip-path: polygon(0 0, 100% 0, 0 100%);
+                }
+                [is-~="badge"][cap-^="slant-bottom"]:before {
+                    clip-path: polygon(100% 0, 100% 100%, 0 100%);
+                }
+                [is-~="badge"][cap-$="slant-bottom"]:after {
+                    clip-path: polygon(0 0, 100% 100%, 0 100%);
+                }
+                [is-~="badge"][cap-^="ribbon"]:before {
+                    clip-path: polygon(
+                        0 0,
+                        100% 0,
+                        100% 100%,
+                        0 100%,
+                        100% 50%
+                    );
+                }
+                [is-~="badge"][cap-$="ribbon"]:after {
+                    clip-path: polygon(0 0, 100% 0, 0% 50%, 100% 100%, 0% 100%);
+                }
+            }
+            @layer components {
+                input,
+                [is-~="input"] {
+                    background-color: var(--background1);
+                    color: var(--foreground0);
+                    font-family: var(--font-family);
+                    font-size: var(--font-size);
+                    font-weight: var(--font-weight-normal);
+                    line-height: var(--line-height);
+                    outline: none;
+                    border: none;
+                    min-width: 24ch;
+                }
+                input::placeholder,
+                [is-~="input"]::placeholder {
+                    color: var(--foreground2);
+                }
+                input:not([size-]),
+                [is-~="input"]:not([size-]) {
+                    height: 1lh;
+                    padding: 0 1ch;
+                }
+                input[size-="small"],
+                [is-~="input"][size-="small"] {
+                    height: 1lh;
+                    padding: 0;
+                }
+                input[size-="large"],
+                [is-~="input"][size-="large"] {
+                    height: 3lh;
+                    padding: 1lh 2ch;
+                }
+            }
+            @layer components {
+                @property --popover-offset-x {
+                    syntax: "<length>";
+                    inherits: true;
+                    initial-value: 0;
+                }
+                @property --popover-offset-y {
+                    syntax: "<length>";
+                    inherits: true;
+                    initial-value: 0;
+                }
+                details[is-="popover"] {
+                    --popover-backdrop-color: transparent;
+                    position: relative;
+                }
+                details[is-="popover"] summary:focus {
+                    text-decoration: underline;
+                }
+                details[is-="popover"] summary::marker {
+                    content: "";
+                    display: none;
+                }
+                details[is-="popover"][open] summary:before {
+                    content: "";
+                    display: block;
+                    width: 100vw;
+                    height: 100vh;
+                    position: fixed;
+                    top: 0;
+                    right: 0;
+                    bottom: 0;
+                    left: 0;
+                    z-index: 1;
+                    background-color: var(--popover-backdrop-color);
+                    cursor: default;
+                }
+                details[is-="popover"][open] summary::marker {
+                    content: "";
+                    display: none;
+                }
+                details[is-="popover"][open] summary + * {
+                    position: absolute;
+                    z-index: 2;
+                }
+                details[is-="popover"][open][position-~="baseline-left"]
+                    summary
+                    + *,
+                details[is-="popover"][open]:not([position-]) summary + * {
+                    left: 0%;
+                }
+                details[is-="popover"][open][position-~="baseline-right"]
+                    summary
+                    + * {
+                    left: 100%;
+                    translate: -100%;
+                }
+                details[is-="popover"][open][position-~="left"] summary + * {
+                    left: calc(var(--popover-offset-x) * -1);
+                    translate: -100%;
+                }
+                details[is-="popover"][open][position-~="right"] summary + * {
+                    left: calc(100% + var(--popover-offset-x));
+                }
+                details[is-="popover"][open][position-~="baseline-top"]
+                    summary
+                    + * {
+                    top: 0%;
+                }
+                details[is-="popover"][open][position-~="baseline-bottom"]
+                    summary
+                    + * {
+                    top: 100%;
+                    transform: translateY(-100%);
+                }
+                details[is-="popover"][open][position-~="top"] summary + * {
+                    top: calc(var(--popover-offset-y) * -1);
+                    transform: translateY(-100%);
+                }
+                details[is-="popover"][open][position-~="bottom"] summary + *,
+                details[is-="popover"][open]:not([position-]) summary + * {
+                    top: calc(100% + var(--popover-offset-y));
+                }
+            }
+            @layer components {
+                input[type="checkbox"] {
+                    appearance: none;
+                    -webkit-appearance: none;
+                    -moz-appearance: none;
+                    display: inline-block;
+                    position: relative;
+                    width: 3ch;
+                    min-width: initial;
+                    vertical-align: text-top;
+                    cursor: pointer;
+                    color: var(--foreground2);
+                    font-family: var(--font-family);
+                    font-size: var(--font-size);
+                    line-height: var(--line-height);
+                    outline: none;
+                }
+                input[type="checkbox"]:before {
+                    content: "";
+                    position: absolute;
+                    top: 0;
+                    right: 0;
+                    bottom: 0;
+                    left: 0;
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                    width: 3ch;
+                    height: 1lh;
+                    background: var(--background1);
+                }
+                input[type="checkbox"]:checked:before {
+                    content: "X";
+                }
+                label:has(input[type="checkbox"]) {
+                    display: inline-flex;
+                    align-items: flex-start;
+                    gap: 1ch;
+                    cursor: pointer;
+                    max-width: fit-content;
+                }
+                label:has(input[type="checkbox"]:focus) {
+                    font-weight: 700;
+                    text-decoration: underline;
+                }
+                input[type="checkbox"]:disabled {
+                    color: var(--foreground2);
+                    cursor: default;
+                    pointer-events: none;
+                }
+                label:has(input[type="checkbox"]:disabled) {
+                    color: var(--foreground2);
+                    text-decoration: line-through;
+                    cursor: default;
+                }
+            }
+        </style>
+        <style webtui-nord>
+            @layer base {
+                [data-webtui-theme="nord"] {
+                    --nord0: #2e3440;
+                    --nord1: #3b4252;
+                    --nord2: #434c5e;
+                    --nord3: #4c566a;
+                    --nord4: #d8dee9;
+                    --nord5: #e5e9f0;
+                    --nord6: #eceff4;
+                    --nord7: #8fbcbb;
+                    --nord8: #88c0d0;
+                    --nord9: #81a1c1;
+                    --nord10: #5e81ac;
+                    --nord11: #bf616a;
+                    --nord12: #d08770;
+                    --nord13: #ebcb8b;
+                    --nord14: #a3be8c;
+                    --nord15: #b48ead;
+                    --background0: var(--nord0);
+                    --background1: var(--nord1);
+                    --background2: var(--nord2);
+                    --background3: var(--nord3);
+                    --foreground0: var(--nord6);
+                    --foreground1: var(--nord5);
+                    --foreground2: var(--nord4);
+                }
+            }
+            @layer components {
+                [data-webtui-theme="nord"] button[variant-="nord0"] {
+                    --button-primary: var(--background0);
+                    --button-secondary: var(--foreground0);
+                }
+                [data-webtui-theme="nord"] button[variant-="nord1"] {
+                    --button-primary: var(--background1);
+                    --button-secondary: var(--foreground0);
+                }
+                [data-webtui-theme="nord"] button[variant-="nord2"] {
+                    --button-primary: var(--background2);
+                    --button-secondary: var(--foreground0);
+                }
+                [data-webtui-theme="nord"] button[variant-="nord3"] {
+                    --button-primary: var(--background3);
+                    --button-secondary: var(--foreground0);
+                }
+                [data-webtui-theme="nord"] button[variant-="nord6"] {
+                    --button-primary: var(--foreground0);
+                    --button-secondary: var(--background0);
+                }
+                [data-webtui-theme="nord"] button[variant-="nord5"] {
+                    --button-primary: var(--foreground1);
+                    --button-secondary: var(--background0);
+                }
+                [data-webtui-theme="nord"] button[variant-="nord4"] {
+                    --button-primary: var(--foreground2);
+                    --button-secondary: var(--background0);
+                }
+                [data-webtui-theme="nord"] button[variant-="nord7"] {
+                    --button-primary: var(--nord7);
+                    --button-secondary: var(--background0);
+                }
+                [data-webtui-theme="nord"] button[variant-="nord8"] {
+                    --button-primary: var(--nord8);
+                    --button-secondary: var(--background0);
+                }
+                [data-webtui-theme="nord"] button[variant-="nord9"] {
+                    --button-primary: var(--nord9);
+                    --button-secondary: var(--background0);
+                }
+                [data-webtui-theme="nord"] button[variant-="nord10"] {
+                    --button-primary: var(--nord10);
+                    --button-secondary: var(--background0);
+                }
+                [data-webtui-theme="nord"] button[variant-="nord11"] {
+                    --button-primary: var(--nord11);
+                    --button-secondary: var(--background0);
+                }
+                [data-webtui-theme="nord"] button[variant-="nord12"] {
+                    --button-primary: var(--nord12);
+                    --button-secondary: var(--background0);
+                }
+                [data-webtui-theme="nord"] button[variant-="nord13"] {
+                    --button-primary: var(--nord13);
+                    --button-secondary: var(--background0);
+                }
+                [data-webtui-theme="nord"] button[variant-="nord14"] {
+                    --button-primary: var(--nord14);
+                    --button-secondary: var(--background0);
+                }
+                [data-webtui-theme="nord"] button[variant-="nord15"] {
+                    --button-primary: var(--nord15);
+                    --button-secondary: var(--background0);
+                }
+            }
+            @layer components {
+                [data-webtui-theme="nord"] h1,
+                [data-webtui-theme="nord"] h2,
+                [data-webtui-theme="nord"] h3,
+                [data-webtui-theme="nord"] h4,
+                [data-webtui-theme="nord"] h5,
+                [data-webtui-theme="nord"] h6 {
+                    color: var(--nord14);
+                }
+                [data-webtui-theme="nord"] p a,
+                [data-webtui-theme="nord"] blockquote a,
+                [data-webtui-theme="nord"] li a,
+                [data-webtui-theme="nord"] [is-~="typography-block"] a {
+                    color: var(--nord7);
+                    text-decoration: underline;
+                }
+                [data-webtui-theme="nord"] p a:hover,
+                [data-webtui-theme="nord"] blockquote a:hover,
+                [data-webtui-theme="nord"] li a:hover,
+                [data-webtui-theme="nord"] [is-~="typography-block"] a:hover {
+                    color: var(--nord8);
+                }
+                [data-webtui-theme="nord"] p code,
+                [data-webtui-theme="nord"] blockquote code,
+                [data-webtui-theme="nord"] li code,
+                [data-webtui-theme="nord"] [is-~="typography-block"] code {
+                    color: var(--nord12);
+                }
+            }
+            @layer components {
+                [data-webtui-theme="nord"] [is-~="badge"][variant-="nord0"] {
+                    --badge-color: var(--background0);
+                    --badge-text: var(--foreground0);
+                }
+                [data-webtui-theme="nord"] [is-~="badge"][variant-="nord1"] {
+                    --badge-color: var(--background1);
+                    --badge-text: var(--foreground0);
+                }
+                [data-webtui-theme="nord"] [is-~="badge"][variant-="nord2"] {
+                    --badge-color: var(--background2);
+                    --badge-text: var(--foreground0);
+                }
+                [data-webtui-theme="nord"] [is-~="badge"][variant-="nord3"] {
+                    --badge-color: var(--background3);
+                    --badge-text: var(--foreground0);
+                }
+                [data-webtui-theme="nord"] [is-~="badge"][variant-="nord6"] {
+                    --badge-color: var(--foreground0);
+                    --badge-text: var(--background0);
+                }
+                [data-webtui-theme="nord"] [is-~="badge"][variant-="nord5"] {
+                    --badge-color: var(--foreground1);
+                    --badge-text: var(--background0);
+                }
+                [data-webtui-theme="nord"] [is-~="badge"][variant-="nord4"] {
+                    --badge-color: var(--foreground2);
+                    --badge-text: var(--background0);
+                }
+                [data-webtui-theme="nord"] [is-~="badge"][variant-="nord7"] {
+                    --badge-color: var(--nord7);
+                    --badge-text: var(--background0);
+                }
+                [data-webtui-theme="nord"] [is-~="badge"][variant-="nord8"] {
+                    --badge-color: var(--nord8);
+                    --badge-text: var(--background0);
+                }
+                [data-webtui-theme="nord"] [is-~="badge"][variant-="nord9"] {
+                    --badge-color: var(--nord9);
+                    --badge-text: var(--background0);
+                }
+                [data-webtui-theme="nord"] [is-~="badge"][variant-="nord10"] {
+                    --badge-color: var(--nord10);
+                    --badge-text: var(--background0);
+                }
+                [data-webtui-theme="nord"] [is-~="badge"][variant-="nord11"] {
+                    --badge-color: var(--nord11);
+                    --badge-text: var(--background0);
+                }
+                [data-webtui-theme="nord"] [is-~="badge"][variant-="nord12"] {
+                    --badge-color: var(--nord12);
+                    --badge-text: var(--background0);
+                }
+                [data-webtui-theme="nord"] [is-~="badge"][variant-="nord13"] {
+                    --badge-color: var(--nord13);
+                    --badge-text: var(--background0);
+                }
+                [data-webtui-theme="nord"] [is-~="badge"][variant-="nord14"] {
+                    --badge-color: var(--nord14);
+                    --badge-text: var(--background0);
+                }
+                [data-webtui-theme="nord"] [is-~="badge"][variant-="nord15"] {
+                    --badge-color: var(--nord15);
+                    --badge-text: var(--background0);
+                }
+            }
+        </style>
+        <style>
+            body {
+                font-family: monospace;
+            }
+        </style>
+    </head>
+    <body>
+        <style>
+            this {
+                height: 100vh;
+                display: flex;
+                flex-direction: column;
+                overflow: hidden;
+                font-family: monospace;
+                font-size: 1.25rem;
+            }
+        </style>
+        <header>
+            <script type="module">
+                let Link = (path, ...children) => {
+                    return h(
+                        "a",
+                        {
+                            href: path,
+                            "size-": "small",
+                        },
+                        children,
+                    );
+                };
+                let Style = (css) => {
+                    return h("style", { innerHTML: css }, []);
+                };
+                Hyperapp({
+                    init: { path: "/" },
+                    subscriptions: (state) => [],
+                    view: ({ todos, value }) =>
+                        h(
+                            "header",
+                            {
+                                "box-": "square",
+                            },
+                            [
+                                Style(`
+                                    this {
+                                        display: flex;
+                                        justify-content: space-between;
+                                        align-items: center;
+                                        --box-border-color: var(--background3);
+                                        --font-size: 1.25rem;
+                                        padding: 1lh 2ch;
+                                    }
+                                `),
+                                h("div", {}, [text("vono.js")]),
+                                h("div", {}, [
+                                    Style(`
+                                      this {
+                                          display: flex;
+                                          justify-content: space-between;
+                                          align-items: center;
+                                          gap: 1ch;
+                                      }
+                                  `),
+                                    Link(
+                                        "/docs",
+                                        h("i", {
+                                            class: "si-book",
+                                            style: "font-size: 1.25rem;",
+                                        }),
+                                        text("Docs"),
+                                    ),
+                                    Link(
+                                        "/examples",
+                                        h("i", {
+                                            class: "si-lightbulb",
+                                            style: "font-size: 1.25rem;",
+                                        }),
+                                        text("Examples"),
+                                    ),
+                                    h(
+                                        "a",
+                                        {
+                                            target: "_blank",
+                                            href: "https://github.com/vonojs/vite",
+                                        },
+                                        [
+                                            h("i", {
+                                                class: "si-git-branch",
+                                                style: "font-size: 1.25rem;",
+                                            }),
+                                            text("GitHub"),
+                                        ],
+                                    ),
+                                    h(
+                                        "button",
+                                        {
+                                            "size-": "small",
+                                        },
+                                        [
+                                            h("i", {
+                                                class: "si-search",
+                                                style: "font-size: 1.25rem;",
+                                            }),
+                                            text("Search"),
+                                        ],
+                                    ),
+                                ]),
+                            ],
+                        ),
+                    node: document.querySelector("header"),
+                });
+            </script>
+        </header>
+
+        <main>
+            <style>
+                this {
+                    flexgrow: 1;
+                    width: 100%;
+                    height: 100%;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    overflow-x: hidden;
+                    overflow-y: scroll;
+                }
+            </style>
+            <route-view></route-view>
+        </main>
+
+        <footer>
+            <style>
+                this {
+                    display: flex;
+                    justify-content: space-between;
+                }
+            </style>
+            <div>
+                <style>
+                    this {
+                        display: flex;
+                    }
+                </style>
+                <span is-="badge">NORMAL</span>
+                <span is-="badge" variant-="background2">master</span>
+                <span is-="badge" variant-="background0"> home.html </span>
+            </div>
+            <div>
+                <div>
+                    <style>
+                        this {
+                            display: none;
+                        }
+                        @media md {
+                            this {
+                                display: flex;
+                            }
+                        }
+                    </style>
+                    <span is-="badge" variant-="background0">utf-8</span>
+                    <span is-="badge" variant-="background1">Top</span>
+                    <span is-="badge" variant-="blue">
+                        <span>1</span>
+                        <span>:1</span>
+                    </span>
+                </div>
+            </div>
+        </footer>
+
+        <template href="/">home</template>
+
+        <template href="/docs">docs</template>
+
+        <template href="404">not found</template>
+    </body>
+</html>
